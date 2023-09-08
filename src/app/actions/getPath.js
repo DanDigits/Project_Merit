@@ -5,6 +5,7 @@ function getBaseURL() {
     return `http://${process.env.NEXTAUTH_URL}:${process.env.PORT}`;
   } else {
     return `http://localhost:3000`;
+
   }
 }
 
