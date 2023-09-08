@@ -19,8 +19,8 @@ COPY --from=build --chown=user:user /app/.next/static ./.next/static
 USER user
 
 # Mitigation due to issues with next-auth and ECS
-#RUN sed -i 's|const errorUrl = new URL(`${basePath}${errorPage}`, origin);|const errorUrl = new URL(`${basePath}${errorPage}`, process.env.NEXTAUTH_URL + ":" + process.env.NEXTAUTH_PORT);|g' .next/server/src/middleware.js 
-#RUN sed -i 's|const signInUrl = new URL(`${basePath}${signInPage}`, origin);|const signInUrl = new URL(`${basePath}${signInPage}`, process.env.NEXTAUTH_URL + ":" + process.env.NEXTAUTH_PORT);|g' .next/server/src/middleware.js 
+RUN sed -i 's|const errorUrl = new URL(`${basePath}${errorPage}`, origin);|const errorUrl = new URL(`${basePath}${errorPage}`, process.env.NEXTAUTH_URL + ":" + process.env.NEXTAUTH_PORT);|g' .next/server/src/middleware.js 
+RUN sed -i 's|const signInUrl = new URL(`${basePath}${signInPage}`, origin);|const signInUrl = new URL(`${basePath}${signInPage}`, process.env.NEXTAUTH_URL + ":" + process.env.NEXTAUTH_PORT);|g' .next/server/src/middleware.js 
 
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
