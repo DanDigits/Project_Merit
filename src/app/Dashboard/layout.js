@@ -174,7 +174,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
   const router = useRouter();
   const handleLogout = (e) => {
     e.preventDefault();
-    signOut({ callbackUrl: "/api/auth/logout" });
+    signOut({ callbackUrl: "/Auth/Logout" });
   };
   return (
     <Flex
