@@ -13,10 +13,10 @@ export default {
   baseUrl: "http://localhost:3000",
   api: {
     reports: {
-      create: "/api/Reports/create",
-      get: "/api/Reports/get",
-      update: "/api/Reports/update",
-      delete: "/api/Reports/delete",
+      create: "/api/reports/create",
+      get: "/api/reports/get",
+      update: "/api/reports/update",
+      delete: "/api/reports/delete",
     },
     user: {
       signUp: "/api/user/signUp",
