@@ -1,15 +1,16 @@
-function getBaseURL() {
-  // Base URL for respective installations (container/local/etc)
-  console.log(process.env.NEXTAUTH_URL);
-  if (process.env.NEXTAUTH_URL != "localhost") {
-    return `http://${process.env.NEXTAUTH_URL}`;
-  } else {
-    return `http://localhost:3000`;
-  }
-}
+/* eslint-disable prettier/prettier */
+//function getBaseURL() {
+// Base URL for respective installations (container/local/etc)
+// console.log(process.env.NEXTAUTH_URL);
+// if (process.env.NEXTAUTH_URL != "localhost") {
+//   return `http://${process.env.NEXTAUTH_URL}:80`;
+// } else {
+//   return `http://localhost:3000`;
+// }
+//}
 
 export default {
-  baseUrl: getBaseURL(),
+  baseUrl: "http://localhost:3000",
   api: {
     reports: {
       create: "/api/Reports/create",

@@ -17,7 +17,7 @@ import Report from "./report";
 export default function Page() {
   const [mode, setMode] = useState("Create New Report");
   const [title, setTitle] = useState("");
-  const [quarter, setQuarter] = useState("");
+  const [quarter, setQuarter] = useState(1);
   const [date_of_creation, setDate] = useState(""); // needs to default to current date
   const [report, setReport] = useState("");
   const [email, setEmail] = useState("");
