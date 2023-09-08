@@ -44,7 +44,8 @@ export const authOptions = {
     // ...add more providers here
   ],
 };
-export default NextAuth({
+
+const handler = NextAuth({
   ...authOptions,
   adapter: MongoDBAdapter(clientPromise),
   debug: true,
@@ -52,7 +53,9 @@ export default NextAuth({
     strategy: "jwt",
   },
   pages: {
-    signIn: "/login",
-    signOut: "/logout",
+    signIn: "/Auth/Login",
+    signOut: "/Auth/Logout",
   },
 });
+
+export { handler as GET, handler as POST };

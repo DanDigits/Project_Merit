@@ -7,7 +7,6 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { Stack, Text, VStack, HStack, Heading } from "@chakra-ui/layout";
-import Layout from "src/app/Index/layout";
 
 export default function Page() {
   return (
@@ -100,7 +99,3 @@ export default function Page() {
     </>
   );
 }
-
-Page.getLayout = function (page) {
-  return <Layout>{page}</Layout>;
-};

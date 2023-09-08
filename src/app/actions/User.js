@@ -1,4 +1,4 @@
-import urls from "utils/urls";
+import urls from "getPath";
 
 export const signUp = (
   email,

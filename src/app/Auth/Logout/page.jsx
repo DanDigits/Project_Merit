@@ -1,7 +1,6 @@
 "use client";
 import { Heading, Link, Card } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
-import Layout from "../Login/layout";
 
 export default function Page() {
   return (
@@ -16,7 +15,7 @@ export default function Page() {
         <Heading mt={"5"} mb={"5"}>
           Logout successful.
         </Heading>
-        <Link href="/">
+        <Link href="/Auth/Login">
           <Button
             mb={"5"}
             bgColor={"#70A0AF"}
@@ -30,7 +29,3 @@ export default function Page() {
     </>
   );
 }
-
-Page.getLayout = function (page) {
-  return <Layout>{page}</Layout>;
-};

@@ -9,7 +9,6 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/react";
-import Layout from "src/app/Index/layout";
 import { signOut } from "next-auth/react";
 import { useEffect } from "react";
 import { getSession } from "next-auth/react";
@@ -32,7 +31,7 @@ export default function Page() {
   }, []);
   const handleLogout = (e) => {
     e.preventDefault();
-    signOut({ callbackUrl: "/logout" });
+    signOut({ callbackUrl: "/Logout" });
   };
   return (
     <Box>
@@ -97,7 +96,3 @@ export default function Page() {
     </Box>
   );
 }
-
-Page.getLayout = function (page) {
-  return <Layout>{page}</Layout>;
-};

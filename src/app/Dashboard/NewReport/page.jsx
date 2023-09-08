@@ -9,11 +9,9 @@ import {
   Link,
   VStack,
 } from "@chakra-ui/react";
-import urls from "utils/urls";
-import { createReport } from "src/actions/Report";
+import { createReport } from "src/app/actions/Report";
 import { useEffect } from "react";
 import { getSession } from "next-auth/react";
-import Layout from "src/app/Index/layout";
 import Report from "./report";
 
 export default function Page() {
@@ -51,7 +49,7 @@ export default function Page() {
           <br />
           <Report />
           <ButtonGroup>
-            <Link href="/">
+            <Link href="/Dashboard/Index">
               <Button
                 bgColor={"#A0C1B9"}
                 color={"#331E38"}
@@ -74,7 +72,3 @@ export default function Page() {
     </>
   );
 }
-
-Page.getLayout = function (page) {
-  return <Layout>{page}</Layout>;
-};

@@ -27,7 +27,6 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import Layout from "src/app/Index/layout";
 
 const IndeterminateCheckbox = React.forwardRef(
   ({ indeterminate, ...rest }, ref) => {
@@ -287,7 +286,3 @@ export default function Page() {
     </>
   );
 }
-
-Page.getLayout = function (page) {
-  return <Layout>{page}</Layout>;
-};

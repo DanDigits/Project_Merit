@@ -1,4 +1,6 @@
 "use client";
+import { ChakraProvider } from "@chakra-ui/react";
+import { customTheme } from "../styles/customTheme";
 import React from "react";
 import {
   IconButton,
@@ -40,30 +42,32 @@ import { signOut } from "next-auth/react";
 export default function SidebarWithHeader({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Box minH="100vh" bg={useColorModeValue("#F5F5F5", "#D4D4D4")}>
-      <SidebarContent
-        onClose={() => onClose}
-        display={{ base: "none", md: "block" }}
-      />
-      <Drawer
-        autoFocus={false}
-        isOpen={isOpen}
-        placement="left"
-        onClose={onClose}
-        returnFocusOnClose={false}
-        onOverlayClick={onClose}
-        size="full"
-      >
-        <DrawerContent>
-          <SidebarContent onClose={onClose} />
-        </DrawerContent>
-      </Drawer>
-      {/* mobilenav */}
-      <MobileNav onOpen={onOpen} />
-      <Box p="4" px="8" ml={{ base: "0", md: "60" }}>
-        {children}
+    <ChakraProvider theme={customTheme}>
+      <Box minH="100vh" bg={useColorModeValue("#F5F5F5", "#D4D4D4")}>
+        <SidebarContent
+          onClose={() => onClose}
+          display={{ base: "none", md: "block" }}
+        />
+        <Drawer
+          autoFocus={false}
+          isOpen={isOpen}
+          placement="left"
+          onClose={onClose}
+          returnFocusOnClose={false}
+          onOverlayClick={onClose}
+          size="full"
+        >
+          <DrawerContent>
+            <SidebarContent onClose={onClose} />
+          </DrawerContent>
+        </Drawer>
+        {/* mobilenav */}
+        <MobileNav onOpen={onOpen} />
+        <Box p="4" px="8" ml={{ base: "0", md: "60" }}>
+          {children}
+        </Box>
       </Box>
-    </Box>
+    </ChakraProvider>
   );
 }
 
@@ -93,7 +97,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
         />
       </Flex>
       <VStack mt="50px" ml={10} spacing={14} alignItems="left" w="100%">
-        <NextLink href="/">
+        <NextLink href="/Dashboard/Index">
           <Button
             variant="ghost"
             onClick={onClose}
@@ -107,7 +111,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
           </Button>
         </NextLink>
 
-        <NextLink href={"/reports"} passHref>
+        <NextLink href={"/Dashboard/Reports"} passHref>
           <Button
             variant="ghost"
             onClick={onClose}
@@ -121,7 +125,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
           </Button>
         </NextLink>
 
-        <NextLink href={"/guidelines"} passHref>
+        <NextLink href={"/Dashboard/Guidelines"} passHref>
           <Button
             variant="ghost"
             onClick={onClose}
@@ -170,7 +174,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
   const router = useRouter();
   const handleLogout = (e) => {
     e.preventDefault();
-    signOut({ callbackUrl: "/logout" });
+    signOut({ callbackUrl: "/Auth/Logout" });
   };
   return (
     <Flex
@@ -194,7 +198,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
       <Box justifyContent={{ base: "space-between", md: "flex-end" }}>
         <Button
           variant="ghost"
-          onClick={() => router.push("/newreport")}
+          onClick={() => router.push("/Dashboard/NewReport")}
           fontSize={20}
           textColor={"#706993"}
           colorScheme="purple"
@@ -219,7 +223,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
           <MenuList>
             <MenuItem
               textColor={"#331E38"}
-              onClick={() => router.push("/profile")}
+              onClick={() => router.push("/Dashboard/Profile")}
             >
               Profile
             </MenuItem>

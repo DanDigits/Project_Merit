@@ -9,7 +9,6 @@ import {
   Center,
 } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/react";
-import Layout from "src/app/Index/layout";
 
 import InfoBox from "./InfoBox";
 
@@ -309,7 +308,3 @@ export default function Page() {
     </div>
   );
 }
-
-Page.getLayout = function (page) {
-  return <Layout>{page}</Layout>;
-};

@@ -17,10 +17,8 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import urls from "utils/urls";
-import { updateReport, getReport } from "src/actions/Report";
+import { updateReport, getReport } from "src/app/actions/Report";
 import { getSession } from "next-auth/react";
-import Layout from "src/app/Index/layout";
 import Report from "../NewReport/report";
 import ReportPreview from "./reportPreview";
 
@@ -145,7 +143,3 @@ export default function Page() {
     </>
   );
 }
-
-Page.getLayout = function (page) {
-  return <Layout>{page}</Layout>;
-};

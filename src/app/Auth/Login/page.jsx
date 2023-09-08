@@ -17,8 +17,7 @@ import {
 } from "@chakra-ui/react";
 
 import { signIn } from "next-auth/react";
-import { signUp } from "src/actions/User";
-import Layout from "../Login/layout";
+import { signUp } from "src/app/actions/User";
 
 export default function Page() {
   const [mode, setMode] = useState("Login");
@@ -50,7 +49,7 @@ export default function Page() {
       signIn("credentials", {
         email: email,
         password: password,
-        callbackUrl: "/",
+        callbackUrl: "/Dashboard/Index",
       });
     }
   };
@@ -335,7 +334,3 @@ export default function Page() {
     </>
   );
 }
-
-Page.getLayout = function (page) {
-  return <Layout>{page}</Layout>;
-};
