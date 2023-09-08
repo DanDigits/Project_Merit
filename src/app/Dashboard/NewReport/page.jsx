@@ -29,9 +29,10 @@ export default function Page() {
   const handleSubmitInfo = (e) => {
     e.preventDefault();
 
-    createReport(title, email, date_of_creation, quarter, report).then(() => {
+    createReport(title, email, date_of_creation, quarter, report, {
+      callbackUrl: "/Dashboard/Home",
+    }).then(() => {
       alert("Successfully created new report.");
-      setMode("Login");
     });
   };
 
