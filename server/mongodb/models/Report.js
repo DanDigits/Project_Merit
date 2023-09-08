@@ -1,11 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 
 const ReportSchema = new Schema({
-  name: {
+  title: {
     type: String,
     required: true,
   },
-  userEmail: {
+  email: {
     type: String,
     required: true,
   },
@@ -17,11 +17,7 @@ const ReportSchema = new Schema({
     type: Number,
     required: true,
   },
-  year: {
-    type: Number,
-    required: true,
-  },
-  data: {
+  report: {
     type: String,
     required: true,
   },
