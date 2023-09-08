@@ -53,8 +53,8 @@ const handler = NextAuth({
     strategy: "jwt",
   },
   pages: {
-    signIn: "/api/auth/login",
-    signOut: "/api/auth/logout",
+    signIn: "/Auth/Login",
+    signOut: "/Auth/Logout",
   },
 });
 

@@ -3,7 +3,7 @@ import React from "react";
 import { Stack, Icon, Box } from "@chakra-ui/react";
 import { AiOutlineFileProtect } from "react-icons/ai";
 import { ChakraProvider } from "@chakra-ui/react";
-import { customTheme } from "../../styles/customTheme";
+import { customTheme } from "../styles/customTheme";
 
 export default function layoutLogin({ children }) {
   return (
