@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Fetch Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/DanDigits/Project_Merit.git'
+                git branch: 'test', url: 'https://github.com/DanDigits/Project_Merit.git'
             }
         }
         stage('Jest Tests') {
