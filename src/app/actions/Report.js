@@ -1,4 +1,4 @@
-import urls from "../../../utils/getPath";
+import getPath from "../../../utils/getPath";
 
 export const createReport = async ({
   title,
@@ -7,7 +7,7 @@ export const createReport = async ({
   quarter,
   report,
 }) =>
-  fetch(urls.baseUrl + urls.api.reports.create, {
+  fetch(getPath.baseUrl + getPath.api.reports.create, {
     method: "POST",
     mode: "same-origin",
     headers: {
@@ -42,7 +42,7 @@ export const updateReport = async ({
   quarter,
   report,
 }) =>
-  fetch(urls.baseUrl + urls.api.reports.update, {
+  fetch(getPath.baseUrl + getPath.api.reports.update, {
     method: "POST",
     mode: "same-origin",
     headers: {
@@ -69,7 +69,7 @@ export const updateReport = async ({
     });
 
 export const getReport = async ({ reportId }) =>
-  fetch(urls.baseUrl + urls.api.reports.get, {
+  fetch(getPath.baseUrl + getPath.api.reports.get, {
     method: "POST",
     mode: "same-origin",
     headers: {
@@ -89,7 +89,7 @@ export const getReport = async ({ reportId }) =>
     });
 
 export const getUserReports = async ({ user }) =>
-  fetch(urls.baseUrl + urls.api.reports.get, {
+  fetch(getPath.baseUrl + getPath.api.reports.get, {
     method: "POST",
     mode: "same-origin",
     headers: {
