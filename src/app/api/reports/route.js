@@ -42,3 +42,7 @@ export async function GET() {
     return new Response(res, { status: 400 });
   }
 }
+
+// export async function DELETE() {
+
+// }
