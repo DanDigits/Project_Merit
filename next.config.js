@@ -1,10 +1,9 @@
-// /** @type {import('next').NextConfig} */
-// const nextConfig = {
-//   reactStrictMode: true,
-// };
-
-module.exports = {
-  // eslint-disable-next-line prettier/prettier
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  experimental: {
+    serverActions: true,
+  },
   output: "standalone",
   async redirects() {
     return [
@@ -16,3 +15,5 @@ module.exports = {
     ];
   },
 };
+
+module.exports = nextConfig;
