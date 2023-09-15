@@ -41,7 +41,7 @@ export default function Page() {
   const handleSubmitInfo = (e) => {
     e.preventDefault();
 
-    createReport(title, email, date, quarter, report).then(() => {
+    createReport({ title, email, date, quarter, report }).then(() => {
       alert("Successfully created new report.");
     });
   };
@@ -82,6 +82,8 @@ export default function Page() {
                   Quarter
                 </FormLabel>
                 <Select
+                  defaultValue={1}
+                  placeholder="Select Quarter"
                   variant="login"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
@@ -90,9 +92,7 @@ export default function Page() {
                   size={"md"}
                   onChange={(e) => setQuarter(e.target.value)}
                 >
-                  <option value={1} selected="selected">
-                    1st Quarter
-                  </option>
+                  <option value={1}>1st Quarter</option>
                   <option value={2}>2nd Quarter</option>
                   <option value={3}>3rd Quarter</option>
                   <option value={4}>4th Quarter</option>
