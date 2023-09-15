@@ -24,6 +24,7 @@ import {
 //import { createReport } from "src/app/actions/Report";
 import { useEffect } from "react";
 import { getSession } from "next-auth/react";
+import { revalidateTag } from "next/cache";
 import { addReport } from "./../../../../actions/serverActions";
 import { Report } from "./../../../../typings";
 
@@ -42,6 +43,8 @@ export default async function Page() {
   });
 
   const reports: Report[] = await res.json();
+
+  revalidateTag("reports");
 
   return (
     <>
