@@ -9,13 +9,13 @@ pipeline {
     stages {
         stage('Fetch Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/DanDigits/Project_Merit.git'
+                git branch: 'test', url: 'https://github.com/DanDigits/Project_Merit.git'
             }
         }
         stage('Jest Tests') {
             steps {
                 script {
-                    echo "Coming soon!"
+                    echo "npm run test, someday"
                 }
             }
         }
@@ -47,7 +47,7 @@ pipeline {
     post {
         always {
             echo "Send pipeline notification"
-            discordSend description: "New main build #$BUILD_NUMBER is finished. Result is $currentBuild.currentResult" + ".", title: "Merit Pipeline", result: currentBuild.currentResult, webhookURL: "$WEBHOOK"
+            discordSend description: "Build #$BUILD_NUMBER is finished.", title: "$GIT_BRANCH", result: currentBuild.currentResult, webhookURL: "$WEBHOOK"
         }
     }
 }

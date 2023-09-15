@@ -25,7 +25,6 @@ export async function signUp(userData) {
     const res = "ConflictError";
     return res;
   }
-
   await mongoDB();
   return bcrypt
     .hash(userData.password, 10)

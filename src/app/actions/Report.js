@@ -5,7 +5,8 @@ export const createReport = async ({
   email,
   date_of_creation,
   quarter,
-  report,
+  year,
+  data,
 }) =>
   fetch(getPath.baseUrl + getPath.api.reports.create, {
     method: "POST",
@@ -18,7 +19,8 @@ export const createReport = async ({
       email,
       date_of_creation,
       quarter,
-      report,
+      year,
+      data,
     }),
   })
     .then((response) => response.json())
