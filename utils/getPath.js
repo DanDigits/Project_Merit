@@ -10,7 +10,7 @@
 //}
 
 export default {
-  baseUrl: "http://localhost:3000",
+  baseUrl: "https://merit.testing.systems",
   api: {
     reports: {
       create: "/api/reports/create",
