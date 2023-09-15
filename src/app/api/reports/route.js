@@ -7,22 +7,24 @@ import {
   createReport,
   getReport,
   getUserReports,
+  deleteReport,
+  modifyReport,
 } from "server/mongodb/actions/Report";
 
 export async function POST(Request) {
   const res = await createReport(await Request.json());
   if (res.name == "ValidationError") {
     return new Response(res, { status: 422 });
-  } else if (res.name) {
-    return new Response(res, { status: 400 });
-  } else if (res) {
-    return new Response(res, { status: 201 });
+  } else if (res.message) {
+    return new Response(res.message, { status: 400 });
+  } else if (res.id) {
+    return new Response(res.id, { status: 201 });
   }
 }
 
 export async function GET() {
   const headersInstance = headers();
-  const user = headersInstance.get("user"); //email?
+  const user = headersInstance.get("user"); // or "email"
   const report = headersInstance.get("report");
   var res;
 
@@ -31,7 +33,7 @@ export async function GET() {
   } else if (report) {
     res = await getReport(report);
   } else {
-    return new Response("REQUEST ERROR", { status: 400 });
+    return new Response("ERROR", { status: 400 });
   }
 
   if (res.name) {
@@ -43,6 +45,32 @@ export async function GET() {
   }
 }
 
-// export async function DELETE() {
+// Decide how delete implementation will work, currently uses "report" header
+export async function DELETE() {
+  const headersInstance = headers();
+  const report = headersInstance.get("report");
 
-// }
+  const res = await deleteReport(report);
+  if (res.message) {
+    return new Response(res.message, { status: 400 });
+  } else if (res) {
+    return new Response({ status: 204 });
+  }
+}
+
+//Decide how delete implementation will work, currently needs a json "query"
+// parameter to find report, and a second json parameter to update the
+// respective field in the document
+export async function PATCH(Request) {
+  const headersInstance = headers();
+  const reportQuery = headersInstance.get("report");
+
+  const res = await modifyReport(reportQuery, Request);
+  if (res.name == "ValidationError") {
+    return new Response(res, { status: 422 });
+  } else if (res.message) {
+    return new Response(res.message, { status: 400 });
+  } else if (res) {
+    return new Response({ status: 204 });
+  }
+}
