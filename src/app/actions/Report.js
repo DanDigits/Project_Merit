@@ -12,8 +12,7 @@ export const createReport = async ({ title, email, date, quarter, report }) => {
       email,
       date,
       quarter,
-      year,
-      data,
+      report,
     }),
   });
 
