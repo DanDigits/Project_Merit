@@ -1,7 +1,14 @@
 "use client";
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
+import React from "react";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  AlertDialogCloseButton,
   Accordion,
   AccordionItem,
   AccordionButton,
@@ -19,20 +26,24 @@ import {
   Link,
   Select,
   Textarea,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { createReport } from "src/app/actions/Report";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 //import Report from "./report";
 
 export default function Page() {
-  const [mode, setMode] = useState("Create New Report");
+  const [status, setStatus] = useState(false);
   const [title, setTitle] = useState("");
   const [quarter, setQuarter] = useState(1);
   const [date, setDate] = useState(""); // needs to default to current date
   const [report, setReport] = useState("");
   const [email, setEmail] = useState("");
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = React.useRef();
 
   useEffect(() => {
     getSession().then((session) => setEmail(session.user.email));
@@ -41,8 +52,14 @@ export default function Page() {
   const handleSubmitInfo = (e) => {
     e.preventDefault();
 
-    createReport({ title, email, date, quarter, report }).then(() => {
-      alert("Successfully created new report.");
+    createReport({ title, email, date, quarter, report }).then((response) => {
+      if (response.ok) {
+        {
+          setStatus(true);
+        }
+      } else {
+        alert("Report could not be created. Please try again.");
+      }
     });
   };
 
@@ -56,7 +73,7 @@ export default function Page() {
         bgColor={"white"}
       >
         <VStack m="5vh">
-          <Heading color="#331E38">{mode}</Heading>
+          <Heading color="#331E38">Create Report</Heading>
           <br />
           <div className="flex">
             <FormControl id="title" isRequired>
@@ -178,6 +195,50 @@ export default function Page() {
           </ButtonGroup>
         </VStack>
       </Card>
+      <>
+        <AlertDialog
+          isOpen={status}
+          leastDestructiveRef={cancelRef}
+          onClose={onClose}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Report created successfully.
+              </AlertDialogHeader>
+
+              <AlertDialogBody>
+                Would you like to create another report?
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Link href="/Dashboard/Reports">
+                  <Button
+                    bgColor={"#A0C1B9"}
+                    color={"#331E38"}
+                    _hover={{ bgColor: "#706993", color: "white" }}
+                    ref={cancelRef}
+                    onClick={onClose}
+                  >
+                    No
+                  </Button>
+                </Link>
+
+                <Link href="/Dashboard/NewReport">
+                  <Button
+                    bgColor={"#70A0AF"}
+                    color={"white"}
+                    _hover={{ bgColor: "#706993", color: "white" }}
+                    ml={3}
+                  >
+                    Yes
+                  </Button>
+                </Link>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
+      </>
     </>
   );
 }

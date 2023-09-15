@@ -1,7 +1,7 @@
 import getPath from "../../../utils/getPath";
 
-export const createReport = async ({ title, email, date, quarter, report }) =>
-  fetch(getPath.baseUrl + "/api/reports", {
+export const createReport = async ({ title, email, date, quarter, report }) => {
+  const response = await fetch(getPath.baseUrl + "/api/reports", {
     method: "POST",
     mode: "same-origin",
     headers: {
@@ -14,17 +14,10 @@ export const createReport = async ({ title, email, date, quarter, report }) =>
       quarter,
       report,
     }),
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      if (json == null) {
-        throw new Error("Could not connect to API");
-      }
-      if (!json.success) {
-        throw new Error(json.message);
-      }
-      return json.payload;
-    });
+  });
+
+  return response;
+};
 
 /* updateReport needs to be corrected to update a specific 
    report rather than create a new one */
