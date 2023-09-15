@@ -17,11 +17,7 @@ const ReportSchema = new Schema({
     type: Number,
     required: true,
   },
-  year: {
-    type: Number,
-    required: true,
-  },
-  data: {
+  report: {
     type: String,
     required: true,
   },

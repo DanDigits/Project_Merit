@@ -2,6 +2,8 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { customTheme } from "../styles/customTheme";
 import React from "react";
+import { useEffect, useState } from "react";
+import { getSession } from "next-auth/react";
 import {
   IconButton,
   Box,
@@ -9,7 +11,6 @@ import {
   Button,
   Flex,
   VStack,
-  Heading,
   Icon,
   useColorModeValue,
   Drawer,
@@ -176,6 +177,16 @@ const MobileNav = ({ onOpen, ...rest }) => {
     e.preventDefault();
     signOut({ callbackUrl: "/Auth/Logout" });
   };
+
+  const [rank, setRank] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [suffix, setSuffix] = useState("");
+
+  useEffect(() => {
+    getSession().then((session) => setRank(session.user.rank));
+    getSession().then((session) => setLastName(session.user.lastName));
+    getSession().then((session) => setSuffix(session.user.suffix));
+  }, []);
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -186,7 +197,6 @@ const MobileNav = ({ onOpen, ...rest }) => {
       justifyContent={{ base: "space-between" }}
       {...rest}
     >
-      <Heading textColor={"#706993"}>Dashboard</Heading>
       <IconButton
         display={{ base: "flex", md: "none" }}
         onClick={onOpen}
@@ -218,7 +228,11 @@ const MobileNav = ({ onOpen, ...rest }) => {
             _hover={{ bg: "#706993", color: "white" }}
             leftIcon={<FaUser />}
           >
-            <Text display={{ base: "none", md: "flex" }}>Rank Lastname</Text>
+            <Text display={{ base: "none", md: "flex" }}>
+              {rank}
+              {lastName}
+              {suffix}
+            </Text>
           </MenuButton>
           <MenuList>
             <MenuItem

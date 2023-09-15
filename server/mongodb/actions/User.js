@@ -19,17 +19,23 @@ export async function login({ email, password }) {
   return user;
 }
 
-export async function signUp({ email, password }) {
-  if (email == null || password == null) {
-    throw new Error("All parameters must be provided!");
+export async function signUp(userData) {
+  const user = await User.findOne({ email: userData.email });
+  if (user) {
+    const res = "ConflictError";
+    return res;
   }
   await mongoDB();
   return bcrypt
-    .hash(password, 10)
+    .hash(userData.password, 10)
     .then((hashedPassword) =>
       User.create({
-        email,
+        email: userData.email,
         password: hashedPassword,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+      }).catch(function (err) {
+        return err;
       })
     )
     .then((user) => {
