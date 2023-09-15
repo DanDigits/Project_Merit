@@ -16,7 +16,7 @@ export async function POST(Request) {
   } else if (res.name) {
     return new Response(res, { status: 400 });
   } else if (res) {
-    return new Response("OK", { status: 201 });
+    return new Response(res, { status: 201 });
   }
 }
 

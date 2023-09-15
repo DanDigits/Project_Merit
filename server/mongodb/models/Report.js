@@ -9,7 +9,7 @@ const ReportSchema = new Schema({
     type: String,
     required: true,
   },
-  date_of_creation: {
+  date: {
     type: String,
     required: true,
   },
