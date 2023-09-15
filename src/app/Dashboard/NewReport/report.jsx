@@ -7,13 +7,10 @@ import {
   AccordionPanel,
   AccordionIcon,
   Box,
-  Button,
-  ButtonGroup,
   FormControl,
   FormLabel,
   HStack,
   Input,
-  Link,
   Select,
   Textarea,
   VStack,
@@ -22,7 +19,7 @@ import {
 export default function Report() {
   const [title, setTitle] = useState("");
   const [quarter, setQuarter] = useState("");
-  const [date_of_creation, setDate] = useState(""); // needs to default to current date
+  const [date, setDate] = useState(""); // needs to default to current date
   const [report, setReport] = useState("");
 
   return (
@@ -50,9 +47,8 @@ export default function Report() {
             Quarter
           </FormLabel>
           <Select
-            placeholder="1st Quarter"
-            value={quarter}
             defaultValue={1}
+            placeholder="Select Quarter"
             variant="login"
             borderWidth={"2px"}
             borderColor={"#70A0AF"}
@@ -61,6 +57,7 @@ export default function Report() {
             size={"md"}
             onChange={(e) => setQuarter(e.target.value)}
           >
+            <option value={1}>1st Quarter</option>
             <option value={2}>2nd Quarter</option>
             <option value={3}>3rd Quarter</option>
             <option value={4}>4th Quarter</option>
@@ -72,7 +69,7 @@ export default function Report() {
           </FormLabel>
           <Input
             type="date"
-            value={date_of_creation}
+            value={date}
             variant="login"
             borderWidth={"2px"}
             borderColor={"#70A0AF"}
