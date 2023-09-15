@@ -29,7 +29,7 @@ export const updateReport = async ({
   quarter,
   report,
 }) =>
-  fetch(getPath.baseUrl + getPath.api.reports.update, {
+  fetch(getPath.baseUrl + "/api/reports", {
     method: "POST",
     mode: "same-origin",
     headers: {
@@ -56,11 +56,11 @@ export const updateReport = async ({
     });
 
 export const getReport = async ({ reportId }) =>
-  fetch(getPath.baseUrl + getPath.api.reports.get, {
-    method: "POST",
+  fetch(getPath.baseUrl + "/api/reports", {
+    method: "GET",
     mode: "same-origin",
     headers: {
-      "Content-Type": "application/text",
+      "Content-Type": "report",
     },
     body: reportId,
   })
@@ -77,10 +77,10 @@ export const getReport = async ({ reportId }) =>
 
 export const getUserReports = async ({ user }) =>
   fetch(getPath.baseUrl + getPath.api.reports.get, {
-    method: "POST",
+    method: "GET",
     mode: "same-origin",
     headers: {
-      "Content-Type": "application/text",
+      "Content-Type": "user",
     },
     body: user._id,
   })
