@@ -13,9 +13,9 @@ export async function POST(Request) {
   } else if (res == "ConflictError") {
     return new Response("ERROR", { status: 400 });
   } else if (res.name) {
-    return new Response(res, { status: 400 });
-  } else if (res) {
-    return new Response(res, { status: 200 });
+    return new Response(res.message, { status: 400 });
+  } else if (res.id) {
+    return new Response(res.id, { status: 200 });
   }
 }
 

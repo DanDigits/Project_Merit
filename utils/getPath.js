@@ -8,8 +8,12 @@ function getBaseURL() {
       process.env.NEXT_PUBLIC_NEXTAUTH_URL.toLowerCase().includes("http://")
     ) {
       return `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}:80`;
+    } else if (
+      process.env.NEXT_PUBLIC_NEXTAUTH_URL.toLowerCase().includes("https://")
+    ) {
+      return `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}:443`;
     } else {
-      return `http://${process.env.NEXT_PUBLIC_NEXTAUTH_URL}:80`;
+      return `https://${process.env.NEXT_PUBLIC_NEXTAUTH_URL}:443`;
     }
   }
 }
