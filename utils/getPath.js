@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 function getBaseURL() {
-  console.error(process.env.NEXT_PUBLIC_NEXTAUTH_URL);
   // Check if a domain name has been assigned, and correct application URLs accordingly
   if (!process.env.NEXT_PUBLIC_NEXTAUTH_URL) {
     return `http://localhost:3000`;
