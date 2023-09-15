@@ -1,7 +1,7 @@
 import getPath from "../../../utils/getPath";
 
 export const createReport = async ({ title, email, date, quarter, report }) =>
-  fetch(getPath.baseUrl + getPath.api.reports.create, {
+  fetch(getPath.baseUrl + "/api/reports", {
     method: "POST",
     mode: "same-origin",
     headers: {
