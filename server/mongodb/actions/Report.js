@@ -27,3 +27,25 @@ export async function getUserReports(email) {
   });
   return reports;
 }
+
+export async function deleteReport(reportId) {
+  await mongoDB();
+  const report = await ReportSchema.findByIdAndDelete(reportId).catch(function (
+    err
+  ) {
+    return err;
+  });
+  return report;
+}
+
+// updateMany? findByIdAndUpdate?
+export async function modifyReport({ _id: reportQuery }, { reportInfo }) {
+  await mongoDB();
+  const report = await ReportSchema.findOneAndUpdate(
+    reportQuery,
+    reportInfo
+  ).catch(function (err) {
+    return err;
+  });
+  return report;
+}

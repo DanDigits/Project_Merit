@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 //import { headers } from "next/headers";
-import { login, signUp } from "server/mongodb/actions/User";
+import { signUp, changeDetails } from "server/mongodb/actions/User";
 
 export async function POST(Request) {
   //console.log(await Request.json());
@@ -17,4 +17,12 @@ export async function POST(Request) {
   } else if (res) {
     return new Response(res, { status: 200 });
   }
+}
+
+// Decide how update information will be passed
+export async function PATCH(Request) {
+  const headersInstance = headers();
+  const user = headersInstance.get("user");
+
+  const res = await modifyReport(user, Request);
 }
