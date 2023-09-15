@@ -75,8 +75,8 @@ export const getReport = async ({ reportId }) =>
       return json.payload;
     });
 
-export const getUserReports = async ({ user }) =>
-  fetch(getPath.baseUrl + getPath.api.reports.get, {
+export const getUserReports = async ({ email }) =>
+  fetch(getPath.baseUrl + "/api/reports", {
     method: "GET",
     mode: "same-origin",
     headers: {

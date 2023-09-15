@@ -5,7 +5,7 @@
 /* eslint-disable react/display-name */
 // Line 176, (row, i)
 "use client";
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import {
   useTable,
   useRowSelect,
@@ -27,6 +27,7 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
+import { getUserReports } from "src/app/actions/Report";
 
 const IndeterminateCheckbox = React.forwardRef(
   ({ indeterminate, ...rest }, ref) => {
@@ -215,6 +216,18 @@ export default function Page() {
     - Here in this example, we have grouped our columns into two headers. react-table is flexible enough to create grouped table headers
   */
   const [rowSelection, setRowSelection] = React.useState({});
+  const [email, setEmail] = useState("");
+  const [reportList, setReportList] = useState("");
+
+  useEffect(() => {
+    getSession().then((session) => setEmail(session.user.email));
+  }, []);
+
+  getUserReports({ email }).then((response) => {
+    setReportList(response.json());
+    console.log(reportList);
+  });
+
   const columns = useMemo(
     () => [
       {
