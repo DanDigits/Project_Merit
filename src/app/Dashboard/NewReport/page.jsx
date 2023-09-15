@@ -30,31 +30,6 @@ import { createReport } from "./../../actions/Report.js";
 */
 
 export default function Page() {
-  const [createStatus, setCreateStatus] = useState(false);
-  const [title, setTitle] = useState("");
-  const [quarter, setQuarter] = useState(1);
-  const [date, setDate] = useState(""); // needs to default to current date
-  const [report, setReport] = useState("");
-  const [email, setEmail] = useState("");
-
-  useEffect(() => {
-    getSession().then((session) => setEmail(session.user.email));
-  }, []);
-
-  const handleSubmitInfo = (e) => {
-    e.preventDefault();
-
-    createReport({ title, email, date, quarter, report }).then((response) => {
-      if (response.ok) {
-        {
-          setCreateStatus(true);
-        }
-      } else {
-        alert("Report could not be created. Please try again.");
-      }
-    });
-  };
-
   return (
     <>
       <Card
@@ -67,31 +42,30 @@ export default function Page() {
         <VStack m="5vh">
           <Heading color="#331E38">Create Report</Heading>
           <br />
-          <form>
-            {Report(email)}
-            <ButtonGroup>
-              <Link href="/Dashboard/Home">
-                <Button
-                  bgColor={"#A0C1B9"}
-                  color={"#331E38"}
-                  _hover={{ bgColor: "#706993", color: "white" }}
-                >
-                  Cancel
-                </Button>
-              </Link>
+
+          {Report()}
+          <ButtonGroup>
+            <Link href="/Dashboard/Home">
               <Button
-                bgColor={"#70A0AF"}
-                color={"white"}
+                bgColor={"#A0C1B9"}
+                color={"#331E38"}
                 _hover={{ bgColor: "#706993", color: "white" }}
-                onClick={(e) => handleSubmitInfo(e)}
               >
-                Submit
+                Cancel
               </Button>
-            </ButtonGroup>
-          </form>
+            </Link>
+            <Button
+              bgColor={"#70A0AF"}
+              color={"white"}
+              _hover={{ bgColor: "#706993", color: "white" }}
+              form="report-form"
+              type="submit"
+            >
+              Submit
+            </Button>
+          </ButtonGroup>
         </VStack>
       </Card>
-      {Dialog()}
     </>
   );
 }
