@@ -30,7 +30,7 @@ export default function Page() {
   const [mode, setMode] = useState("Create New Report");
   const [title, setTitle] = useState("");
   const [quarter, setQuarter] = useState(1);
-  const [date_of_creation, setDate] = useState(""); // needs to default to current date
+  const [date, setDate] = useState(""); // needs to default to current date
   const [report, setReport] = useState("");
   const [email, setEmail] = useState("");
 
@@ -104,7 +104,7 @@ export default function Page() {
                 </FormLabel>
                 <Input
                   type="date"
-                  value={date_of_creation}
+                  value={date}
                   variant="login"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
