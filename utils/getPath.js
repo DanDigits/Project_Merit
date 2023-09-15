@@ -16,10 +16,10 @@ export default {
   baseUrl: getBaseURL(),
   api: {
     reports: {
-      create: "/api/reports/create",
-      get: "/api/reports/get",
-      update: "/api/reports/update",
-      delete: "/api/reports/delete",
+      create: "/api/reports/",
+      get: "/api/reports/",
+      update: "/api/reports/",
+      delete: "/api/reports/",
     },
     user: {
       signUp: "/api/user/signUp",

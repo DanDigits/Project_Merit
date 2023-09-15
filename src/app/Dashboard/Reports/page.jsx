@@ -28,6 +28,7 @@ import {
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { getUserReports } from "src/app/actions/Report";
+import { getSession } from "next-auth/react";
 
 const IndeterminateCheckbox = React.forwardRef(
   ({ indeterminate, ...rest }, ref) => {
@@ -217,15 +218,20 @@ export default function Page() {
   */
   const [rowSelection, setRowSelection] = React.useState({});
   const [email, setEmail] = useState("");
-  const [reportList, setReportList] = useState("");
+  const [reports, setReports] = useState("");
 
   useEffect(() => {
     getSession().then((session) => setEmail(session.user.email));
   }, []);
 
   getUserReports({ email }).then((response) => {
-    setReportList(response.json());
-    console.log(reportList);
+    if (response.ok) {
+      {
+        setReports(JSON.parse(JSON.stringify(response)));
+      }
+    } else {
+      alert("Error loading report list.");
+    }
   });
 
   const columns = useMemo(
