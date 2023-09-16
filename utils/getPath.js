@@ -1,14 +1,21 @@
 /* eslint-disable prettier/prettier */
 function getBaseURL() {
   // Check if a domain name has been assigned, and correct application URLs accordingly
-  if (!process.env.NEXTAUTH_URL) {
+  if (
+    !process.env.NEXT_PUBLIC_NEXTAUTH_URL ||
+    process.env.NEXT_PUBLIC_NEXTAUTH_URL == "localhost"
+  ) {
     return `http://localhost:3000`;
-  } else if (process.env.NEXTAUTH_URL != "localhost") {
-    if (process.env.NEXTAUTH_URL.toLowerCase().includes("http://")) {
-      return `${process.env.NEXTAUTH_URL}:80`;
-    } else {
-      return `http://${process.env.NEXTAUTH_URL}:80`;
-    }
+  } else if (
+    process.env.NEXT_PUBLIC_NEXTAUTH_URL.toLowerCase().includes("http://")
+  ) {
+    return `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}:80`;
+  } else if (
+    process.env.NEXT_PUBLIC_NEXTAUTH_URL.toLowerCase().includes("https://")
+  ) {
+    return `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}:443`;
+  } else {
+    return `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}:${process.env.NEXTAUTH_PORT}`;
   }
 }
 
@@ -22,7 +29,7 @@ export default {
       delete: "/api/reports/",
     },
     user: {
-      signUp: "/api/user/signUp",
+      signUp: "/api/user/",
     },
   },
 };
