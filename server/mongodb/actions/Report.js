@@ -20,9 +20,7 @@ export async function getReport(reportId) {
 
 export async function getUserReports(email) {
   await mongoDB();
-  const reports = await ReportSchema.find({ userEmail: email }).catch(function (
-    err
-  ) {
+  const reports = await ReportSchema.find({ email }).catch(function (err) {
     return err;
   });
   return reports;
