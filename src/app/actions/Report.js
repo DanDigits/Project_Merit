@@ -80,9 +80,10 @@ export const getUserReports = async ({ email }) => {
     method: "GET",
     mode: "same-origin",
     headers: {
-      "Content-Type": "user",
+      user: email,
     },
   });
+  console.log(response.statusText);
 
   return response;
 };
