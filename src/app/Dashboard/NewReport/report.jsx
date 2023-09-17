@@ -58,7 +58,6 @@ export default function Report(report_mode) {
     } else if (report_mode === "Edit") {
       updateReport(reportId, title, email, date, quarter, report).then(() => {
         alert("Successfully updated the report.");
-        setMode("View");
       });
     }
   };

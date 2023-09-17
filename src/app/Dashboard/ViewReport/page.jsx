@@ -20,7 +20,6 @@ import {
 import { updateReport, getReport } from "src/app/actions/Report";
 import { getSession } from "next-auth/react";
 import Report from "../NewReport/report";
-import ReportPreview from "./reportPreview";
 
 export default function Page() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -133,6 +132,7 @@ export default function Page() {
                   _hover={{ bgColor: "#706993", color: "white" }}
                   form="report-form"
                   type="submit"
+                  onClickCapture={() => setMode("View")}
                 >
                   Update
                 </Button>
