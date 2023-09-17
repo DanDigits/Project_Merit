@@ -43,14 +43,12 @@ export async function signUp(userData) {
     });
 }
 
-// Incomplete
-export async function changeDetails(userData, userInfo) {
+export async function modifyUser(userId, userInfo) {
   await mongoDB();
-  const user = await UserSchema.findOneAndUpdate(
-    { userEmail: userData.email }, // May not be needed, may be fine with just userData -> user header
-    userInfo // Figure out exactly how information will be passed into function
-  ).catch(function (err) {
-    return err;
-  });
-  return user;
+  const report = await UserSchema.findByIdAndUpdate(userId, userInfo).catch(
+    function (err) {
+      return err;
+    }
+  );
+  return report;
 }

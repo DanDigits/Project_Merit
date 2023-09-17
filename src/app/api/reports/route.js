@@ -54,13 +54,10 @@ export async function DELETE() {
   if (res.message) {
     return new Response(res.message, { status: 400 });
   } else if (res) {
-    return new Response({ status: 204 });
+    return new Response(res.id, { status: 200 });
   }
 }
 
-//Decide how delete implementation will work, currently needs a json "query"
-// parameter to find report, and a second json parameter to update the
-// respective field in the document
 export async function PATCH(Request) {
   const headersInstance = headers();
   const report = headersInstance.get("report");
