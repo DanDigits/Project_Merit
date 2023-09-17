@@ -36,7 +36,6 @@ export async function deleteReport(reportId) {
   return report;
 }
 
-// updateMany?
 export async function modifyReport(reportId, reportInfo) {
   await mongoDB();
   const report = await ReportSchema.findByIdAndUpdate(
@@ -45,6 +44,5 @@ export async function modifyReport(reportId, reportInfo) {
   ).catch(function (err) {
     return err;
   });
-  console.log(report);
   return report;
 }
