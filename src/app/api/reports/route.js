@@ -63,14 +63,14 @@ export async function DELETE() {
 // respective field in the document
 export async function PATCH(Request) {
   const headersInstance = headers();
-  const reportQuery = headersInstance.get("report");
+  const report = headersInstance.get("report");
 
-  const res = await modifyReport(reportQuery, Request);
+  const res = await modifyReport(report, await Request.json());
   if (res.name == "ValidationError") {
     return new Response(res, { status: 422 });
   } else if (res.message) {
     return new Response(res.message, { status: 400 });
   } else if (res) {
-    return new Response({ status: 204 });
+    return new Response(res.id, { status: 200 });
   }
 }
