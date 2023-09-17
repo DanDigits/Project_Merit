@@ -23,10 +23,6 @@ import Report from "../NewReport/report";
 import ReportPreview from "./reportPreview";
 
 export default function Page() {
-  useEffect(() => {
-    getSession().then((session) => setEmail(session.user.email));
-  }, []);
-
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [mode, setMode] = useState("View");
@@ -40,6 +36,10 @@ export default function Page() {
   const [report, setReport] = useState("");
 
   const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    getSession().then((session) => setEmail(session.user.email));
+  }, []);
 
   /* must get report id somehow*/
   /*
@@ -80,7 +80,7 @@ export default function Page() {
           <br />
           {mode === "View" && (
             <>
-              <ReportPreview />
+              {Report(mode)}
               <Button
                 bgColor={"#70A0AF"}
                 color={"white"}
@@ -93,7 +93,7 @@ export default function Page() {
           )}
           {mode === "Edit" && (
             <>
-              <Report />
+              {Report(mode)}
               <ButtonGroup>
                 <Button
                   bgColor={"#F4E8C1"}
@@ -131,7 +131,8 @@ export default function Page() {
                   bgColor={"#70A0AF"}
                   color={"white"}
                   _hover={{ bgColor: "#706993", color: "white" }}
-                  onClick={(e) => handleSubmitInfo(e)}
+                  form="report-form"
+                  type="submit"
                 >
                   Update
                 </Button>

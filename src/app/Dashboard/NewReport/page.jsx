@@ -30,6 +30,7 @@ import { createReport } from "./../../actions/Report.js";
 */
 
 export default function Page() {
+  const mode = "New";
   return (
     <>
       <Card
@@ -43,7 +44,7 @@ export default function Page() {
           <Heading color="#331E38">Create Report</Heading>
           <br />
 
-          {Report()}
+          {Report(mode)}
           <ButtonGroup>
             <Link href="/Dashboard/Home">
               <Button

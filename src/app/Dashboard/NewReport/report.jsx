@@ -16,16 +16,29 @@ import {
   Textarea,
   VStack,
 } from "@chakra-ui/react";
-import { createReport } from "./../../actions/Report.js";
+import { createReport, updateReport } from "./../../actions/Report.js";
 import Dialog from "./dialog.jsx";
 
-export default function Report() {
+export default function Report(report_mode) {
   const [createStatus, setCreateStatus] = useState(false);
   const [title, setTitle] = useState("");
   const [quarter, setQuarter] = useState(1);
   const [date, setDate] = useState(""); // needs to default to current date
   const [report, setReport] = useState("");
   const [email, setEmail] = useState("");
+  var state;
+
+  //temp
+  /* must get report id somehow
+  setData(getReport(reportId));
+  */
+  const [data, setData] = useState("");
+  const [reportId, setReportId] = useState("");
+  const [date_of_creation, setDateCreate] = useState("");
+
+  if (report_mode === "View") {
+    state = true;
+  } else state = false;
 
   useEffect(() => {
     getSession().then((session) => setEmail(session.user.email));
@@ -33,16 +46,29 @@ export default function Report() {
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
-
-    createReport({ title, email, date, quarter, report }).then((response) => {
-      if (response.ok) {
-        {
-          setCreateStatus(true);
+    if (report_mode === "New") {
+      createReport({ title, email, date, quarter, report }).then((response) => {
+        if (response.ok) {
+          {
+            setCreateStatus(true);
+          }
+        } else {
+          alert("Report could not be created. Please try again.");
         }
-      } else {
-        alert("Report could not be created. Please try again.");
-      }
-    });
+      });
+    } else if (report_mode === "Edit") {
+      updateReport(
+        reportId,
+        title,
+        email,
+        date_of_creation,
+        quarter,
+        data
+      ).then(() => {
+        alert("Successfully updated the report.");
+        setMode("View");
+      });
+    }
   };
 
   return (
@@ -57,6 +83,7 @@ export default function Report() {
             Title
           </FormLabel>
           <Input
+            isDisabled={state}
             type=""
             value={title}
             maxLength={64}
@@ -75,6 +102,7 @@ export default function Report() {
               Quarter
             </FormLabel>
             <Select
+              isDisabled={state}
               defaultValue={1}
               placeholder="Select Quarter"
               variant="login"
@@ -96,6 +124,7 @@ export default function Report() {
               Date
             </FormLabel>
             <Input
+              isDisabled={state}
               type="date"
               value={date}
               variant="login"
@@ -131,6 +160,7 @@ export default function Report() {
         <VStack>
           <FormControl id="report" isRequired>
             <Textarea
+              isDisabled={state}
               placeholder="What would you like to report?"
               type="text"
               varient="outline"
