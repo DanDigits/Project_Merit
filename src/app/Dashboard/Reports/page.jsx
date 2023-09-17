@@ -9,38 +9,8 @@ import React, { useMemo, useEffect, useState } from "react";
 import { Button, Select } from "@chakra-ui/react";
 import { getUserReports } from "src/app/actions/Report";
 import { getSession } from "next-auth/react";
-import ReportTable from "./ReportTable.jsx";
-
-export function SelectColumnFilter({
-  column: { filterValue, setFilter, preFilteredRows, id },
-}) {
-  // Calculate the options for filtering
-  // using the preFilteredRows
-  const options = React.useMemo(() => {
-    const options = new Set();
-    preFilteredRows.forEach((row) => {
-      options.add(row.values[id]);
-    });
-    return [...options.values()];
-  }, [id, preFilteredRows]);
-  return (
-    <Select
-      size={"xs"}
-      bgColor="white"
-      value={filterValue}
-      onChange={(e) => {
-        setFilter(e.target.value || undefined);
-      }}
-    >
-      <option value="">All</option>
-      {options.map((option, i) => (
-        <option key={i} value={option}>
-          {option}
-        </option>
-      ))}
-    </Select>
-  );
-}
+import ReportTable from "./ReportTable";
+import SelectColumnFilter from "./SelectColumnFilter";
 
 export default function Page() {
   /* 
@@ -59,7 +29,7 @@ export default function Page() {
     getUserReports({ email }).then((response) => {
       if (response.ok) {
         {
-          setData(JSON.parse(JSON.stringify(response)));
+          setData(JSON.stringify(response));
         }
       } else {
         alert("Error loading report list.");
@@ -98,14 +68,6 @@ export default function Page() {
 
   return (
     <>
-      <Button
-        bgColor={"#70A0AF"}
-        color={"white"}
-        _hover={{ bgColor: "#706993", color: "white" }}
-        onClick={loadReports()}
-      >
-        Load Reports
-      </Button>
       <ReportTable columns={columns} data={data} />
     </>
   );
