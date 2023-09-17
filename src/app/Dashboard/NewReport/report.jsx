@@ -26,15 +26,14 @@ export default function Report(report_mode) {
   const [date, setDate] = useState(""); // needs to default to current date
   const [report, setReport] = useState("");
   const [email, setEmail] = useState("");
+  const [reportId, setReportId] = useState("");
+  //const [data, setData] = useState("");
   var state;
 
   //temp
   /* must get report id somehow
   setData(getReport(reportId));
   */
-  const [data, setData] = useState("");
-  const [reportId, setReportId] = useState("");
-  const [date_of_creation, setDateCreate] = useState("");
 
   if (report_mode === "View") {
     state = true;
@@ -57,14 +56,7 @@ export default function Report(report_mode) {
         }
       });
     } else if (report_mode === "Edit") {
-      updateReport(
-        reportId,
-        title,
-        email,
-        date_of_creation,
-        quarter,
-        data
-      ).then(() => {
+      updateReport(reportId, title, email, date, quarter, report).then(() => {
         alert("Successfully updated the report.");
         setMode("View");
       });
