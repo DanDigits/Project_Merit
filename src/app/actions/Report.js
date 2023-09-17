@@ -76,7 +76,7 @@ export const getReport = async ({ reportId }) =>
     });
 
 export const getUserReports = async ({ email }) => {
-  const response = await fetch(getPath.baseUrl + getPath.api.reports.delete, {
+  const response = await fetch(getPath.baseUrl + getPath.api.reports.get, {
     method: "GET",
     mode: "same-origin",
     headers: {
