@@ -5,7 +5,7 @@
 /* eslint-disable react/display-name */
 // Line 176, (row, i)
 "use client";
-import React, { useMemo, useEffect, useState } from "react";
+import React, { memo, useMemo, useEffect, useState } from "react";
 import { Button, Select } from "@chakra-ui/react";
 import { getUserReports } from "src/app/actions/Report";
 import { getSession } from "next-auth/react";
@@ -19,7 +19,7 @@ export default function Page() {
   */
   const [rowSelection, setRowSelection] = React.useState({});
   const [email, setEmail] = useState("");
-  const [data, setData] = useState("");
+  const [reports, setReports] = useState("");
 
   useEffect(() => {
     getSession().then((session) => setEmail(session.user.email));
@@ -29,7 +29,7 @@ export default function Page() {
     getUserReports({ email }).then((response) => {
       if (response.ok) {
         {
-          setData(JSON.stringify(response));
+          setReports(JSON.parse(JSON.stringify(response)));
         }
       } else {
         alert("Error loading report list.");
@@ -65,6 +65,8 @@ export default function Page() {
     ],
     []
   );
+
+  const data = useMemo(() => [{ loadReports }], []);
 
   return (
     <>
