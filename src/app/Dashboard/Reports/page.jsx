@@ -1,72 +1,128 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/jsx-no-undef */
-/* eslint-disable react/jsx-key */
-/* eslint-disable no-undef */
-/* eslint-disable react/display-name */
-// Line 176, (row, i)
 "use client";
-import React, { memo, useMemo, useEffect, useState } from "react";
-import { Button, Select } from "@chakra-ui/react";
-import { getUserReports } from "src/app/actions/Report";
-import { getSession } from "next-auth/react";
-import ReportTable from "./ReportTable";
+
+import * as React from "react";
+
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import {
+  Table,
+  Tbody,
+  Thead,
+  Th,
+  Tr,
+  Td,
+  Box,
+  Button,
+  Input,
+  Flex,
+  HStack,
+} from "@chakra-ui/react";
 import SelectColumnFilter from "./SelectColumnFilter";
+import ReportTable from "./ReportTable";
+
+const data = [
+  {
+    quarter: 2,
+    date: "2023 Apr 12",
+    title: "This is a title",
+    view: "o",
+  },
+  {
+    quarter: 2,
+    date: "2023 May 30",
+    title: "This is a title",
+    view: "o",
+  },
+  {
+    quarter: 2,
+    date: "2023 Jun 5",
+    title: "This is a title",
+    view: "o",
+  },
+  {
+    quarter: 3,
+    date: "2023 Aug 23",
+    title: "This is a title",
+    view: "o",
+  },
+  {
+    quarter: 1,
+    date: "2023 Feb 18",
+    title: "This is a title",
+    view: "o",
+  },
+];
+
+function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    if (typeof indeterminate === "boolean") {
+      ref.current.indeterminate = !rest.checked && indeterminate;
+    }
+  }, [ref, indeterminate]);
+
+  return (
+    <input
+      type="checkbox"
+      ref={ref}
+      className={className + " cursor-pointer"}
+      {...rest}
+    />
+  );
+}
 
 export default function Page() {
-  /* 
-    - Columns is a simple array right now, but it will contain some logic later on. It is recommended by react-table to memoize the columns data
-    - Here in this example, we have grouped our columns into two headers. react-table is flexible enough to create grouped table headers
-  */
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [email, setEmail] = useState("");
-  const [reports, setReports] = useState("");
-
-  useEffect(() => {
-    getSession().then((session) => setEmail(session.user.email));
-  }, []);
-
-  const loadReports = () => {
-    getUserReports({ email }).then((response) => {
-      if (response.ok) {
-        {
-          setReports(JSON.parse(JSON.stringify(response)));
-        }
-      } else {
-        alert("Error loading report list.");
-      }
-    });
-  };
-  const columns = useMemo(
+  const columns = React.useMemo(
     () => [
       {
-        Header: "Q#",
-        accessor: "quarter",
-        Filter: SelectColumnFilter,
-        filter: "",
+        id: "select",
+        header: ({ table }) => (
+          <IndeterminateCheckbox
+            {...{
+              checked: table.getIsAllRowsSelected(),
+              indeterminate: table.getIsSomeRowsSelected(),
+              onChange: table.getToggleAllRowsSelectedHandler(),
+            }}
+          />
+        ),
+        cell: ({ row }) => (
+          <div className="px-1">
+            <IndeterminateCheckbox
+              {...{
+                checked: row.getIsSelected(),
+                disabled: !row.getCanSelect(),
+                indeterminate: row.getIsSomeSelected(),
+                onChange: row.getToggleSelectedHandler(),
+              }}
+            />
+          </div>
+        ),
       },
       {
-        Header: "Date",
-        accessor: "date",
-        Filter: SelectColumnFilter,
-        filter: "",
+        accessorKey: "quarter",
+        header: () => "Quarter",
       },
       {
-        Header: "Title",
-        accessor: "title",
-        Filter: "",
-        filter: "",
+        accessorKey: "date",
+        header: "Date",
       },
       {
-        Header: "View/Edit",
-        accessor: "view",
-        Filter: "",
-        filter: "",
+        accessorKey: "title",
+        header: "Title",
+      },
+      {
+        accessorKey: "view",
+        header: "View/Edit",
       },
     ],
+
     []
   );
-
-  const data = useMemo(() => [{ loadReports }], []);
 
   return (
     <>

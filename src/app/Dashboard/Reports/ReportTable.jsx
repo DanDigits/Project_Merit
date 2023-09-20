@@ -6,11 +6,12 @@
 "use client";
 import React from "react";
 import {
-  useTable,
-  useRowSelect,
-  useGlobalFilter,
-  useFilters,
-} from "react-table";
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import {
   Table,
   Tbody,
@@ -46,54 +47,27 @@ export default function ReportTable({ columns, data }) {
 
   const emptyArray = [];
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-    setGlobalFilter,
-    selectedFlatRows,
-    state: { selectedRowIds },
-  } = useTable(
-    {
-      data: data || emptyArray,
-      columns,
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [globalFilter, setGlobalFilter] = React.useState("");
+
+  const table = useReactTable({
+    data,
+    columns,
+    state: {
+      rowSelection,
+      globalFilter: globalFilter,
     },
-    useGlobalFilter,
-    useFilters,
-    useRowSelect,
-    (hooks) => {
-      hooks.columns.push((columns) => [
-        // Let's make a column for selection
-        {
-          id: "selection",
-          // The header can use the table's getToggleAllRowsSelectedProps method
-          // to render a checkbox
-          Header: ({ getToggleAllRowsSelectedProps }) => (
-            <div>
-              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-            </div>
-          ),
-          // The cell can use the individual row's getToggleRowSelectedProps method
-          // to the render a checkbox
-          Cell: ({ row }) => (
-            <div>
-              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-            </div>
-          ),
-        },
-        ...columns,
-      ]);
-    }
-  );
-  const handleSearchInputChange = (e) => {
-    const { value } = e.currentTarget;
-    setGlobalFilter(value);
-  };
-  // Render the UI for your table
+    onGlobalFilterChange: setGlobalFilter,
+    enableRowSelection: true, //enable row selection for all rows
+    // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
+    onRowSelectionChange: setRowSelection,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    debugTable: true,
+  });
+
   return (
-    <>
+    <div>
       <HStack justifyContent={"space-between"} pb={"5"}>
         <Input
           w="sm"
@@ -101,83 +75,55 @@ export default function ReportTable({ columns, data }) {
           borderWidth={"1px"}
           borderColor={"#70A0AF"}
           bg="#ECECEC"
-          placeholder="Search"
-          onChange={handleSearchInputChange}
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          placeholder="Search all columns..."
         />
-        <NextLink
-          href={{ pathname: "/export", query: selectedRowIds }}
-          passHref
+
+        <Button
+          isDisabled
+          bgColor={"#70A0AF"}
+          color={"white"}
+          _hover={{ bgColor: "#706993", color: "white" }}
         >
-          <Button
-            isDisabled
-            bgColor={"#70A0AF"}
-            color={"white"}
-            _hover={{ bgColor: "#706993", color: "white" }}
-          >
-            Export
-          </Button>
-        </NextLink>
+          Export
+        </Button>
       </HStack>
       <Box overflowX={"auto"}>
-        <Table variant={"striped"} bgColor="#70A0AF" {...getTableProps()}>
+        <Table variant={"striped"} bgColor="#70A0AF">
           <Thead>
-            {headerGroups.map((headerGroup) => (
-              <Tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <Th {...column.getHeaderProps()}>
-                    <Flex align={"center"} gap={"10px"}>
-                      <Box as="span"> {column.render("Header")} </Box>
-                      {column.isSorted && (
-                        <Box as="span">
-                          {column.isSortedDesc ? (
-                            <ArrowDownIcon boxSize={3} ml={2} />
-                          ) : (
-                            <ArrowUpIcon boxSize={3} ml={2} />
-                          )}
-                        </Box>
-                      )}
-                      <Box ml={2} as="span">
-                        {column?.canFilter ? column.render("Filter") : null}
-                      </Box>
-                    </Flex>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <Tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <Th key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </Th>
                 ))}
               </Tr>
             ))}
           </Thead>
-          <Tbody {...getTableBodyProps()}>
-            {rows.slice(0, 10).map((row) => {
-              prepareRow(row);
-              return (
-                <Tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
-                    );
-                  })}
-                </Tr>
-              );
-            })}
+          <Tbody>
+            {table.getRowModel().rows.map((row) => (
+              <Tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <Td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Td>
+                ))}
+              </Tr>
+            ))}
           </Tbody>
         </Table>
       </Box>
-      <Box display={"none"}>
-        <p>Selected Rows: {Object.keys(selectedRowIds).length}</p>
-        <pre>
-          <code>
-            {JSON.stringify(
-              {
-                selectedRowIds: selectedRowIds,
-                "selectedFlatRows[].original": selectedFlatRows.map(
-                  (d) => d.original
-                ),
-              },
-              null,
-              2
-            )}
-          </code>
-        </pre>
-      </Box>
-    </>
+      <div>
+        {Object.keys(rowSelection).length} of{" "}
+        {table.getPreFilteredRowModel().rows.length} Total Rows Selected
+      </div>
+    </div>
   );
 }
