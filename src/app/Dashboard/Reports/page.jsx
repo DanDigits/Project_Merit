@@ -1,30 +1,12 @@
 "use client";
 
-import * as React from "react";
+import React, { useEffect, useState, useRef } from "react";
 
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import {
-  Table,
-  Tbody,
-  Thead,
-  Th,
-  Tr,
-  Td,
-  Box,
-  Button,
-  Input,
-  Flex,
-  HStack,
-} from "@chakra-ui/react";
-import SelectColumnFilter from "./SelectColumnFilter";
 import ReportTable from "./ReportTable";
+import { getSession } from "next-auth/react";
+import { getUserReports } from "./../../actions/Report.js";
 
-const data = [
+/*const data = [
   {
     quarter: 2,
     date: "2023 Apr 12",
@@ -55,10 +37,10 @@ const data = [
     title: "This is a title",
     view: "o",
   },
-];
+];*/
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
-  const ref = React.useRef(null);
+  const ref = useRef(null);
 
   React.useEffect(() => {
     if (typeof indeterminate === "boolean") {
@@ -77,6 +59,28 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 }
 
 export default function Page() {
+  const [email, setEmail] = useState("");
+  const [reports, setReports] = useState("");
+
+  useEffect(() => {
+    getSession().then((session) => setEmail(session.user.email));
+
+    loadReports();
+  }, []);
+
+  const loadReports = () => {
+    getUserReports({ email }).then((response) => {
+      if (response.ok) {
+        {
+          setReports(response.json());
+          console.log(reports);
+        }
+      } else {
+        alert("Error loading report list.");
+      }
+    });
+  };
+
   const columns = React.useMemo(
     () => [
       {
@@ -126,7 +130,7 @@ export default function Page() {
 
   return (
     <>
-      <ReportTable columns={columns} data={data} />
+      <ReportTable columns={columns} data={reports} />
     </>
   );
 }
