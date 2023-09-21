@@ -1,43 +1,10 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-
+import { Text } from "@chakra-ui/react";
 import ReportTable from "./ReportTable";
 import { getSession } from "next-auth/react";
 import { getUserReports } from "./../../actions/Report.js";
-
-/*const data = [
-  {
-    quarter: 2,
-    date: "2023 Apr 12",
-    title: "This is a title",
-    view: "o",
-  },
-  {
-    quarter: 2,
-    date: "2023 May 30",
-    title: "This is a title",
-    view: "o",
-  },
-  {
-    quarter: 2,
-    date: "2023 Jun 5",
-    title: "This is a title",
-    view: "o",
-  },
-  {
-    quarter: 3,
-    date: "2023 Aug 23",
-    title: "This is a title",
-    view: "o",
-  },
-  {
-    quarter: 1,
-    date: "2023 Feb 18",
-    title: "This is a title",
-    view: "o",
-  },
-];*/
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   const ref = useRef(null);
@@ -61,29 +28,38 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 export default function Page() {
   const [email, setEmail] = useState("");
   const [reports, setReports] = useState("");
-  const [refresh, setRefresh] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [hasEmail, setHasEmail] = useState(false);
+  const [hasReport, setHasReport] = useState(false);
 
   useEffect(() => {
-    setEmail(null);
-    getSession().then((session) => setEmail(session.user.email));
-    if (email) {
-      loadReports();
+    if (!hasEmail) {
+      console.log("!hasemail");
+      setIsLoading(true);
+      setHasError(false);
+      getSession()
+        .then((session) => setEmail(session.user.email))
+        .then((email) => setHasEmail(true));
     }
-  }, [refresh]);
-
-  const loadReports = () => {
-    getUserReports({ email }).then((response) => {
-      if (response.ok) {
-        {
-          setReports(response.json());
-          console.log(reports);
-          setRefresh(false);
-        }
-      } else {
-        alert(response.statusText);
-      }
-    });
-  };
+    if (hasEmail && !hasReport) {
+      console.log("hasEmail && !hasreport", email, hasReport);
+      setIsLoading(true);
+      setHasError(false);
+      getUserReports({ email }).then((response) => {
+        response.ok
+          ? response
+              .json()
+              .then((response) => setReports(response))
+              .then(setHasReport(true))
+          : setHasError(true);
+      });
+    }
+    if (hasEmail && hasReport) {
+      console.log("hasEmail && hasreport", email, hasReport);
+      setIsLoading(false);
+    }
+  }, [hasEmail, hasReport]);
 
   const columns = React.useMemo(
     () => [
@@ -124,6 +100,10 @@ export default function Page() {
         header: "Title",
       },
       {
+        accessorKey: "report",
+        header: "Content",
+      },
+      {
         accessorKey: "view",
         header: "View/Edit",
       },
@@ -134,7 +114,17 @@ export default function Page() {
 
   return (
     <>
-      <ReportTable columns={columns} data={reports} />
+      {hasError && <Text>SOMETHING WENT WRONG</Text>}
+      {isLoading ? (
+        <>
+          <Text>IS LOADING...</Text>
+        </>
+      ) : (
+        <>
+          {console.log(reports)}
+          <ReportTable columns={columns} data={reports} />
+        </>
+      )}
     </>
   );
 }
