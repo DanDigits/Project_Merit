@@ -22,38 +22,58 @@ import { getSession } from "next-auth/react";
 import Report from "../NewReport/report";
 
 export default function Page() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   const [mode, setMode] = useState("View");
   const [data, setData] = useState("");
-  const [reportId, setReportId] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  //temporary for viewing purposes
   const [title, setTitle] = useState("");
   const [quarter, setQuarter] = useState("");
   const [date_of_creation, setDate] = useState("");
   const [report, setReport] = useState("");
 
   const [email, setEmail] = useState("");
+  const [reportId, setReportId] = useState("6504ee2cf2bb6994e6dc8129");
+  const [entry, setEntry] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [hasEntry, setHasEntry] = useState(false);
+  const [hasReportId, setHasReportId] = useState(false);
+  //const [bucket, setBucket] = useState("");
 
   useEffect(() => {
-    getSession().then((session) => setEmail(session.user.email));
-  }, []);
-
-  /* must get report id somehow*/
-  /*
-  if (mode === "View") {
-    setData(getReport(reportId));
-  }
-
-  const [title, setTitle] = data.title;
-  const [quarter, setQuarter] = data.quarter;
-  const [date_of_creation, setDate] = data.date_of_creation;
-  const [report, setReport] = data.report;
-
-  const [email, setEmail] = useState("");
-
-    */
+    if (reportId !== "" && reportId !== null) {
+      setHasReportId(true);
+      console.log("hasReportId:", reportId);
+    } else {
+      console.log("reportId missing");
+    }
+    if (entry !== null) {
+      setHasEntry(true);
+      console.log("hasEntry:", entry);
+    }
+    if (hasReportId && !hasEntry) {
+      console.log("hasReportId && !hasEntry", reportId, hasEntry);
+      setIsLoading(true);
+      setHasError(false);
+      getReport({ reportId }).then((response) => {
+        response.ok
+          ? response
+              .json()
+              .then((response) => setEntry(response))
+              .then(setHasEntry(true))
+          : setHasError(true);
+      });
+    }
+    if (hasReportId && hasEntry) {
+      console.log("hasReportId && hasEntry", reportId, hasEntry);
+      console.log(entry);
+      //setTitle(entry.title);
+      //setQuarter(entry.quarter);
+      //setDate(entry.date);
+      //setReport(entry.report);
+      //setIsLoading(false);
+    }
+  }, [hasEntry, hasReportId, reportId, entry]);
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
