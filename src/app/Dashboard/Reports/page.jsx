@@ -35,7 +35,7 @@ export default function Page() {
 
   useEffect(() => {
     if (!hasEmail) {
-      console.log("!hasemail");
+      //console.log("!hasemail");
       setIsLoading(true);
       setHasError(false);
       getSession()
