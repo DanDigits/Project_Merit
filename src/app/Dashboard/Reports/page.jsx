@@ -61,12 +61,15 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 export default function Page() {
   const [email, setEmail] = useState("");
   const [reports, setReports] = useState("");
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
+    setEmail(null);
     getSession().then((session) => setEmail(session.user.email));
-
-    loadReports();
-  }, []);
+    if (email) {
+      loadReports();
+    }
+  }, [refresh]);
 
   const loadReports = () => {
     getUserReports({ email }).then((response) => {
@@ -74,9 +77,10 @@ export default function Page() {
         {
           setReports(response.json());
           console.log(reports);
+          setRefresh(false);
         }
       } else {
-        alert("Error loading report list.");
+        alert(response.statusText);
       }
     });
   };
