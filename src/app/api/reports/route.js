@@ -30,6 +30,7 @@ export async function GET() {
 
   if (user) {
     res = await getUserReports(user);
+    res = JSON.stringify(res);
   } else if (report) {
     res = await getReport(report);
   } else {
