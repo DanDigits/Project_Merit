@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Text } from "@chakra-ui/react";
+import { AbsoluteCenter, Spinner, Text } from "@chakra-ui/react";
 import ReportTable from "./ReportTable";
 import { getSession } from "next-auth/react";
 import { getUserReports } from "./../../actions/Report.js";
@@ -117,7 +117,15 @@ export default function Page() {
       {hasError && <Text>SOMETHING WENT WRONG</Text>}
       {isLoading ? (
         <>
-          <Text>IS LOADING...</Text>
+          <AbsoluteCenter>
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="#70A0Af"
+              size="xl"
+            />
+          </AbsoluteCenter>
         </>
       ) : (
         <>
