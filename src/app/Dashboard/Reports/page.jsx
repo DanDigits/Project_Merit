@@ -13,7 +13,7 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
     if (typeof indeterminate === "boolean") {
       ref.current.indeterminate = !rest.checked && indeterminate;
     }
-  }, [ref, indeterminate]);
+  }, [ref, indeterminate, rest.checked]);
 
   return (
     <input
@@ -40,7 +40,7 @@ export default function Page() {
       setHasError(false);
       getSession()
         .then((session) => setEmail(session.user.email))
-        .then((email) => setHasEmail(true));
+        .then(() => setHasEmail(true));
     }
     if (hasEmail && !hasReport) {
       console.log("hasEmail && !hasreport", email, hasReport);
@@ -59,7 +59,7 @@ export default function Page() {
       console.log("hasEmail && hasreport", email, hasReport);
       setIsLoading(false);
     }
-  }, [hasEmail, hasReport]);
+  }, [hasEmail, hasReport, email]);
 
   const columns = React.useMemo(
     () => [
