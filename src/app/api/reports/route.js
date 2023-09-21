@@ -30,7 +30,6 @@ export async function GET() {
 
   if (user) {
     res = await getUserReports(user);
-    res = JSON.stringify(res);
   } else if (report) {
     res = await getReport(report);
   } else {
@@ -38,10 +37,13 @@ export async function GET() {
   }
 
   if (res.name) {
+    res = JSON.stringify(res);
     return new Response(res, { status: 404 });
   } else if (res) {
+    res = JSON.stringify(res);
     return new Response(res, { status: 200 });
   } else {
+    res = JSON.stringify(res);
     return new Response(res, { status: 400 });
   }
 }
