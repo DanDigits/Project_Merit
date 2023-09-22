@@ -13,7 +13,19 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  suffix: {
+    type: String,
+    required: false,
+  },
   password: {
+    type: String,
+    required: true,
+  },
+  rank: {
+    type: String,
+    required: true,
+  },
+  reportType: {
     type: String,
     required: true,
   },

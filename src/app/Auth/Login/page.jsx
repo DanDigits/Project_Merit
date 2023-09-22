@@ -33,17 +33,22 @@ export default function Page() {
   const handleSubmitInfo = (e) => {
     e.preventDefault();
     if (mode === "Register") {
-      signUp(
+      signUp({
         email,
         password,
         reportType,
         rank,
         firstName,
         lastName,
-        suffix
-      ).then(() => {
-        alert("Successfully created new user account");
-        setMode("Login");
+        suffix,
+      }).then((response) => {
+        if (response.ok) {
+          {
+            setMode("Login");
+          }
+        } else {
+          alert("User creation failed, please try again.");
+        }
       });
     } else {
       signIn("credentials", {

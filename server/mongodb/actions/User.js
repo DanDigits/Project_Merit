@@ -34,6 +34,9 @@ export async function signUp(userData) {
         password: hashedPassword,
         firstName: userData.firstName,
         lastName: userData.lastName,
+        suffix: userData.suffix,
+        rank: userData.rank,
+        reportType: userData.reportType,
       }).catch(function (err) {
         return err;
       })
