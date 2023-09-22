@@ -111,6 +111,7 @@ export default function Report(report_mode) {
           if (response.ok) {
             {
               setCreateStatus(true);
+              alert("Report updated.");
             }
           } else {
             alert("Report could not be updated. Please try again.");
