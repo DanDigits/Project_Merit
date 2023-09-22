@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { AbsoluteCenter, Spinner, Text } from "@chakra-ui/react";
+import { AbsoluteCenter, Spinner, Text, Button } from "@chakra-ui/react";
 import ReportTable from "./ReportTable";
 import { getSession } from "next-auth/react";
 import { getUserReports } from "./../../actions/Report.js";
+import { useRouter } from "next/navigation";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   const ref = useRef(null);
@@ -26,6 +27,7 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 }
 
 export default function Page() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [reports, setReports] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -103,9 +105,19 @@ export default function Page() {
         accessorKey: "report",
         header: "Content",
       },
+
       {
-        accessorKey: "view",
+        id: "view",
         header: "View/Edit",
+        cell: () => (
+          <Button
+            textColor={"white"}
+            bg={"#706993"}
+            onClick={() => router.push("/Dashboard/ViewReport")}
+          >
+            View
+          </Button>
+        ),
       },
     ],
 

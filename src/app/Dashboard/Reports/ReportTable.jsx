@@ -79,15 +79,22 @@ export default function ReportTable({ columns, data }) {
           onChange={(e) => setGlobalFilter(e.target.value)}
           placeholder="Search all columns..."
         />
-
-        <Button
-          isDisabled
-          bgColor={"#70A0AF"}
-          color={"white"}
-          _hover={{ bgColor: "#706993", color: "white" }}
-        >
-          Export
-        </Button>
+        <HStack>
+          <Button
+            bgColor={"#B38080"}
+            color={"white"}
+            _hover={{ bgColor: "#706993", color: "white" }}
+          >
+            Delete
+          </Button>
+          <Button
+            bgColor={"#70A0AF"}
+            color={"white"}
+            _hover={{ bgColor: "#706993", color: "white" }}
+          >
+            Export
+          </Button>
+        </HStack>
       </HStack>
       <Box overflowX={"auto"}>
         <Table variant={"striped"} bgColor="#70A0AF">
