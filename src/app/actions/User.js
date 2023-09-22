@@ -1,15 +1,15 @@
 import urls from "../../../utils/getPath";
 
-export const signUp = (
+export const signUp = async ({
   email,
   rank,
   firstName,
   lastName,
   suffix,
   reportType,
-  password
-) =>
-  fetch(urls.baseUrl + urls.api.user.signUp, {
+  password,
+}) => {
+  const response = await fetch(urls.baseUrl + urls.api.user.signUp, {
     method: "POST",
     mode: "same-origin",
     credentials: "include",
@@ -25,14 +25,9 @@ export const signUp = (
       reportType,
       password,
     }),
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      if (json == null) {
-        throw new Error("Could not connect to API!");
-      } else if (!json.success) {
-        throw new Error(json.message);
-      }
+  });
 
-      return json.payload;
-    });
+  console.log(response.statusText);
+
+  return response;
+};
