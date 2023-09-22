@@ -66,12 +66,19 @@ export default function Page() {
     }
     if (hasReportId && hasEntry) {
       console.log("hasReportId && hasEntry", reportId, hasEntry);
-      console.log(entry);
-      //setTitle(entry.title);
-      //setQuarter(entry.quarter);
-      //setDate(entry.date);
-      //setReport(entry.report);
-      //setIsLoading(false);
+      var arr = JSON.parse(JSON.stringify(entry));
+      if (arr) {
+        console.log(arr.title);
+        console.log(arr.quarter);
+        console.log(arr.date);
+        console.log(arr.report);
+
+        setTitle(arr.title);
+        setQuarter(arr.quarter);
+        setDate(arr.date);
+        setReport(arr.report);
+        setIsLoading(false);
+      }
     }
   }, [hasEntry, hasReportId, reportId, entry]);
 
