@@ -17,7 +17,6 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { updateReport, getReport } from "src/app/actions/Report";
 import { getSession } from "next-auth/react";
 import Report from "../NewReport/report";
 
@@ -33,65 +32,17 @@ export default function Page() {
 
   const [email, setEmail] = useState("");
   const [reportId, setReportId] = useState("6504ee2cf2bb6994e6dc8129");
-  const [entry, setEntry] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasError, setHasError] = useState(false);
-  const [hasEntry, setHasEntry] = useState(false);
-  const [hasReportId, setHasReportId] = useState(false);
-  //const [bucket, setBucket] = useState("");
 
-  useEffect(() => {
-    if (reportId !== "" && reportId !== null) {
-      setHasReportId(true);
-      console.log("hasReportId:", reportId);
-    } else {
-      console.log("reportId missing");
-    }
-    if (entry !== null) {
-      setHasEntry(true);
-      console.log("hasEntry:", entry);
-    }
-    if (hasReportId && !hasEntry) {
-      console.log("hasReportId && !hasEntry", reportId, hasEntry);
-      setIsLoading(true);
-      setHasError(false);
-      getReport({ reportId }).then((response) => {
-        response.ok
-          ? response
-              .json()
-              .then((response) => setEntry(response))
-              .then(setHasEntry(true))
-          : setHasError(true);
-      });
-    }
-    if (hasReportId && hasEntry) {
-      console.log("hasReportId && hasEntry", reportId, hasEntry);
-      var arr = JSON.parse(JSON.stringify(entry));
-      if (arr) {
-        console.log(arr.title);
-        console.log(arr.quarter);
-        console.log(arr.date);
-        console.log(arr.report);
-
-        setTitle(arr.title);
-        setQuarter(arr.quarter);
-        setDate(arr.date);
-        setReport(arr.report);
-        setIsLoading(false);
-      }
-    }
-  }, [hasEntry, hasReportId, reportId, entry]);
-
-  const handleSubmitInfo = (e) => {
+  /*const handleSubmitInfo = (e) => {
     e.preventDefault();
 
-    updateReport(reportId, title, email, date_of_creation, quarter, data).then(
+    updateReport(reportId, title, email, date, quarter, data).then(
       () => {
         alert("Successfully updated the report.");
         setMode("View");
       }
     );
-  };
+  };*/
 
   return (
     <>
@@ -159,7 +110,7 @@ export default function Page() {
                   _hover={{ bgColor: "#706993", color: "white" }}
                   form="report-form"
                   type="submit"
-                  onClickCapture={() => setMode("View")}
+                  //onClickCapture={() => setMode("View")}
                 >
                   Update
                 </Button>

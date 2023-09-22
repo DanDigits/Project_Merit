@@ -16,7 +16,11 @@ import {
   Textarea,
   VStack,
 } from "@chakra-ui/react";
-import { createReport, updateReport } from "./../../actions/Report.js";
+import {
+  createReport,
+  getReport,
+  updateReport,
+} from "./../../actions/Report.js";
 import Dialog from "./dialog.jsx";
 
 export default function Report(report_mode) {
@@ -26,8 +30,12 @@ export default function Report(report_mode) {
   const [date, setDate] = useState(""); // needs to default to current date
   const [report, setReport] = useState("");
   const [email, setEmail] = useState("");
-  const [reportId, setReportId] = useState("");
-  //const [data, setData] = useState("");
+  const [entry, setEntry] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [hasEntry, setHasEntry] = useState(false);
+  const [hasReportId, setHasReportId] = useState(false);
+  const [reportId, setReportId] = useState("6504ee2cf2bb6994e6dc8129");
   var state;
 
   //temp
@@ -41,7 +49,49 @@ export default function Report(report_mode) {
 
   useEffect(() => {
     getSession().then((session) => setEmail(session.user.email));
-  }, []);
+
+    if (report_mode === "View") {
+      if (reportId !== "" && reportId !== null) {
+        setHasReportId(true);
+        console.log("hasReportId:", reportId);
+      } else {
+        console.log("reportId missing");
+      }
+      if (entry !== null) {
+        setHasEntry(true);
+        console.log("hasEntry:", entry);
+      }
+      if (hasReportId && !hasEntry) {
+        console.log("hasReportId && !hasEntry", reportId, hasEntry);
+        setIsLoading(true);
+        setHasError(false);
+        getReport({ reportId }).then((response) => {
+          response.ok
+            ? response
+                .json()
+                .then((response) => setEntry(response))
+                .then(setHasEntry(true))
+            : setHasError(true);
+        });
+      }
+      if (hasReportId && hasEntry) {
+        console.log("hasReportId && hasEntry", reportId, hasEntry);
+        var arr = JSON.parse(JSON.stringify(entry));
+        if (arr) {
+          console.log(arr.title);
+          console.log(arr.quarter);
+          console.log(arr.date);
+          console.log(arr.report);
+
+          setTitle(arr.title);
+          setQuarter(arr.quarter);
+          setDate(arr.date);
+          setReport(arr.report);
+          setIsLoading(false);
+        }
+      }
+    }
+  }, [hasEntry, hasReportId, reportId, entry, report_mode]);
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
@@ -56,9 +106,17 @@ export default function Report(report_mode) {
         }
       });
     } else if (report_mode === "Edit") {
-      updateReport(reportId, title, email, date, quarter, report).then(() => {
-        alert("Successfully updated the report.");
-      });
+      updateReport(reportId, title, email, date, quarter, report).then(
+        (response) => {
+          if (response.ok) {
+            {
+              setCreateStatus(true);
+            }
+          } else {
+            alert("Report could not be updated. Please try again.");
+          }
+        }
+      );
     }
   };
 
