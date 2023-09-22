@@ -37,6 +37,7 @@ export async function deleteReport(reportId) {
 }
 
 export async function modifyReport(reportId, reportInfo) {
+  console.log(reportInfo);
   await mongoDB();
   const report = await ReportSchema.findByIdAndUpdate(
     reportId,
