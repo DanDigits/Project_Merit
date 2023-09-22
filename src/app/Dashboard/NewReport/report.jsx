@@ -35,7 +35,7 @@ export default function Report(report_mode) {
   const [hasError, setHasError] = useState(false);
   const [hasEntry, setHasEntry] = useState(false);
   const [hasReportId, setHasReportId] = useState(false);
-  const [reportId, setReportId] = useState("6504ee2cf2bb6994e6dc8129");
+  const [reportId, setReportId] = useState("6505e9718a0e552d773e577d");
   var state;
 
   //temp
@@ -106,12 +106,12 @@ export default function Report(report_mode) {
         }
       });
     } else if (report_mode === "Edit") {
-      updateReport(reportId, title, email, date, quarter, report).then(
+      updateReport({ reportId, title, email, date, quarter, report }).then(
         (response) => {
           if (response.ok) {
             {
-              setCreateStatus(true);
-              alert("Report updated.");
+              console.log("success");
+              report_mode == "View";
             }
           } else {
             alert("Report could not be updated. Please try again.");
