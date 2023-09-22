@@ -23,7 +23,7 @@ const UserSchema = new Schema({
   },
   rank: {
     type: String,
-    required: false,
+    required: true,
   },
   reportType: {
     type: String,
