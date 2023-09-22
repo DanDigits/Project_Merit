@@ -161,6 +161,7 @@ export default function Report(report_mode) {
               bg="#ECECEC"
               mb={3}
               size={"md"}
+              value={quarter}
               onChange={(e) => setQuarter(e.target.value)}
             >
               <option value={1}>1st Quarter</option>
