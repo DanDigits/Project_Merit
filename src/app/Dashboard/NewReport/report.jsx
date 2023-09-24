@@ -155,7 +155,6 @@ export default function Report(report_mode) {
             </FormLabel>
             <Select
               isDisabled={state}
-              defaultValue={1}
               placeholder="Select Category"
               variant="login"
               borderWidth={"2px"}
