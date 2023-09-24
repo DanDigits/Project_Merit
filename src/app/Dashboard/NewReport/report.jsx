@@ -26,7 +26,7 @@ import Dialog from "./dialog.jsx";
 export default function Report(report_mode) {
   const [createStatus, setCreateStatus] = useState(false);
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState(1);
+  const [category, setCategory] = useState("");
   const [date, setDate] = useState(""); // needs to default to current date
   const [report, setReport] = useState("");
   const [email, setEmail] = useState("");
