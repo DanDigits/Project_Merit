@@ -37,6 +37,7 @@ export async function signUp(userData) {
         suffix: userData.suffix,
         rank: userData.rank,
         reportType: userData.reportType,
+        verified: userData.verified,
       }).catch(function (err) {
         return err;
       })
