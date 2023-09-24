@@ -26,7 +26,7 @@ import Dialog from "./dialog.jsx";
 export default function Report(report_mode) {
   const [createStatus, setCreateStatus] = useState(false);
   const [title, setTitle] = useState("");
-  const [quarter, setQuarter] = useState(1);
+  const [category, setCategory] = useState(1);
   const [date, setDate] = useState(""); // needs to default to current date
   const [report, setReport] = useState("");
   const [email, setEmail] = useState("");
@@ -79,12 +79,12 @@ export default function Report(report_mode) {
         var arr = JSON.parse(JSON.stringify(entry));
         if (arr) {
           console.log(arr.title);
-          console.log(arr.quarter);
+          console.log(arr.category);
           console.log(arr.date);
           console.log(arr.report);
 
           setTitle(arr.title);
-          setQuarter(arr.quarter);
+          setCategory(arr.category);
           setDate(arr.date);
           setReport(arr.report);
           setIsLoading(false);
@@ -96,17 +96,19 @@ export default function Report(report_mode) {
   const handleSubmitInfo = (e) => {
     e.preventDefault();
     if (report_mode === "New") {
-      createReport({ title, email, date, quarter, report }).then((response) => {
-        if (response.ok) {
-          {
-            setCreateStatus(true);
+      createReport({ title, email, date, category, report }).then(
+        (response) => {
+          if (response.ok) {
+            {
+              setCreateStatus(true);
+            }
+          } else {
+            alert("Report could not be created. Please try again.");
           }
-        } else {
-          alert("Report could not be created. Please try again.");
         }
-      });
+      );
     } else if (report_mode === "Edit") {
-      updateReport({ reportId, title, email, date, quarter, report }).then(
+      updateReport({ reportId, title, email, date, category, report }).then(
         (response) => {
           if (response.ok) {
             {
@@ -147,27 +149,29 @@ export default function Report(report_mode) {
           />
         </FormControl>
         <HStack mb="3">
-          <FormControl id="quarter" isRequired>
+          <FormControl id="category" isRequired>
             <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-              Quarter
+              Category
             </FormLabel>
             <Select
               isDisabled={state}
               defaultValue={1}
-              placeholder="Select Quarter"
+              placeholder="Select Category"
               variant="login"
               borderWidth={"2px"}
               borderColor={"#70A0AF"}
               bg="#ECECEC"
               mb={3}
               size={"md"}
-              value={quarter}
-              onChange={(e) => setQuarter(e.target.value)}
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
             >
-              <option value={1}>1st Quarter</option>
-              <option value={2}>2nd Quarter</option>
-              <option value={3}>3rd Quarter</option>
-              <option value={4}>4th Quarter</option>
+              <option value={"Duties"}>Primary / Additional Duties</option>
+              <option value={"Conduct"}>
+                Standards, Conduct, Character & Military Bearing
+              </option>
+              <option value={"Training"}>Training Requirements</option>
+              <option value={"Teamwork"}>Teamwork / Followership</option>
             </Select>
           </FormControl>
           <FormControl id="date" isRequired>

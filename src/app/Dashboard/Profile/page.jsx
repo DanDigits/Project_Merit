@@ -19,7 +19,6 @@ export default function Page() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [suffix, setSuffix] = useState("");
-  const [reportType, setReportType] = useState(0);
 
   useEffect(() => {
     getSession().then((session) => setEmail(session.user.email));
@@ -27,7 +26,6 @@ export default function Page() {
     getSession().then((session) => setFirstName(session.user.firstName));
     getSession().then((session) => setLastName(session.user.lastName));
     getSession().then((session) => setSuffix(session.user.suffix));
-    getSession().then((session) => setReportType(session.user.reportType));
   }, []);
   const handleLogout = (e) => {
     e.preventDefault();
@@ -52,29 +50,17 @@ export default function Page() {
               </Box>
               <Box p="5">
                 <Text fontSize="2xl" fontWeight="bold">
-                  Name
-                </Text>
-                <Text fontSize="lg">
-                  {firstName} {lastName}
-                </Text>
-              </Box>
-              <Box p="5">
-                <Text fontSize="2xl" fontWeight="bold">
-                  Suffix
-                </Text>
-                <Text fontSize="lg">{suffix}</Text>
-              </Box>
-              <Box p="5">
-                <Text fontSize="2xl" fontWeight="bold">
                   Rank
                 </Text>
                 <Text fontSize="lg">{rank}</Text>
               </Box>
               <Box p="5">
                 <Text fontSize="2xl" fontWeight="bold">
-                  Report Type
+                  Name
                 </Text>
-                <Text fontSize="lg">{reportType}</Text>
+                <Text fontSize="lg">
+                  {firstName} {lastName} {suffix}
+                </Text>
               </Box>
             </VStack>
             <VStack spacing={10}>

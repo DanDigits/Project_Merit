@@ -90,8 +90,8 @@ export default function Page() {
         ),
       },
       {
-        accessorKey: "quarter",
-        header: () => "Quarter",
+        accessorKey: "category",
+        header: () => "Category",
       },
       {
         accessorKey: "date",
