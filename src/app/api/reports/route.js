@@ -30,10 +30,9 @@ export async function GET() {
   // Switch case to differentiate GET requests
   switch (request) {
     case "1": {
-      console.log("CASE 1");
       // Get 20 of a Users reports, ordered by date most recent
       const user = headersInstance.get("user"); // or "email";
-      res = await getUserReports(user);
+      res = await getUserReports(user, null);
       break;
     }
     case "2": {

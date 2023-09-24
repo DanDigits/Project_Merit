@@ -3,19 +3,62 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 //import { headers } from "next/headers";
-import { signUp, modifyUser } from "server/mongodb/actions/User";
+import { signUp, verify } from "server/mongodb/actions/User";
+import urls from "../../../../utils/getPath";
+import nodemailer from "nodemailer";
+
+export async function GET(Request) {
+  const url = new URL(Request.url);
+  const user = url.searchParams.get("num");
+  const res = await verify(user);
+  if (res.id) {
+    return new Response("OK", { status: 200 });
+  } else {
+    return new Response("ERROR", { status: 400 });
+  }
+}
 
 export async function POST(Request) {
-  //console.log(await Request.json());
-  const res = await signUp(await Request.json());
-  if (res.name == "ValidationError") {
+  const req = await Request.json();
+  const res = await signUp(req);
+  if (res.id) {
+    // Send email verification link
+    const transporter = nodemailer.createTransport({
+      port: process.env.EMAIL_SERVER_PORT,
+      host: process.env.EMAIL_SERVER_HOST,
+      auth: {
+        user: process.env.EMAIL_SERVER_USER,
+        pass: process.env.EMAIL_SERVER_PASSWORD,
+      },
+      secure: false,
+      requireTLS: true,
+    });
+
+    const mailData = {
+      from: process.env.EMAIL_FROM,
+      to: req.email,
+      subject: process.env.EMAIL_SUBJECT,
+      text: "Sent from: " + process.env.EMAIL_FROM,
+      html: `<div>${`Hello! Please verify your email at ${
+        urls.baseUrl + urls.api.user.verify
+      }?num=${res.id}`}</div>`,
+    };
+
+    transporter.sendMail(mailData, function (err) {
+      console.log(mailData);
+      if (err) {
+        console.log(err);
+      }
+    });
+    return new Response("OK", { status: 200 });
+  } else if (res.name == "ValidationError") {
     return new Response(res, { status: 422 });
   } else if (res == "ConflictError") {
-    return new Response("ERROR", { status: 400 });
+    return new Response("EXISTS", { status: 400 });
   } else if (res.name) {
     return new Response(res.message, { status: 400 });
-  } else if (res.id) {
-    return new Response(res.id, { status: 200 });
+  } else {
+    return new Response("SERVER ERROR", { status: 400 });
   }
 }
 

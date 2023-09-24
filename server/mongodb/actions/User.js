@@ -56,3 +56,13 @@ export async function modifyUser(userId, userInfo) {
   );
   return report;
 }
+
+export async function verify(userId) {
+  await mongoDB();
+  const user = await UserSchema.findByIdAndUpdate(userId, {
+    verified: true,
+  }).catch(function (err) {
+    return err;
+  });
+  return user;
+}
