@@ -117,7 +117,6 @@ export default function Page() {
                 <Select
                   placeholder="Select Rank"
                   value={rank}
-                  defaultValue={0}
                   variant="login"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
