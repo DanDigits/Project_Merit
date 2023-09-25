@@ -1,6 +1,12 @@
 import getPath from "../../../utils/getPath";
 
-export const createReport = async ({ title, email, date, quarter, report }) => {
+export const createReport = async ({
+  title,
+  email,
+  date,
+  category,
+  report,
+}) => {
   const response = await fetch(getPath.baseUrl + getPath.api.reports.create, {
     method: "POST",
     mode: "same-origin",
@@ -11,7 +17,7 @@ export const createReport = async ({ title, email, date, quarter, report }) => {
       title,
       email,
       date,
-      quarter,
+      category,
       report,
     }),
   });
@@ -19,61 +25,46 @@ export const createReport = async ({ title, email, date, quarter, report }) => {
   return response;
 };
 
-/* updateReport needs to be corrected to update a specific 
-   report rather than create a new one */
 export const updateReport = async ({
   reportId,
   title,
   email,
   date,
-  quarter,
+  category,
   report,
-}) =>
-  fetch(getPath.baseUrl + getPath.api.reports.update, {
-    method: "POST",
+}) => {
+  const response = await fetch(getPath.baseUrl + getPath.api.reports.update, {
+    method: "PATCH",
     mode: "same-origin",
     headers: {
-      "Content-Type": "application/json",
+      report: reportId,
     },
     body: JSON.stringify({
-      reportId,
       title,
       email,
       date,
-      quarter,
+      category,
       report,
     }),
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      if (json == null) {
-        throw new Error("Could not connect to API");
-      }
-      if (!json.success) {
-        throw new Error(json.message);
-      }
-      return json.payload;
-    });
+  });
+  console.log("Update Response:", response.statusText);
 
-export const getReport = async ({ reportId }) =>
-  fetch(getPath.baseUrl + getPath.api.reports.get, {
+  return response;
+};
+
+export const getReport = async ({ reportId }) => {
+  const response = await fetch(getPath.baseUrl + getPath.api.reports.get, {
     method: "GET",
     mode: "same-origin",
     headers: {
-      "Content-Type": "report",
+      report: reportId,
     },
-    body: reportId,
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      if (json == null) {
-        throw new Error("Could not connect to API");
-      }
-      if (!json.success) {
-        throw new Error(json.message);
-      }
-      return json.payload;
-    });
+  });
+
+  console.log(response.statusText);
+
+  return response;
+};
 
 export const getUserReports = async ({ email }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.reports.get, {
@@ -81,6 +72,19 @@ export const getUserReports = async ({ email }) => {
     mode: "same-origin",
     headers: {
       user: email,
+    },
+  });
+  console.log(response.statusText);
+
+  return response;
+};
+
+export const deleteReport = async ({ reportId }) => {
+  const response = await fetch(getPath.baseUrl + getPath.api.reports.delete, {
+    method: "DELETE",
+    mode: "same-origin",
+    headers: {
+      report: reportId,
     },
   });
   console.log(response.statusText);

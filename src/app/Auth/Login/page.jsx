@@ -26,7 +26,6 @@ export default function Page() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [suffix, setSuffix] = useState("");
-  const [reportType, setReportType] = useState(0);
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
 
@@ -36,7 +35,6 @@ export default function Page() {
       signUp({
         email,
         password,
-        reportType,
         rank,
         firstName,
         lastName,
@@ -112,28 +110,6 @@ export default function Page() {
           )}
           {mode === "Register" && (
             <div>
-              <FormControl id="reportType" isRequired>
-                <FormLabel mb={1} fontSize={15} color={"black"}>
-                  Report Type
-                </FormLabel>
-                <Select
-                  placeholder="Select Report Type"
-                  value={reportType}
-                  defaultValue={0}
-                  variant="login"
-                  borderWidth={"2px"}
-                  borderColor={"#70A0AF"}
-                  bg="#ECECEC"
-                  mb={3}
-                  size={"md"}
-                  _hover={{ bgColor: "#706993" }}
-                  onChange={(e) => setReportType(e.target.value)}
-                >
-                  <option value={1}>EPR</option>
-                  <option value={2}>OPR</option>
-                  <FormErrorMessage>Report Type is required.</FormErrorMessage>
-                </Select>
-              </FormControl>
               <FormControl id="rank" isRequired>
                 <FormLabel mb={1} fontSize={15} color={"black"}>
                   Rank
@@ -141,7 +117,6 @@ export default function Page() {
                 <Select
                   placeholder="Select Rank"
                   value={rank}
-                  defaultValue={0}
                   variant="login"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}

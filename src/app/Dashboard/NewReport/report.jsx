@@ -16,18 +16,26 @@ import {
   Textarea,
   VStack,
 } from "@chakra-ui/react";
-import { createReport, updateReport } from "./../../actions/Report.js";
+import {
+  createReport,
+  getReport,
+  updateReport,
+} from "./../../actions/Report.js";
 import Dialog from "./dialog.jsx";
 
 export default function Report(report_mode) {
   const [createStatus, setCreateStatus] = useState(false);
   const [title, setTitle] = useState("");
-  const [quarter, setQuarter] = useState(1);
+  const [category, setCategory] = useState("");
   const [date, setDate] = useState(""); // needs to default to current date
   const [report, setReport] = useState("");
   const [email, setEmail] = useState("");
-  const [reportId, setReportId] = useState("");
-  //const [data, setData] = useState("");
+  const [entry, setEntry] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [hasEntry, setHasEntry] = useState(false);
+  const [hasReportId, setHasReportId] = useState(false);
+  const [reportId, setReportId] = useState("6505e9718a0e552d773e577d");
   var state;
 
   //temp
@@ -41,24 +49,77 @@ export default function Report(report_mode) {
 
   useEffect(() => {
     getSession().then((session) => setEmail(session.user.email));
-  }, []);
+
+    if (report_mode === "View") {
+      if (reportId !== "" && reportId !== null) {
+        setHasReportId(true);
+        console.log("hasReportId:", reportId);
+      } else {
+        console.log("reportId missing");
+      }
+      if (entry !== null) {
+        setHasEntry(true);
+        console.log("hasEntry:", entry);
+      }
+      if (hasReportId && !hasEntry) {
+        console.log("hasReportId && !hasEntry", reportId, hasEntry);
+        setIsLoading(true);
+        setHasError(false);
+        getReport({ reportId }).then((response) => {
+          response.ok
+            ? response
+                .json()
+                .then((response) => setEntry(response))
+                .then(setHasEntry(true))
+            : setHasError(true);
+        });
+      }
+      if (hasReportId && hasEntry) {
+        console.log("hasReportId && hasEntry", reportId, hasEntry);
+        var arr = JSON.parse(JSON.stringify(entry));
+        if (arr) {
+          console.log(arr.title);
+          console.log(arr.category);
+          console.log(arr.date);
+          console.log(arr.report);
+
+          setTitle(arr.title);
+          setCategory(arr.category);
+          setDate(arr.date);
+          setReport(arr.report);
+          setIsLoading(false);
+        }
+      }
+    }
+  }, [hasEntry, hasReportId, reportId, entry, report_mode]);
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
     if (report_mode === "New") {
-      createReport({ title, email, date, quarter, report }).then((response) => {
-        if (response.ok) {
-          {
-            setCreateStatus(true);
+      createReport({ title, email, date, category, report }).then(
+        (response) => {
+          if (response.ok) {
+            {
+              setCreateStatus(true);
+            }
+          } else {
+            alert("Report could not be created. Please try again.");
           }
-        } else {
-          alert("Report could not be created. Please try again.");
         }
-      });
+      );
     } else if (report_mode === "Edit") {
-      updateReport(reportId, title, email, date, quarter, report).then(() => {
-        alert("Successfully updated the report.");
-      });
+      updateReport({ reportId, title, email, date, category, report }).then(
+        (response) => {
+          if (response.ok) {
+            {
+              console.log("success");
+              report_mode == "View";
+            }
+          } else {
+            alert("Report could not be updated. Please try again.");
+          }
+        }
+      );
     }
   };
 
@@ -88,26 +149,28 @@ export default function Report(report_mode) {
           />
         </FormControl>
         <HStack mb="3">
-          <FormControl id="quarter" isRequired>
+          <FormControl id="category" isRequired>
             <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-              Quarter
+              Category
             </FormLabel>
             <Select
               isDisabled={state}
-              defaultValue={1}
-              placeholder="Select Quarter"
+              placeholder="Select Category"
               variant="login"
               borderWidth={"2px"}
               borderColor={"#70A0AF"}
               bg="#ECECEC"
               mb={3}
               size={"md"}
-              onChange={(e) => setQuarter(e.target.value)}
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
             >
-              <option value={1}>1st Quarter</option>
-              <option value={2}>2nd Quarter</option>
-              <option value={3}>3rd Quarter</option>
-              <option value={4}>4th Quarter</option>
+              <option value={"Duties"}>Primary / Additional Duties</option>
+              <option value={"Conduct"}>
+                Standards, Conduct, Character & Military Bearing
+              </option>
+              <option value={"Training"}>Training Requirements</option>
+              <option value={"Teamwork"}>Teamwork / Followership</option>
             </Select>
           </FormControl>
           <FormControl id="date" isRequired>

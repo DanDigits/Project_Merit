@@ -25,10 +25,6 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  reportType: {
-    type: String,
-    required: true,
-  },
 });
 
 export default mongoose.models.User ?? mongoose.model("User", UserSchema);

@@ -1,6 +1,7 @@
 "use client";
 /* eslint-disable no-unused-vars */
-import { React, useState, useEffect } from "react";
+import { React, useState } from "react";
+import { redirect } from "next/navigation";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -17,53 +18,25 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { updateReport, getReport } from "src/app/actions/Report";
-import { getSession } from "next-auth/react";
 import Report from "../NewReport/report";
+import { deleteReport } from "./../../actions/Report.js";
 
 export default function Page() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   const [mode, setMode] = useState("View");
-  const [data, setData] = useState("");
-  const [reportId, setReportId] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [reportId, setReportId] = useState("6505e9718a0e552d773e577d");
 
-  //temporary for viewing purposes
-  const [title, setTitle] = useState("");
-  const [quarter, setQuarter] = useState("");
-  const [date_of_creation, setDate] = useState("");
-  const [report, setReport] = useState("");
-
-  const [email, setEmail] = useState("");
-
-  useEffect(() => {
-    getSession().then((session) => setEmail(session.user.email));
-  }, []);
-
-  /* must get report id somehow*/
-  /*
-  if (mode === "View") {
-    setData(getReport(reportId));
-  }
-
-  const [title, setTitle] = data.title;
-  const [quarter, setQuarter] = data.quarter;
-  const [date_of_creation, setDate] = data.date_of_creation;
-  const [report, setReport] = data.report;
-
-  const [email, setEmail] = useState("");
-
-    */
-
-  const handleSubmitInfo = (e) => {
-    e.preventDefault();
-
-    updateReport(reportId, title, email, date_of_creation, quarter, data).then(
-      () => {
-        alert("Successfully updated the report.");
-        setMode("View");
+  const handleDelete = () => {
+    deleteReport({ reportId }).then((response) => {
+      if (response.ok) {
+        {
+          console.log("report deleted: ", reportId);
+          window.location.replace("/Dashboard/Reports");
+        }
+      } else {
+        alert("Delete failed");
       }
-    );
+    });
   };
 
   return (
@@ -92,7 +65,7 @@ export default function Page() {
           )}
           {mode === "Edit" && (
             <>
-              {Report(mode)}
+              {Report(mode, reportId)}
               <ButtonGroup>
                 <Button
                   bgColor={"#F4E8C1"}
@@ -111,7 +84,13 @@ export default function Page() {
                       <AlertDialogBody>Are you sure?</AlertDialogBody>
                       <AlertDialogFooter>
                         <Button onClick={onClose}>Cancel</Button>
-                        <Button colorScheme="red" onClick={onClose} ml={3}>
+                        <Button
+                          colorScheme="red"
+                          onClick={() => {
+                            handleDelete();
+                          }}
+                          ml={3}
+                        >
                           Delete
                         </Button>
                       </AlertDialogFooter>
@@ -122,7 +101,7 @@ export default function Page() {
                   bgColor={"#A0C1B9"}
                   color={"#331E38"}
                   _hover={{ bgColor: "#706993", color: "white" }}
-                  onClick={() => setMode("View")} // This needs to be updated to reload the view with the report id
+                  onClick={() => setMode("View")}
                 >
                   Cancel
                 </Button>
@@ -132,7 +111,6 @@ export default function Page() {
                   _hover={{ bgColor: "#706993", color: "white" }}
                   form="report-form"
                   type="submit"
-                  onClickCapture={() => setMode("View")}
                 >
                   Update
                 </Button>

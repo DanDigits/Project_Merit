@@ -9,11 +9,7 @@ import {
   Link,
   VStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { getSession } from "next-auth/react";
 import Report from "./report";
-import Dialog from "./dialog.jsx";
-import { createReport } from "./../../actions/Report.js";
 
 /* 
   report.jsx has been updated. The email variable needs to be sent to the
