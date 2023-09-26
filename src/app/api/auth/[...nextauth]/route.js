@@ -46,11 +46,13 @@ export const authOptions = {
     async jwt({ token, user, session }) {
       console.log("jwt callback", { token, user, session });
 
-      // pass in email, rank, lastName, and suffix to token
+      // pass in id, email, rank, lastName, and suffix to token
       if (user) {
         return {
           ...token,
+          id: user.id,
           rank: user.rank,
+          firstName: user.firstName,
           lastName: user.lastName,
           suffix: user.suffix,
         };
@@ -65,14 +67,16 @@ export const authOptions = {
         ...session,
         user: {
           ...session.user,
-          rank: user.rank,
-          lastName: user.lastName,
-          suffix: user.suffix,
+          id: token.is,
+          rank: token.rank,
+          firstName: token.firstName,
+          lastName: token.lastName,
+          suffix: token.suffix,
         },
       };
-      return session;
     },
   },
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth({

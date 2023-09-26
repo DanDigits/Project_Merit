@@ -3,7 +3,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { customTheme } from "../styles/customTheme";
 import React from "react";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import {
   IconButton,
   Box,
@@ -173,12 +173,23 @@ const SidebarContent = ({ onClose, ...rest }) => {
 }*/
 
 const MobileNav = ({ onOpen, ...rest }) => {
-  const { data: session, status, update } = useSession();
+  //const { data: session, status, update } = useSession();
   const router = useRouter();
+
   const handleLogout = (e) => {
     e.preventDefault();
     signOut({ callbackUrl: "/Auth/Logout" });
   };
+
+  const [rank, setRank] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [suffix, setSuffix] = useState("");
+
+  useEffect(() => {
+    getSession().then((session) => setRank(session.user.rank));
+    getSession().then((session) => setLastName(session.user.lastName));
+    getSession().then((session) => setSuffix(session.user.suffix));
+  }, []);
 
   return (
     <Flex
@@ -222,9 +233,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
             leftIcon={<FaUser />}
           >
             <Text display={{ base: "none", md: "flex" }}>
-              {session?.user.rank}
-              {session?.user.lastName}
-              {session?.user.suffix}
+              {rank} {lastName} {suffix}
             </Text>
           </MenuButton>
           <MenuList>
