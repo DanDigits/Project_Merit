@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { AbsoluteCenter, Spinner, Text, Button } from "@chakra-ui/react";
 import ReportTable from "./ReportTable";
 import { getSession } from "next-auth/react";
@@ -36,10 +36,13 @@ export default function Page() {
   const [hasEmail, setHasEmail] = useState(false);
   const [hasReport, setHasReport] = useState(false);
 
-  function handleSubmitInfo(reportId) {
-    secureLocalStorage.setItem("reportID", reportId);
-    router.push("/Dashboard/ViewReport");
-  }
+  const handleSubmitInfo = useCallback(
+    (reportId) => {
+      secureLocalStorage.setItem("reportID", reportId);
+      router.push("/Dashboard/ViewReport");
+    },
+    [router]
+  );
 
   useEffect(() => {
     if (!hasEmail) {
@@ -129,7 +132,7 @@ export default function Page() {
       },
     ],
 
-    []
+    [handleSubmitInfo]
   );
 
   return (

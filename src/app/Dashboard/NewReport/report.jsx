@@ -103,7 +103,7 @@ export default function Report(report_mode) {
         }
       }
     }
-  }, [hasEntry, hasReportId, reportId, entry, report_mode]);
+  }, [hasEntry, hasReportId, reportId, entry, report_mode, router]);
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
