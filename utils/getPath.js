@@ -30,6 +30,7 @@ export default {
     },
     user: {
       signUp: "/api/user/",
+      verify: "/api/user/",
     },
   },
 };
