@@ -6,6 +6,7 @@ import ReportTable from "./ReportTable";
 import { getSession } from "next-auth/react";
 import { getUserReports } from "./../../actions/Report.js";
 import { useRouter } from "next/navigation";
+import secureLocalStorage from "react-secure-storage";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   const ref = useRef(null);
@@ -34,6 +35,11 @@ export default function Page() {
   const [hasError, setHasError] = useState(false);
   const [hasEmail, setHasEmail] = useState(false);
   const [hasReport, setHasReport] = useState(false);
+
+  function handleSubmitInfo(reportId) {
+    secureLocalStorage.setItem("reportID", reportId);
+    router.push("/Dashboard/ViewReport");
+  }
 
   useEffect(() => {
     if (!hasEmail) {
@@ -109,14 +115,16 @@ export default function Page() {
       {
         id: "view",
         header: "View/Edit",
-        cell: () => (
-          <Button
-            textColor={"white"}
-            bg={"#706993"}
-            onClick={() => router.push("/Dashboard/ViewReport")}
-          >
-            View
-          </Button>
+        cell: ({ cell }) => (
+          <>
+            <Button
+              textColor={"white"}
+              bg={"#706993"}
+              onClick={() => handleSubmitInfo(cell.row.original._id)}
+            >
+              View
+            </Button>
+          </>
         ),
       },
     ],
