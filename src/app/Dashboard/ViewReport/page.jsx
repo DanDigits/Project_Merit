@@ -20,11 +20,14 @@ import {
 } from "@chakra-ui/react";
 import Report from "../NewReport/report";
 import { deleteReport } from "./../../actions/Report.js";
+import secureLocalStorage from "react-secure-storage";
 
 export default function Page() {
   const [mode, setMode] = useState("View");
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [reportId, setReportId] = useState("6505e9718a0e552d773e577d");
+  const [reportId, setReportId] = useState(
+    String(secureLocalStorage.getItem("reportID"))
+  );
 
   const handleDelete = () => {
     deleteReport({ reportId }).then((response) => {

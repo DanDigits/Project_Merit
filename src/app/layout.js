@@ -1,7 +1,11 @@
+import Provider from "./context/Provider";
+
 export default function RootLayout({ children }) {
   return (
     <html>
-      <body>{children}</body>
+      <Provider>
+        <body>{children}</body>
+      </Provider>
     </html>
   );
 }

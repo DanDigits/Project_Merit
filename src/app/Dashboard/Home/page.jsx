@@ -7,8 +7,20 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { Stack, Text, VStack, HStack, Heading } from "@chakra-ui/layout";
+import { useEffect, useState } from "react";
+import { getSession } from "next-auth/react";
 
 export default function Page() {
+  const [rank, setRank] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [suffix, setSuffix] = useState("");
+
+  useEffect(() => {
+    getSession().then((session) => setRank(session.user.rank));
+    getSession().then((session) => setLastName(session.user.lastName));
+    getSession().then((session) => setSuffix(session.user.suffix));
+  }, []);
+
   return (
     <>
       <Card
@@ -25,9 +37,9 @@ export default function Page() {
             color="#331E38"
             py={"5"}
           >
-            Welcome, Rank Lastname!
+            Welcome {rank} {lastName} {suffix}
           </Heading>
-
+          ;
           <Text fontSize={20} color="#331E38" py={"2"}>
             You have written...
           </Text>
@@ -63,7 +75,6 @@ export default function Page() {
               </CardBody>
             </Card>
           </HStack>
-
           <Text
             fontSize={20}
             color="#331E38"

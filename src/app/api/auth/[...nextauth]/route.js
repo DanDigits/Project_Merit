@@ -41,8 +41,42 @@ export const authOptions = {
         return user;
       },
     }),
-    // ...add more providers here
   ],
+  callbacks: {
+    async jwt({ token, user, session }) {
+      console.log("jwt callback", { token, user, session });
+
+      // pass in id, email, rank, lastName, and suffix to token
+      if (user) {
+        return {
+          ...token,
+          id: user.id,
+          rank: user.rank,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          suffix: user.suffix,
+        };
+      }
+      return token;
+    },
+    async session({ session, token, user }) {
+      console.log("session callback", { token, user, session });
+
+      // pass in email, rank, lastName, and suffix to session
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.is,
+          rank: token.rank,
+          firstName: token.firstName,
+          lastName: token.lastName,
+          suffix: token.suffix,
+        },
+      };
+    },
+  },
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth({

@@ -42,6 +42,7 @@ import { signOut } from "next-auth/react";
 
 export default function SidebarWithHeader({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <ChakraProvider theme={customTheme}>
       <Box minH="100vh" bg={useColorModeValue("#F5F5F5", "#D4D4D4")}>
@@ -172,7 +173,9 @@ const SidebarContent = ({ onClose, ...rest }) => {
 }*/
 
 const MobileNav = ({ onOpen, ...rest }) => {
+  //const { data: session, status, update } = useSession();
   const router = useRouter();
+
   const handleLogout = (e) => {
     e.preventDefault();
     signOut({ callbackUrl: "/Auth/Logout" });
@@ -187,6 +190,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
     getSession().then((session) => setLastName(session.user.lastName));
     getSession().then((session) => setSuffix(session.user.suffix));
   }, []);
+
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -229,9 +233,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
             leftIcon={<FaUser />}
           >
             <Text display={{ base: "none", md: "flex" }}>
-              {rank}
-              {lastName}
-              {suffix}
+              {rank} {lastName} {suffix}
             </Text>
           </MenuButton>
           <MenuList>

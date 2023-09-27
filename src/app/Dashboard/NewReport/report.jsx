@@ -22,9 +22,13 @@ import {
   updateReport,
 } from "./../../actions/Report.js";
 import Dialog from "./dialog.jsx";
+import { useRouter } from "next/navigation";
+
+import secureLocalStorage from "react-secure-storage";
 
 export default function Report(report_mode) {
-  const [createStatus, setCreateStatus] = useState(false);
+  const router = useRouter();
+  const [dialogStatus, setDialogStatus] = useState(false);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [date, setDate] = useState(""); // needs to default to current date
@@ -35,7 +39,10 @@ export default function Report(report_mode) {
   const [hasError, setHasError] = useState(false);
   const [hasEntry, setHasEntry] = useState(false);
   const [hasReportId, setHasReportId] = useState(false);
-  const [reportId, setReportId] = useState("6505e9718a0e552d773e577d");
+  const [reportId, setReportId] = useState(
+    String(secureLocalStorage.getItem("reportID"))
+  );
+
   var state;
 
   //temp
@@ -62,17 +69,22 @@ export default function Report(report_mode) {
         console.log("hasEntry:", entry);
       }
       if (hasReportId && !hasEntry) {
+        secureLocalStorage.removeItem("reportID");
         console.log("hasReportId && !hasEntry", reportId, hasEntry);
         setIsLoading(true);
         setHasError(false);
-        getReport({ reportId }).then((response) => {
-          response.ok
-            ? response
-                .json()
-                .then((response) => setEntry(response))
-                .then(setHasEntry(true))
-            : setHasError(true);
-        });
+        if (reportId == "null") {
+          router.push("/Dashboard/Reports");
+        } else {
+          getReport({ reportId }).then((response) => {
+            response.ok
+              ? response
+                  .json()
+                  .then((response) => setEntry(response))
+                  .then(setHasEntry(true))
+              : setHasError(true);
+          });
+        }
       }
       if (hasReportId && hasEntry) {
         console.log("hasReportId && hasEntry", reportId, hasEntry);
@@ -91,7 +103,7 @@ export default function Report(report_mode) {
         }
       }
     }
-  }, [hasEntry, hasReportId, reportId, entry, report_mode]);
+  }, [hasEntry, hasReportId, reportId, entry, report_mode, router]);
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
@@ -100,7 +112,7 @@ export default function Report(report_mode) {
         (response) => {
           if (response.ok) {
             {
-              setCreateStatus(true);
+              setDialogStatus("New");
             }
           } else {
             alert("Report could not be created. Please try again.");
@@ -112,8 +124,7 @@ export default function Report(report_mode) {
         (response) => {
           if (response.ok) {
             {
-              console.log("success");
-              report_mode == "View";
+              setDialogStatus("Edit");
             }
           } else {
             alert("Report could not be updated. Please try again.");
@@ -232,7 +243,7 @@ export default function Report(report_mode) {
           </FormControl>
         </VStack>
       </form>
-      {Dialog(createStatus)}
+      {Dialog(dialogStatus)}
     </>
   );
 }

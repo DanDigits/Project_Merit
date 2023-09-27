@@ -1,5 +1,6 @@
 import getPath from "../../../utils/getPath";
 
+/** Create new report */
 export const createReport = async ({
   title,
   email,
@@ -25,6 +26,7 @@ export const createReport = async ({
   return response;
 };
 
+/** Update report */
 export const updateReport = async ({
   reportId,
   title,
@@ -52,28 +54,62 @@ export const updateReport = async ({
   return response;
 };
 
-export const getReport = async ({ reportId }) => {
-  const response = await fetch(getPath.baseUrl + getPath.api.reports.get, {
-    method: "GET",
-    mode: "same-origin",
-    headers: {
-      report: reportId,
-    },
-  });
-
-  console.log(response.statusText);
-
-  return response;
-};
-
+/** Get list of reports for user */
 export const getUserReports = async ({ email }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.reports.get, {
     method: "GET",
     mode: "same-origin",
     headers: {
+      request: "1",
       user: email,
     },
   });
+  console.log(response.statusText);
+
+  return response;
+};
+
+/** Get most recent report for user */
+export const getLastReport = async ({ email }) => {
+  const response = await fetch(getPath.baseUrl + getPath.api.reports.get, {
+    method: "GET",
+    mode: "same-origin",
+    headers: {
+      request: "2",
+      user: email,
+    },
+  });
+  console.log(response.statusText);
+
+  return response;
+};
+
+/** Get report totals for fiscal year, quarter, and catetories */
+export const getTotals = async ({ email }) => {
+  const response = await fetch(getPath.baseUrl + getPath.api.reports.get, {
+    method: "GET",
+    mode: "same-origin",
+    headers: {
+      request: "3",
+      user: email,
+    },
+  });
+  console.log(response.statusText);
+
+  return response;
+};
+
+/** Create new report */
+export const getReport = async ({ reportId }) => {
+  const response = await fetch(getPath.baseUrl + getPath.api.reports.get, {
+    method: "GET",
+    mode: "same-origin",
+    headers: {
+      request: "4",
+      report: reportId,
+    },
+  });
+
   console.log(response.statusText);
 
   return response;
