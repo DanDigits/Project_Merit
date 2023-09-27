@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+//import { useState } from "react";
 import {
   VStack,
   Text,
@@ -10,25 +10,24 @@ import {
 } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/react";
 import { signOut } from "next-auth/react";
-import { useEffect } from "react";
-import { getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export default function Page() {
-  const [email, setEmail] = useState("");
+  const { data: session } = useSession();
+  /*const [email, setEmail] = useState("");
   const [rank, setRank] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [suffix, setSuffix] = useState("");
-  const [reportType, setReportType] = useState(0);
-
+  
   useEffect(() => {
     getSession().then((session) => setEmail(session.user.email));
     getSession().then((session) => setRank(session.user.rank));
     getSession().then((session) => setFirstName(session.user.firstName));
     getSession().then((session) => setLastName(session.user.lastName));
     getSession().then((session) => setSuffix(session.user.suffix));
-    getSession().then((session) => setReportType(session.user.reportType));
-  }, []);
+  }, []); */
+
   const handleLogout = (e) => {
     e.preventDefault();
     signOut({ callbackUrl: "/Auth/Logout" });
@@ -48,33 +47,22 @@ export default function Page() {
                 <Text fontSize="2xl" fontWeight="bold">
                   Primary Email
                 </Text>
-                <Text fontSize="lg">{email}</Text>
+                <Text fontSize="lg">{session?.user.email}</Text>
+              </Box>
+              <Box p="5">
+                <Text fontSize="2xl" fontWeight="bold">
+                  Rank
+                </Text>
+                <Text fontSize="lg">{session?.user.rank}</Text>
               </Box>
               <Box p="5">
                 <Text fontSize="2xl" fontWeight="bold">
                   Name
                 </Text>
                 <Text fontSize="lg">
-                  {firstName} {lastName}
+                  {session?.user.firstName} {session?.user.lastName}{" "}
+                  {session?.user.suffix}
                 </Text>
-              </Box>
-              <Box p="5">
-                <Text fontSize="2xl" fontWeight="bold">
-                  Suffix
-                </Text>
-                <Text fontSize="lg">{suffix}</Text>
-              </Box>
-              <Box p="5">
-                <Text fontSize="2xl" fontWeight="bold">
-                  Rank
-                </Text>
-                <Text fontSize="lg">{rank}</Text>
-              </Box>
-              <Box p="5">
-                <Text fontSize="2xl" fontWeight="bold">
-                  Report Type
-                </Text>
-                <Text fontSize="lg">{reportType}</Text>
               </Box>
             </VStack>
             <VStack spacing={10}>

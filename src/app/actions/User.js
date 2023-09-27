@@ -6,7 +6,6 @@ export const signUp = async ({
   firstName,
   lastName,
   suffix,
-  reportType,
   password,
 }) => {
   const response = await fetch(urls.baseUrl + urls.api.user.signUp, {
@@ -22,7 +21,6 @@ export const signUp = async ({
       firstName,
       lastName,
       suffix,
-      reportType,
       password,
     }),
   });

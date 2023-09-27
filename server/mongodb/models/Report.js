@@ -13,8 +13,8 @@ const ReportSchema = new Schema({
     type: String,
     required: true,
   },
-  quarter: {
-    type: Number,
+  category: {
+    type: String,
     required: true,
   },
   report: {

@@ -1,6 +1,12 @@
 import getPath from "../../../utils/getPath";
 
-export const createReport = async ({ title, email, date, quarter, report }) => {
+export const createReport = async ({
+  title,
+  email,
+  date,
+  category,
+  report,
+}) => {
   const response = await fetch(getPath.baseUrl + getPath.api.reports.create, {
     method: "POST",
     mode: "same-origin",
@@ -11,7 +17,7 @@ export const createReport = async ({ title, email, date, quarter, report }) => {
       title,
       email,
       date,
-      quarter,
+      category,
       report,
     }),
   });
@@ -24,7 +30,7 @@ export const updateReport = async ({
   title,
   email,
   date,
-  quarter,
+  category,
   report,
 }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.reports.update, {
@@ -37,7 +43,7 @@ export const updateReport = async ({
       title,
       email,
       date,
-      quarter,
+      category,
       report,
     }),
   });
