@@ -3,16 +3,30 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 //import { headers } from "next/headers";
-import { signUp, verify } from "server/mongodb/actions/User";
+import {
+  modifyUser,
+  signUp,
+  verifyUser,
+  deleteUser,
+} from "server/mongodb/actions/User";
 import urls from "../../../../utils/getPath";
 import nodemailer from "nodemailer";
 
 export async function GET(Request) {
-  const url = new URL(Request.url);
-  const user = url.searchParams.get("num");
-  const res = await verify(user);
+  const headersInstance = headers();
+  const user = headersInstance.get("user");
+  let res;
+
+  if (!user) {
+    const url = new URL(Request.url);
+    const user = url.searchParams.get("num");
+    res = await verifyUser(user);
+  } else if (user) {
+    res = await getUser(user);
+  }
+
   if (res.id) {
-    return new Response("OK", { status: 200 });
+    return new Response(res, { status: 200 });
   } else {
     return new Response("ERROR", { status: 400 });
   }
@@ -66,12 +80,24 @@ export async function PATCH(Request) {
   const headersInstance = headers();
   const user = headersInstance.get("user");
 
-  const res = await modifyReport(user, await Request.json());
+  const res = await modifyUser(user, await Request.json());
   if (res.name == "ValidationError") {
     return new Response(res, { status: 422 });
   } else if (res.message) {
     return new Response(res.message, { status: 400 });
   } else if (res) {
     return new Response(res.id, { status: 200 });
+  }
+}
+
+export async function DELETE(Request) {
+  const headersInstance = headers();
+  const user = headersInstance.get("user");
+
+  const res = await deleteUser(user, await Request.json());
+  if (res.id) {
+    return new Response("OK", { status: 200 });
+  } else if (res) {
+    return new Response(res, { status: 400 });
   }
 }
