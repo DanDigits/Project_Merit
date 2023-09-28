@@ -5,7 +5,7 @@ function getBaseURL() {
     !process.env.NEXT_PUBLIC_NEXTAUTH_URL ||
     process.env.NEXT_PUBLIC_NEXTAUTH_URL == "localhost"
   ) {
-    return `https://merit.testing.systems`;
+    return `http://localhost:3000`;
   } else if (
     process.env.NEXT_PUBLIC_NEXTAUTH_URL.toLowerCase().includes("http://")
   ) {
