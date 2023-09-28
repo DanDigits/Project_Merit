@@ -15,7 +15,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 
-import { getUser } from "src/app/actions/User";
+import { getUser, updateUser } from "src/app/actions/User";
 
 export default function UpdateProfile() {
   const [mode, setMode] = useState("View");
@@ -69,6 +69,19 @@ export default function UpdateProfile() {
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
+
+    updateUser({ email, rank, firstName, lastName, suffix }).then(
+      (response) => {
+        if (response.ok) {
+          {
+            alert("Profile updated.");
+            setMode("View");
+          }
+        } else {
+          alert("User could not be updated. Please try again.");
+        }
+      }
+    );
   };
 
   return (
