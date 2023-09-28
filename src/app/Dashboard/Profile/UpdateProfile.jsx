@@ -18,6 +18,7 @@ import {
 import { getUser } from "src/app/actions/User";
 
 export default function UpdateProfile() {
+  const [mode, setMode] = useState("View");
   const [rank, setRank] = useState("");
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -28,6 +29,12 @@ export default function UpdateProfile() {
   const [hasProfile, setHasProfile] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
+
+  var state;
+
+  if (mode === "View") {
+    state = true;
+  } else state = false;
 
   useEffect(() => {
     if (!hasEmail) {
@@ -83,6 +90,7 @@ export default function UpdateProfile() {
                 Rank
               </FormLabel>
               <Select
+                isDisabled={state}
                 placeholder="Select Rank"
                 value={rank}
                 variant="login"
@@ -128,6 +136,7 @@ export default function UpdateProfile() {
                 First Name
               </FormLabel>
               <Input
+                isDisabled={state}
                 type=""
                 value={firstName}
                 maxLength={64}
@@ -145,6 +154,7 @@ export default function UpdateProfile() {
                 Last Name
               </FormLabel>
               <Input
+                isDisabled={state}
                 type=""
                 value={lastName}
                 maxLength={64}
@@ -162,6 +172,7 @@ export default function UpdateProfile() {
                 Suffix
               </FormLabel>
               <Input
+                isDisabled={state}
                 type=""
                 value={suffix}
                 maxLength={6}
@@ -178,16 +189,40 @@ export default function UpdateProfile() {
         </CardBody>
         <CardFooter>
           <ButtonGroup>
-            <Button
-              bgColor={"#70A0AF"}
-              color={"white"}
-              _hover={{ bgColor: "#706993", color: "white" }}
-              form="profile-form"
-              type="submit"
-              onClick={(e) => handleSubmitInfo(e)}
-            >
-              Update
-            </Button>
+            {mode === "View" && (
+              <>
+                <Button
+                  bgColor={"#70A0AF"}
+                  color={"white"}
+                  _hover={{ bgColor: "#706993", color: "white" }}
+                  onClick={() => setMode("Edit")}
+                >
+                  Edit
+                </Button>
+              </>
+            )}
+            {mode === "Edit" && (
+              <>
+                <Button
+                  bgColor={"#A0C1B9"}
+                  color={"#331E38"}
+                  _hover={{ bgColor: "#706993", color: "white" }}
+                  onClick={() => setMode("View")}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  bgColor={"#70A0AF"}
+                  color={"white"}
+                  _hover={{ bgColor: "#706993", color: "white" }}
+                  form="profile-form"
+                  type="submit"
+                  onClick={(e) => handleSubmitInfo(e)}
+                >
+                  Update
+                </Button>
+              </>
+            )}
           </ButtonGroup>
         </CardFooter>
       </Card>
