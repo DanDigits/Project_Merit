@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getSession } from "next-auth/react";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -8,16 +9,31 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   Button,
+  Link,
   useDisclosure,
 } from "@chakra-ui/react";
+import { deleteUser } from "src/app/actions/User";
 
 export default function DeleteDialog(deleteStatus) {
   const { onClose } = useDisclosure();
+  const [email, setEmail] = useState("");
   const cancelRef = React.useRef();
 
-  const handleDelete = (e) => {
-    e.preventDefault();
-    console.log("Have you hooked up delete yet?");
+  useEffect(() => {
+    getSession().then((session) => setEmail(session.user.email));
+    console.log("Email:", email);
+  });
+
+  const handleDelete = () => {
+    deleteUser({ email }).then((response) => {
+      if (response.ok) {
+        {
+          alert("User deleted.");
+        }
+      } else {
+        alert("User could not be deleted. Please try again.");
+      }
+    });
   };
 
   return (
@@ -38,15 +54,17 @@ export default function DeleteDialog(deleteStatus) {
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button
-                bgColor={"#A0C1B9"}
-                color={"#331E38"}
-                _hover={{ bgColor: "#706993", color: "white" }}
-                ref={cancelRef}
-                onClick={onClose}
-              >
-                No
-              </Button>
+              <Link href="/Dashboard/Profile">
+                <Button
+                  bgColor={"#A0C1B9"}
+                  color={"#331E38"}
+                  _hover={{ bgColor: "#706993", color: "white" }}
+                  ref={cancelRef}
+                  onClick={onClose}
+                >
+                  No
+                </Button>
+              </Link>
               <Button
                 bgColor={"#70A0AF"}
                 color={"white"}
