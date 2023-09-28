@@ -3,17 +3,56 @@ import { Card, CardHeader, CardBody } from "@chakra-ui/react";
 import { Stack, Text, VStack, HStack, Heading } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
+import { getTotals } from "./../../actions/Report.js";
 
 export default function Page() {
+  const [email, setEmail] = useState("");
   const [rank, setRank] = useState("");
   const [lastName, setLastName] = useState("");
   const [suffix, setSuffix] = useState("");
+  const [totals, setTotals] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [hasEmail, setHasEmail] = useState(false);
+  const [hasTotals, setHasTotals] = useState(false);
 
   useEffect(() => {
+    getSession().then((session) => setEmail(session.user.email));
     getSession().then((session) => setRank(session.user.rank));
     getSession().then((session) => setLastName(session.user.lastName));
     getSession().then((session) => setSuffix(session.user.suffix));
   }, []);
+
+  useEffect(() => {
+    if (!hasEmail) {
+      //console.log("!hasemail");
+      setIsLoading(true);
+      setHasError(false);
+      getSession()
+        .then((session) => setEmail(session.user.email))
+        .then(() => setHasEmail(true));
+    }
+    if (hasEmail && !hasTotals) {
+      console.log("hasEmail && !hasTotals", email, hasTotals);
+      setIsLoading(true);
+      setHasError(false);
+      getTotals({ email }).then((response) => {
+        response.ok
+          ? response
+              .json()
+              .then((response) => setTotals(response))
+              .then(setHasTotals(true))
+          : setHasError(true);
+        console.log("hasError:", hasError);
+      });
+    }
+    if (hasEmail && hasTotals) {
+      console.log("hasEmail && hasTotals", email, hasTotals);
+      setIsLoading(false);
+      console.log("isLoading:", isLoading);
+      console.log("totals:", totals);
+    }
+  }, [hasEmail, hasTotals, email]);
 
   return (
     <>
