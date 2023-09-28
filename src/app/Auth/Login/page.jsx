@@ -79,8 +79,8 @@ export default function Page() {
                 <Input
                   variant="login"
                   borderWidth={"2px"}
+                  bg="#F7FAFC"
                   borderColor={"#70A0AF"}
-                  bg="#ECECEC"
                   mb={3}
                   size={"md"}
                   type="email"
@@ -97,7 +97,7 @@ export default function Page() {
                   variant="login"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
-                  bg="#ECECEC"
+                  bg="#F7FAFC"
                   size={"md"}
                   type="password"
                   minLength={8}
@@ -120,7 +120,7 @@ export default function Page() {
                   variant="login"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
-                  bg="#ECECEC"
+                  bg="#F7FAFC"
                   mb={3}
                   size={"md"}
                   _hover={{ bgColor: "#706993" }}
@@ -172,7 +172,7 @@ export default function Page() {
                   variant="login"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
-                  bg="#ECECEC"
+                  bg="#F7FAFC"
                   mb={3}
                   size={"md"}
                   onChange={(e) => setFirstName(e.target.value)}
@@ -190,7 +190,7 @@ export default function Page() {
                   variant="login"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
-                  bg="#ECECEC"
+                  bg="#F7FAFC"
                   mb={3}
                   size={"md"}
                   onChange={(e) => setLastName(e.target.value)}
@@ -208,7 +208,7 @@ export default function Page() {
                   variant="login"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
-                  bg="#ECECEC"
+                  bg="#F7FAFC"
                   mb={3}
                   size={"md"}
                   onChange={(e) => setSuffix(e.target.value)}
@@ -224,7 +224,7 @@ export default function Page() {
                   variant="login"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
-                  bg="#ECECEC"
+                  bg="#F7FAFC"
                   mb={3}
                   size={"md"}
                   maxLength={255}
@@ -242,7 +242,7 @@ export default function Page() {
                   variant="login"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
-                  bg="#ECECEC"
+                  bg="#F7FAFC"
                   mb={3}
                   size={"md"}
                   minLength={8}
@@ -261,7 +261,7 @@ export default function Page() {
                   variant="login"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
-                  bg="#ECECEC"
+                  bg="#F7FAFC"
                   mb={3}
                   size={"md"}
                   minLength={8}
