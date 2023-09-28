@@ -197,9 +197,7 @@ export default function Page() {
             width={{ md: "md" }}
           >
             <CardHeader pb={"5"}>
-              <Heading fontSize={"20"}>
-                Last Report Written on: 00/00/0000
-              </Heading>
+              <Heading fontSize={"20"}>Date of Last Report: 00/00/0000</Heading>
             </CardHeader>
             <CardFooter pt={"0"}>
               <Button bg="white" _hover={{ bg: "#331E38", color: "white" }}>
