@@ -109,7 +109,7 @@ export default function UpdateProfile() {
                 variant="login"
                 borderWidth={"2px"}
                 borderColor={"#70A0AF"}
-                bg="#ECECEC"
+                bg="#EDF2F7"
                 mb={3}
                 size={"md"}
                 _hover={{ bgColor: "#706993" }}
@@ -156,7 +156,7 @@ export default function UpdateProfile() {
                 variant="login"
                 borderWidth={"2px"}
                 borderColor={"#70A0AF"}
-                bg="#ECECEC"
+                bg="#EDF2F7"
                 mb={3}
                 size={"md"}
                 onChange={(e) => setFirstName(e.target.value)}
@@ -174,7 +174,7 @@ export default function UpdateProfile() {
                 variant="login"
                 borderWidth={"2px"}
                 borderColor={"#70A0AF"}
-                bg="#ECECEC"
+                bg="#EDF2F7"
                 mb={3}
                 size={"md"}
                 onChange={(e) => setLastName(e.target.value)}
@@ -192,7 +192,7 @@ export default function UpdateProfile() {
                 variant="login"
                 borderWidth={"2px"}
                 borderColor={"#70A0AF"}
-                bg="#ECECEC"
+                bg="#EDF2F7"
                 mb={3}
                 size={"md"}
                 onChange={(e) => setSuffix(e.target.value)}

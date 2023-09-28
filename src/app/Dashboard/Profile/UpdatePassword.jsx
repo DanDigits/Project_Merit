@@ -46,7 +46,7 @@ export default function UpdatePassword() {
                 variant="login"
                 borderWidth={"2px"}
                 borderColor={"#70A0AF"}
-                bg="#ECECEC"
+                bg="#EDF2F7"
                 mb={3}
                 size={"md"}
                 minLength={8}
@@ -65,7 +65,7 @@ export default function UpdatePassword() {
                 variant="login"
                 borderWidth={"2px"}
                 borderColor={"#70A0AF"}
-                bg="#ECECEC"
+                bg="#EDF2F7"
                 mb={3}
                 size={"md"}
                 minLength={8}
