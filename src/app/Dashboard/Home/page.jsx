@@ -1,9 +1,15 @@
 "use client";
-import { Card, CardHeader, CardBody } from "@chakra-ui/react";
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+} from "@chakra-ui/react";
 import { Stack, Text, VStack, HStack, Heading } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
-import { getTotals } from "./../../actions/Report.js";
+import { getLastReport, getTotals } from "./../../actions/Report.js";
 
 export default function Page() {
   const [email, setEmail] = useState("");
@@ -11,10 +17,12 @@ export default function Page() {
   const [lastName, setLastName] = useState("");
   const [suffix, setSuffix] = useState("");
   const [totals, setTotals] = useState("");
+  const [report, setReport] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [hasEmail, setHasEmail] = useState(false);
   const [hasTotals, setHasTotals] = useState(false);
+  const [hasReport, setHasReport] = useState(false);
 
   useEffect(() => {
     getSession().then((session) => setEmail(session.user.email));
@@ -46,11 +54,31 @@ export default function Page() {
         console.log("hasError:", hasError);
       });
     }
-    if (hasEmail && hasTotals) {
-      console.log("hasEmail && hasTotals", email, hasTotals);
+    if (hasEmail && !hasReport) {
+      console.log("hasEmail && !hasReport", email, hasReport);
+      setIsLoading(true);
+      setHasError(false);
+      getLastReport({ email }).then((response) => {
+        response.ok
+          ? response
+              .json()
+              .then((response) => setReport(response))
+              .then(setHasReport(true))
+          : setHasError(true);
+        console.log("hasError:", hasError);
+      });
+    }
+    if (hasEmail && hasTotals && hasReport) {
+      console.log(
+        "hasEmail && hasTotals && hasReport",
+        email,
+        hasTotals,
+        hasReport
+      );
       setIsLoading(false);
       console.log("isLoading:", isLoading);
       console.log("totals:", totals);
+      console.log("report:", report);
     }
   }, [hasEmail, hasTotals, email]);
 
@@ -161,6 +189,24 @@ export default function Page() {
               </CardBody>
             </Card>
           </HStack>
+          <Card
+            bgColor={"#F4E8C1"}
+            size={{ base: "sm", md: "lg" }}
+            variant={"outline"}
+            align={"center"}
+            width={{ md: "md" }}
+          >
+            <CardHeader pb={"5"}>
+              <Heading fontSize={"20"}>
+                Last Report Written on: 00/00/0000
+              </Heading>
+            </CardHeader>
+            <CardFooter pt={"0"}>
+              <Button bg="white" _hover={{ bg: "#331E38", color: "white" }}>
+                View Last Report
+              </Button>
+            </CardFooter>
+          </Card>
         </Stack>
       </Card>
     </>
