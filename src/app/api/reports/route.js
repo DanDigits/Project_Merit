@@ -24,18 +24,43 @@ export async function POST(Request) {
 
 export async function GET() {
   const headersInstance = headers();
-  const user = headersInstance.get("user"); // or "email"
-  const report = headersInstance.get("report");
-  var res;
+  const request = headersInstance.get("request");
+  let res;
 
-  if (user) {
-    res = await getUserReports(user);
-  } else if (report) {
-    res = await getReport(report);
-  } else {
-    return new Response("ERROR", { status: 400 });
+  // Switch case to differentiate GET requests
+  switch (request) {
+    case "1": {
+      // Get 20 of a Users reports, ordered by date most recent
+      const user = headersInstance.get("user"); // or "email";
+      res = await getUserReports(user, null);
+      break;
+    }
+    case "2": {
+      // Get most recent user report with user username/email
+      const user = headersInstance.get("user");
+      res = await getReport(user);
+      break;
+    }
+    case "3": {
+      // Get total number of reports for fiscal year and quarter,
+      // and number for each category for the given quarter
+      const user = headersInstance.get("user");
+      const date = new Date();
+      res = await getUserReports(user, date);
+      break;
+    }
+    case "4": {
+      // Get specific report with report ID
+      const report = headersInstance.get("report");
+      res = await getReport(report);
+      break;
+    }
+    default: {
+      return new Response("ERROR", { status: 400 });
+    }
   }
 
+  // Coordinate responses respectively
   if (res.name) {
     res = JSON.stringify(res);
     return new Response(res, { status: 404 });
@@ -48,7 +73,6 @@ export async function GET() {
   }
 }
 
-// Decide how delete implementation will work, currently uses "report" header
 export async function DELETE() {
   const headersInstance = headers();
   const report = headersInstance.get("report");
