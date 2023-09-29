@@ -77,8 +77,9 @@ const SidebarContent = ({ onClose, ...rest }) => {
   //const router = useRouter();
   return (
     <Box
+      boxShadow={"md"}
       transition="3s ease"
-      bg={"#F4E8C1"}
+      bg={"#70A0AF"}
       w={{ base: "full", md: 60 }}
       pos="fixed"
       h="full"
@@ -104,9 +105,9 @@ const SidebarContent = ({ onClose, ...rest }) => {
             variant="ghost"
             onClick={onClose}
             fontSize={20}
-            textColor={"#331E38"}
+            textColor={"black"}
             colorScheme="purple"
-            _hover={{ bg: "#706993", color: "white" }}
+            _hover={{ color: "white" }}
             leftIcon={<AiFillHome />}
           >
             Home
@@ -118,9 +119,9 @@ const SidebarContent = ({ onClose, ...rest }) => {
             variant="ghost"
             onClick={onClose}
             fontSize={20}
-            textColor={"#331E38"}
+            textColor={"black"}
             colorScheme="purple"
-            _hover={{ bg: "#706993", color: "white" }}
+            _hover={{ color: "white" }}
             leftIcon={<AiOutlineFolder />}
           >
             Reports
@@ -132,9 +133,9 @@ const SidebarContent = ({ onClose, ...rest }) => {
             variant="ghost"
             onClick={onClose}
             fontSize={20}
-            textColor={"#331E38"}
+            textColor={"black"}
             colorScheme="purple"
-            _hover={{ bg: "#706993", color: "white" }}
+            _hover={{ color: "white" }}
             leftIcon={<AiOutlineFile />}
           >
             Guidelines
@@ -161,7 +162,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
         cursor="pointer"
         _hover={{
           bg: "cyan.400",
-          color: "white"
+          color: "black"
         }}
         {...rest}
       >
@@ -193,11 +194,12 @@ const MobileNav = ({ onOpen, ...rest }) => {
 
   return (
     <Flex
+      boxShadow={"md"}
       ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 4 }}
       height="20"
       alignItems="center"
-      bg={"white"}
+      bg={"#706993"}
       justifyContent={{ base: "space-between" }}
       {...rest}
     >
@@ -206,7 +208,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
         onClick={onOpen}
         variant="outline"
         aria-label="open menu"
-        color={"#706993"}
+        color={"black"}
         icon={<FiMenu />}
       />
       <Box justifyContent={{ base: "space-between", md: "flex-end" }}>
@@ -214,9 +216,9 @@ const MobileNav = ({ onOpen, ...rest }) => {
           variant="ghost"
           onClick={() => router.push("/Dashboard/NewReport")}
           fontSize={20}
-          textColor={"#706993"}
+          textColor={"black"}
           colorScheme="purple"
-          _hover={{ bg: "#706993", color: "white" }}
+          _hover={{ color: "white" }}
           textOverflow={"inherit"}
           leftIcon={<AiOutlineFileAdd />}
         >
@@ -228,8 +230,8 @@ const MobileNav = ({ onOpen, ...rest }) => {
             as={Button}
             variant="ghost"
             fontSize={20}
-            textColor={"#706993"}
-            _hover={{ bg: "#706993", color: "white" }}
+            textColor={"black"}
+            _hover={{ color: "white" }}
             leftIcon={<FaUser />}
           >
             <Text display={{ base: "none", md: "flex" }}>
@@ -238,12 +240,17 @@ const MobileNav = ({ onOpen, ...rest }) => {
           </MenuButton>
           <MenuList>
             <MenuItem
-              textColor={"#331E38"}
+              textColor={"black"}
+              fontWeight={"semibold"}
               onClick={() => router.push("/Dashboard/Profile")}
             >
               Profile
             </MenuItem>
-            <MenuItem textColor={"#331E38"} onClick={handleLogout}>
+            <MenuItem
+              textColor={"black"}
+              fontWeight={"semibold"}
+              onClick={handleLogout}
+            >
               Logout
             </MenuItem>
           </MenuList>
