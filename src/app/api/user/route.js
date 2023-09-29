@@ -2,12 +2,13 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
-//import { headers } from "next/headers";
+import { headers } from "next/headers";
 import {
   modifyUser,
   signUp,
   verifyUser,
   deleteUser,
+  getUser,
 } from "server/mongodb/actions/User";
 import urls from "../../../../utils/getPath";
 import nodemailer from "nodemailer";
@@ -19,14 +20,20 @@ export async function GET(Request) {
 
   if (!user) {
     const url = new URL(Request.url);
-    const user = url.searchParams.get("num");
-    res = await verifyUser(user);
+    const userId = url.searchParams.get("num");
+    if (userId) {
+      res = await verifyUser(userId);
+    } else {
+      return new Response("ERROR", { status: 400 });
+    }
   } else if (user) {
     res = await getUser(user);
   }
 
-  if (res.id) {
+  if (res && user) {
     return new Response(res, { status: 200 });
+  } else if (res && !user) {
+    return new Response("OK", { status: 200 });
   } else {
     return new Response("ERROR", { status: 400 });
   }
@@ -64,6 +71,7 @@ export async function POST(Request) {
         console.log(err);
       }
     });
+
     return new Response("OK", { status: 200 });
   } else if (res.name == "ValidationError") {
     return new Response(res, { status: 422 });
@@ -79,8 +87,8 @@ export async function POST(Request) {
 export async function PATCH(Request) {
   const headersInstance = headers();
   const user = headersInstance.get("user");
-
   const res = await modifyUser(user, await Request.json());
+
   if (res.name == "ValidationError") {
     return new Response(res, { status: 422 });
   } else if (res.message) {
@@ -90,11 +98,11 @@ export async function PATCH(Request) {
   }
 }
 
-export async function DELETE(Request) {
+export async function DELETE() {
   const headersInstance = headers();
   const user = headersInstance.get("user");
+  const res = await deleteUser(user);
 
-  const res = await deleteUser(user, await Request.json());
   if (res.id) {
     return new Response("OK", { status: 200 });
   } else if (res) {
