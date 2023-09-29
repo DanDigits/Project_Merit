@@ -76,8 +76,8 @@ export async function GET() {
 export async function DELETE() {
   const headersInstance = headers();
   const report = headersInstance.get("report");
-
   const res = await deleteReport(report);
+
   if (res.message) {
     return new Response(res.message, { status: 400 });
   } else if (res) {
@@ -88,8 +88,8 @@ export async function DELETE() {
 export async function PATCH(Request) {
   const headersInstance = headers();
   const report = headersInstance.get("report");
-
   const res = await modifyReport(report, await Request.json());
+
   if (res.name == "ValidationError") {
     return new Response(res, { status: 422 });
   } else if (res.message) {

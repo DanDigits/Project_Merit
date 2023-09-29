@@ -2,17 +2,14 @@
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 import {
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-  Box,
+  AbsoluteCenter,
   FormControl,
   FormLabel,
   HStack,
   Input,
   Select,
+  Spinner,
+  Switch,
   Textarea,
   VStack,
 } from "@chakra-ui/react";
@@ -25,6 +22,7 @@ import Dialog from "./dialog.jsx";
 import { useRouter } from "next/navigation";
 
 import secureLocalStorage from "react-secure-storage";
+import Thesaurus from "./thesaurus";
 
 export default function Report(report_mode) {
   const router = useRouter();
@@ -35,6 +33,7 @@ export default function Report(report_mode) {
   const [report, setReport] = useState("");
   const [email, setEmail] = useState("");
   const [entry, setEntry] = useState(null);
+  const [toggle, setToggle] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [hasEntry, setHasEntry] = useState(false);
@@ -131,6 +130,19 @@ export default function Report(report_mode) {
 
   return (
     <>
+      {isLoading && (
+        <>
+          <AbsoluteCenter>
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="#70A0Af"
+              size="xl"
+            />
+          </AbsoluteCenter>
+        </>
+      )}
       <form
         className="flex"
         id="report-form"
@@ -148,7 +160,7 @@ export default function Report(report_mode) {
             variant="login"
             borderWidth={"2px"}
             borderColor={"#70A0AF"}
-            bg="#ECECEC"
+            bg="#F7FAFC"
             mb={3}
             size={"md"}
             onChange={(e) => setTitle(e.target.value)}
@@ -165,7 +177,7 @@ export default function Report(report_mode) {
               variant="login"
               borderWidth={"2px"}
               borderColor={"#70A0AF"}
-              bg="#ECECEC"
+              bg="#F7FAFC"
               mb={3}
               size={"md"}
               value={category}
@@ -190,48 +202,46 @@ export default function Report(report_mode) {
               variant="login"
               borderWidth={"2px"}
               borderColor={"#70A0AF"}
-              bg="#ECECEC"
+              bg="#F7FAFC"
               mb={3}
               size={"md"}
               onChange={(e) => setDate(e.target.value)}
             />
           </FormControl>
         </HStack>
-        <br />
-        <Accordion allowToggle>
-          <AccordionItem borderColor="purple.300">
-            <h2>
-              <AccordionButton>
-                <Box as="span" flex="1" textAlign="left">
-                  Guidelines
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel outlineColor={"#331E38"} pb={4}>
-              <div>Here are some quick tips for effective bullet points:</div>
-              <div>Tip 1: This is a tip</div>
-              <div>Tip 2: This is another time</div>
-              <div>Tip 3: Still another tip</div>
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion>
+        <FormControl display="flex" alignItems="center" htmlFor="thesaurus">
+          <FormLabel mb="0">Enable thesaurus?</FormLabel>
+          <Switch
+            name={"thesaurus"}
+            id={"thesaurusSwitch"}
+            isDisabled={state}
+            colorScheme={"teal"}
+            onChange={(e) => setToggle(!toggle)}
+          />
+        </FormControl>
+        {toggle && (
+          <>
+            <Thesaurus />
+          </>
+        )}
         <br />
         <VStack>
           <FormControl id="report" isRequired>
+            <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+              Report
+            </FormLabel>
             <Textarea
               isDisabled={state}
               placeholder="What would you like to report?"
               type="text"
               varient="outline"
-              maxLength={500}
               variant="login"
               borderWidth={"2px"}
               borderColor={"#70A0AF"}
-              bg="#ECECEC"
+              bg="#F7FAFC"
               mb={3}
               size={"md"}
-              width={{ base: "100%", md: "lg" }}
+              width="100%"
               value={report}
               onChange={(e) => setReport(e.target.value)}
             />
