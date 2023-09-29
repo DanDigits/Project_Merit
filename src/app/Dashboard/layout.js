@@ -77,6 +77,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
   //const router = useRouter();
   return (
     <Box
+      boxShadow={"md"}
       transition="3s ease"
       bg={"#F4E8C1"}
       w={{ base: "full", md: 60 }}
@@ -193,6 +194,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
 
   return (
     <Flex
+      boxShadow={"md"}
       ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 4 }}
       height="20"
