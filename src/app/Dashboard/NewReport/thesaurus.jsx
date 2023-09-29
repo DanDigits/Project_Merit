@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 "use client";
 import React, { useState } from "react";
 import {
@@ -6,7 +7,6 @@ import {
   FormControl,
   FormLabel,
   Textarea,
-  VStack,
 } from "@chakra-ui/react";
 
 export default function Thesaurus() {
