@@ -230,7 +230,7 @@ export default function Report(report_mode) {
           </>
         )}
         <br />
-        <VStack mx={10}>
+        <VStack>
           <FormControl id="report" isRequired>
             <FormLabel mb={1} fontSize={15} color={"#331E38"}>
               Report
@@ -240,14 +240,13 @@ export default function Report(report_mode) {
               placeholder="What would you like to report?"
               type="text"
               varient="outline"
-              maxLength={500}
               variant="login"
               borderWidth={"2px"}
               borderColor={"#70A0AF"}
               bg="#F7FAFC"
               mb={3}
               size={"md"}
-              width={{ base: "100%", md: "lg" }}
+              width="100%"
               value={report}
               onChange={(e) => setReport(e.target.value)}
             />
