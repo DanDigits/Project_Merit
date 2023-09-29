@@ -32,7 +32,8 @@ export async function GET() {
     case "1": {
       // Get 20 of a Users reports, ordered by date most recent
       const user = headersInstance.get("user"); // or "email";
-      res = await getUserReports(user, null);
+      const index = headersInstance.get("index");
+      res = await getUserReports(user, index);
       break;
     }
     case "2": {

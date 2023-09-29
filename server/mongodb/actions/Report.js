@@ -31,20 +31,25 @@ export async function getReport(reportData) {
   return report;
 }
 
-export async function getUserReports(email, date) {
+// The second, eponymous, parameter, is either respectively the index for loading additional reports, or the current date
+export async function getUserReports(email, parameter) {
   await mongoDB();
   const categories = ["Duties", "Conduct", "Training", "Teamwork"];
-  let reports, quarter, temp;
+  let reports, quarter, temp, date;
+  // console.log(parameter);
+  // console.log(new Date());
 
-  if (!date) {
-    // Find 20 of the users most recent reports
+  if (!parameter.getMonth()) {
+    // Find 20 of the users most recent reports, after the given index
     reports = await ReportSchema.find({ email })
       .sort({ date: -1 })
+      .skip(parameter * 20)
       .limit(20)
       .catch(function (err) {
         return err;
       });
-  } else if (date) {
+  } else if (parameter.getMonth()) {
+    date = parameter;
     reports = [];
     // Find total reports for the fiscal year Oct-Sept
     if (date.getMonth() >= 10) {
