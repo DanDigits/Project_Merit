@@ -13,6 +13,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { deleteUser } from "src/app/actions/User";
+import { signOut } from "next-auth/react";
 
 export default function DeleteDialog(deleteStatus) {
   const { onClose } = useDisclosure();
@@ -28,7 +29,7 @@ export default function DeleteDialog(deleteStatus) {
     deleteUser({ email }).then((response) => {
       if (response.ok) {
         {
-          alert("User deleted.");
+          signOut({ callbackUrl: "/Auth/Logout" });
         }
       } else {
         alert("User could not be deleted. Please try again.");
