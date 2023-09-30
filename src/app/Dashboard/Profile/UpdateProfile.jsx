@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import {
   Card,
   Button,
@@ -14,7 +14,6 @@ import {
   Input,
   Select,
 } from "@chakra-ui/react";
-
 import { getUser, updateUser } from "src/app/actions/User";
 
 export default function UpdateProfile() {
@@ -29,6 +28,7 @@ export default function UpdateProfile() {
   const [hasProfile, setHasProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const { data: session, update } = useSession();
 
   var state;
 
@@ -80,7 +80,7 @@ export default function UpdateProfile() {
         console.log("Arr is empty");
       }
     }
-  }, [hasEmail, hasProfile, email]);
+  }, [hasEmail, hasProfile, email, profile]);
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
@@ -89,14 +89,30 @@ export default function UpdateProfile() {
       (response) => {
         if (response.ok) {
           {
-            alert("Profile updated.");
             setMode("View");
+            updateSession({ rank, lastName, suffix });
           }
         } else {
           alert("User could not be updated. Please try again.");
         }
       }
     );
+  };
+
+  const updateSession = async ({ rank, lastName, suffix }) => {
+    const event = new Event("visibilitychange");
+
+    await update({
+      ...session,
+      user: {
+        ...session?.user,
+        rank: rank,
+        lastName: lastName,
+        suffix: suffix,
+      },
+    });
+
+    document.dispatchEvent(event);
   };
 
   return (
