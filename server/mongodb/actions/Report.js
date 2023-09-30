@@ -76,8 +76,12 @@ export async function getUserReports(email, parameter) {
         return err;
       });
       temp = JSON.stringify(temp);
-      let count = temp.match(/email/g).length;
-      reports.push(count);
+      let count = temp?.match(/email/g)?.length;
+      if (count === undefined) {
+        reports.push(0);
+      } else {
+        reports.push(count);
+      }
     }
 
     // Find total reports for the quarter
@@ -114,8 +118,12 @@ export async function getUserReports(email, parameter) {
       return err;
     });
     temp = JSON.stringify(temp);
-    let count = temp.match(/email/g).length;
-    reports.push(count);
+    let count = temp?.match(/email/g)?.length;
+    if (count === undefined) {
+      reports.push(0);
+    } else {
+      reports.push(count);
+    }
 
     // Find total reports for each category, for the quarter
     for (let i = 0; i < categories.length; i++) {
@@ -128,8 +136,13 @@ export async function getUserReports(email, parameter) {
         return err;
       });
       temp = JSON.stringify(temp);
-      let count = temp.match(/email/g).length;
-      reports.push(count);
+      let count = temp?.match(/email/g)?.length;
+      console.log(count);
+      if (count === undefined) {
+        reports.push(0);
+      } else {
+        reports.push(count);
+      }
     }
   } else {
     reports = "ERROR";

@@ -65,6 +65,9 @@ export async function GET() {
   if (res.name) {
     res = JSON.stringify(res);
     return new Response(res, { status: 404 });
+  } else if (res == "ERROR") {
+    res = JSON.stringify(res);
+    return new Response(res, { status: 400 });
   } else if (res) {
     res = JSON.stringify(res);
     return new Response(res, { status: 200 });
