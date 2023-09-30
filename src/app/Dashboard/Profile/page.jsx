@@ -29,6 +29,7 @@ export default function Page() {
               Profile
             </Button>
             <Button
+              isDisabled
               bgColor={"#70A0AF"}
               color={"white"}
               _hover={{ bgColor: "#706993", color: "white" }}
