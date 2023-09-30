@@ -48,9 +48,11 @@ export async function signUp(userData) {
     });
 }
 
-export async function getUser(userID) {
+export async function getUser(userId) {
   await mongoDB();
-  const user = await UserSchema.findOne({ userID }).catch(function (err) {
+  const user = await UserSchema.findOne({ email: userId }).catch(function (
+    err
+  ) {
     return err;
   });
   return user;
@@ -58,7 +60,18 @@ export async function getUser(userID) {
 
 export async function modifyUser(userId, userInfo) {
   await mongoDB();
-  const report = await UserSchema.findByIdAndUpdate(userId, { userInfo }).catch(
+  const report = await UserSchema.findOneAndUpdate(
+    { email: userId },
+    userInfo
+  ).catch(function (err) {
+    return err;
+  });
+  return report;
+}
+
+export async function deleteUser(userId) {
+  await mongoDB();
+  const report = await UserSchema.findOneAndDelete({ email: userId }).catch(
     function (err) {
       return err;
     }
@@ -66,17 +79,8 @@ export async function modifyUser(userId, userInfo) {
   return report;
 }
 
-export async function deleteUser(userId) {
-  await mongoDB();
-  const report = await UserSchema.findByIdAndDelete(userId).catch(function (
-    err
-  ) {
-    return err;
-  });
-  return report;
-}
-
 export async function verifyUser(userId) {
+  console.log(userId);
   await mongoDB();
   const user = await UserSchema.findByIdAndUpdate(userId, {
     verified: true,

@@ -32,7 +32,8 @@ export async function GET() {
     case "1": {
       // Get 20 of a Users reports, ordered by date most recent
       const user = headersInstance.get("user"); // or "email";
-      res = await getUserReports(user, null);
+      const index = headersInstance.get("index");
+      res = await getUserReports(user, index);
       break;
     }
     case "2": {
@@ -76,8 +77,8 @@ export async function GET() {
 export async function DELETE() {
   const headersInstance = headers();
   const report = headersInstance.get("report");
-
   const res = await deleteReport(report);
+
   if (res.message) {
     return new Response(res.message, { status: 400 });
   } else if (res) {
@@ -88,8 +89,8 @@ export async function DELETE() {
 export async function PATCH(Request) {
   const headersInstance = headers();
   const report = headersInstance.get("report");
-
   const res = await modifyReport(report, await Request.json());
+
   if (res.name == "ValidationError") {
     return new Response(res, { status: 422 });
   } else if (res.message) {
