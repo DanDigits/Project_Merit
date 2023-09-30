@@ -26,7 +26,7 @@ export default function UpdateProfile() {
   const [suffix, setSuffix] = useState("");
   const [profile, setProfile] = useState(null);
   const [hasEmail, setHasEmail] = useState("");
-  const [hasProfile, setHasProfile] = useState("");
+  const [hasProfile, setHasProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
@@ -48,6 +48,7 @@ export default function UpdateProfile() {
     if (hasEmail && !hasProfile) {
       console.log("hasEmail && !hasProfile", email, hasProfile);
       setIsLoading(true);
+      console.log("isLoading: ", isLoading);
       setHasError(false);
       getUser({ email }).then((response) => {
         response.ok
@@ -60,10 +61,24 @@ export default function UpdateProfile() {
       });
     }
     if (hasEmail && hasProfile) {
-      console.log("hasEmail && hasProfile", email, hasProfile);
-      setIsLoading(false);
-      console.log(profile);
-      console.log("isLoading", isLoading);
+      console.log("hasEmail && hasProfile", hasEmail, hasProfile);
+      console.log("Profile: ", profile);
+      var arr = JSON.parse(JSON.stringify(profile));
+      if (arr) {
+        console.log(arr.rank);
+        console.log(arr.firstName);
+        console.log(arr.lastName);
+        console.log(arr.suffix);
+
+        setRank(arr.rank);
+        setFirstName(arr.firstName);
+        setLastName(arr.lastName);
+        setSuffix(arr.suffix);
+        setIsLoading(false);
+        setIsLoading(true);
+      } else {
+        console.log("Arr is empty");
+      }
     }
   }, [hasEmail, hasProfile, email]);
 

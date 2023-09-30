@@ -31,10 +31,13 @@ export async function GET(Request) {
   }
 
   if (res && user) {
+    res = JSON.stringify(res);
     return new Response(res, { status: 200 });
   } else if (res && !user) {
+    res = JSON.stringify(res);
     return new Response("OK", { status: 200 });
   } else {
+    res = JSON.stringify(res);
     return new Response("ERROR", { status: 400 });
   }
 }
