@@ -14,8 +14,8 @@ import urls from "../../../../utils/getPath";
 import nodemailer from "nodemailer";
 
 export async function GET(Request) {
-  const headersInstance = headers();
-  const user = headersInstance.get("user");
+  const requestHeaders = headers();
+  const user = requestHeaders.get("user");
   let res;
 
   if (!user) {
@@ -88,22 +88,24 @@ export async function POST(Request) {
 }
 
 export async function PATCH(Request) {
-  const headersInstance = headers();
-  const user = headersInstance.get("user");
+  const requestHeaders = headers();
+  const user = requestHeaders.get("user");
   const res = await modifyUser(user, await Request.json());
 
   if (res.name == "ValidationError") {
     return new Response(res, { status: 422 });
   } else if (res.message) {
     return new Response(res.message, { status: 400 });
-  } else if (res) {
+  } else if (res.id) {
     return new Response(res.id, { status: 200 });
+  } else {
+    return new Response("ERROR", { status: 400 });
   }
 }
 
 export async function DELETE() {
-  const headersInstance = headers();
-  const user = headersInstance.get("user");
+  const requestHeaders = headers();
+  const user = requestHeaders.get("user");
   const res = await deleteUser(user);
 
   if (res.id) {

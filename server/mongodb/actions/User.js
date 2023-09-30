@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import bcrypt from "bcryptjs";
 import mongoDB from "../dbConnection";
 import UserSchema from "../models/User";
@@ -50,33 +49,51 @@ export async function signUp(userData) {
 
 export async function getUser(userId) {
   await mongoDB();
-  const user = await UserSchema.findOne({ email: userId }).catch(function (
-    err
-  ) {
+  const user = await UserSchema.findOne(
+    { email: userId },
+    "-password -__v -_id"
+  ).catch(function (err) {
     return err;
   });
   return user;
 }
 
-export async function modifyUser(userId, userInfo) {
+export async function modifyUser(userId, userData) {
   await mongoDB();
-  const report = await UserSchema.findOneAndUpdate(
-    { email: userId },
-    userInfo
-  ).catch(function (err) {
-    return err;
-  });
-  return report;
+  let user;
+
+  if (userData?.password != undefined) {
+    return bcrypt
+      .hash(userData.password, 10)
+      .then((hashedPassword) =>
+        UserSchema.findOneAndUpdate(
+          { email: userId },
+          { password: hashedPassword }
+        ).catch(function (err) {
+          return err;
+        })
+      )
+      .then((user) => {
+        return user;
+      });
+  } else {
+    user = await UserSchema.findOneAndUpdate({ email: userId }, userData).catch(
+      function (err) {
+        return err;
+      }
+    );
+    return user;
+  }
 }
 
 export async function deleteUser(userId) {
   await mongoDB();
-  const report = await UserSchema.findOneAndDelete({ email: userId }).catch(
+  const user = await UserSchema.findOneAndDelete({ email: userId }).catch(
     function (err) {
       return err;
     }
   );
-  return report;
+  return user;
 }
 
 export async function verifyUser(userId) {

@@ -31,20 +31,24 @@ export async function getReport(reportData) {
   return report;
 }
 
-export async function getUserReports(email, date) {
+// The second eponymous parameter, is either respectively the index for loading additional reports, or the current date
+export async function getUserReports(email, parameter) {
   await mongoDB();
   const categories = ["Duties", "Conduct", "Training", "Teamwork"];
-  let reports, quarter, temp;
+  let reports, quarter, temp, date, index;
 
-  if (!date) {
-    // Find 20 of the users most recent reports
+  if (typeof parseInt(parameter) === "number" && !isNaN(parseInt(parameter))) {
+    index = parseInt(parameter);
+    // Find 20 of the users most recent reports, after the given index
     reports = await ReportSchema.find({ email })
       .sort({ date: -1 })
+      .skip(index * 20)
       .limit(20)
       .catch(function (err) {
         return err;
       });
-  } else if (date) {
+  } else if (parameter?.getMonth() != undefined) {
+    date = parameter;
     reports = [];
     // Find total reports for the fiscal year Oct-Sept
     if (date.getMonth() >= 10) {
@@ -71,8 +75,12 @@ export async function getUserReports(email, date) {
         return err;
       });
       temp = JSON.stringify(temp);
-      let count = temp.match(/email/g).length;
-      reports.push(count);
+      let count = temp?.match(/email/g)?.length;
+      if (count === undefined) {
+        reports.push(0);
+      } else {
+        reports.push(count);
+      }
     }
 
     // Find total reports for the quarter
@@ -109,8 +117,12 @@ export async function getUserReports(email, date) {
       return err;
     });
     temp = JSON.stringify(temp);
-    let count = temp.match(/email/g).length;
-    reports.push(count);
+    let count = temp?.match(/email/g)?.length;
+    if (count === undefined) {
+      reports.push(0);
+    } else {
+      reports.push(count);
+    }
 
     // Find total reports for each category, for the quarter
     for (let i = 0; i < categories.length; i++) {
@@ -123,9 +135,15 @@ export async function getUserReports(email, date) {
         return err;
       });
       temp = JSON.stringify(temp);
-      let count = temp.match(/email/g).length;
-      reports.push(count);
+      let count = temp?.match(/email/g)?.length;
+      if (count === undefined) {
+        reports.push(0);
+      } else {
+        reports.push(count);
+      }
     }
+  } else {
+    reports = "ERROR";
   }
   return reports;
 }
