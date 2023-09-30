@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getSession, useSession } from "next-auth/react";
 import {
+  AbsoluteCenter,
   Card,
   Button,
   ButtonGroup,
@@ -13,6 +14,7 @@ import {
   FormLabel,
   Input,
   Select,
+  Spinner,
 } from "@chakra-ui/react";
 import { getUser, updateUser } from "src/app/actions/User";
 
@@ -75,7 +77,6 @@ export default function UpdateProfile() {
         setLastName(arr.lastName);
         setSuffix(arr.suffix);
         setIsLoading(false);
-        setIsLoading(true);
       } else {
         console.log("Arr is empty");
       }
@@ -100,8 +101,6 @@ export default function UpdateProfile() {
   };
 
   const updateSession = async ({ rank, lastName, suffix }) => {
-    const event = new Event("visibilitychange");
-
     await update({
       ...session,
       user: {
@@ -111,12 +110,23 @@ export default function UpdateProfile() {
         suffix: suffix,
       },
     });
-
-    document.dispatchEvent(event);
   };
 
   return (
     <>
+      {isLoading && (
+        <>
+          <AbsoluteCenter>
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="#70A0Af"
+              size="xl"
+            />
+          </AbsoluteCenter>
+        </>
+      )}
       <Card
         p={2}
         alignSelf={"center"}
