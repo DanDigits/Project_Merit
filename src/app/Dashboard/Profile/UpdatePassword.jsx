@@ -14,7 +14,6 @@ import {
   FormErrorMessage,
   Input,
 } from "@chakra-ui/react";
-import PasswordDialog from "./PasswordDialog.jsx";
 
 import { updatePassword } from "src/app/actions/User";
 
