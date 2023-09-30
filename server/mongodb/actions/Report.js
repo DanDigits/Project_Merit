@@ -35,20 +35,19 @@ export async function getReport(reportData) {
 export async function getUserReports(email, parameter) {
   await mongoDB();
   const categories = ["Duties", "Conduct", "Training", "Teamwork"];
-  let reports, quarter, temp, date;
-  // console.log(parameter);
-  // console.log(new Date());
+  let reports, quarter, temp, date, index;
 
-  if (!parameter) {
+  if (typeof parseInt(parameter) === "number" && !isNaN(parseInt(parameter))) {
+    index = parseInt(parameter);
     // Find 20 of the users most recent reports, after the given index
     reports = await ReportSchema.find({ email })
       .sort({ date: -1 })
-      .skip(parameter * 20)
+      .skip(index * 20)
       .limit(20)
       .catch(function (err) {
         return err;
       });
-  } else if (parameter.getMonth()) {
+  } else if (parameter?.getMonth() != undefined) {
     date = parameter;
     reports = [];
     // Find total reports for the fiscal year Oct-Sept
