@@ -136,7 +136,6 @@ export async function getUserReports(email, parameter) {
       });
       temp = JSON.stringify(temp);
       let count = temp?.match(/email/g)?.length;
-      console.log(count);
       if (count === undefined) {
         reports.push(0);
       } else {
