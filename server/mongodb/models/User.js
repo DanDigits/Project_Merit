@@ -29,6 +29,10 @@ const UserSchema = new Schema({
     type: Boolean,
     required: true,
   },
+  isPasswordLocked: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 export default mongoose.models.User ?? mongoose.model("User", UserSchema);
