@@ -36,7 +36,7 @@ export default function UpdatePassword() {
       updatePassword({ email, password, newPassword }).then((response) => {
         if (response.ok) {
           {
-            <PasswordDialog />;
+            setStatus("success");
           }
         } else {
           setStatus("old");
