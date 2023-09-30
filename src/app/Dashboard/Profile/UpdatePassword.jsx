@@ -18,6 +18,7 @@ import PasswordDialog from "./PasswordDialog.jsx";
 //import { updateUser } from "src/app/actions/User";
 
 export default function UpdatePassword() {
+  const [current, setCurrent] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [status, setStatus] = useState(false);
@@ -36,9 +37,28 @@ export default function UpdatePassword() {
         </CardHeader>
         <CardBody>
           <div>
+            <FormControl id="current">
+              <FormLabel mb={1} fontSize={15} color={"black"}>
+                Current Password
+              </FormLabel>
+              <Input
+                type="password"
+                value={current}
+                variant="login"
+                borderWidth={"2px"}
+                borderColor={"#70A0AF"}
+                bg="#EDF2F7"
+                mb={3}
+                size={"md"}
+                minLength={8}
+                maxLength={32}
+                onChange={(e) => setCurrent(e.target.value)}
+              />
+              <FormErrorMessage>Current password is required.</FormErrorMessage>
+            </FormControl>
             <FormControl id="password">
               <FormLabel mb={1} fontSize={15} color={"black"}>
-                Password
+                New Password
               </FormLabel>
               <Input
                 type="password"
@@ -53,11 +73,11 @@ export default function UpdatePassword() {
                 maxLength={32}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <FormErrorMessage>Password is required.</FormErrorMessage>
+              <FormErrorMessage>Please enter new password.</FormErrorMessage>
             </FormControl>
             <FormControl id="confirmPassword">
               <FormLabel mb={1} fontSize={15} color={"black"}>
-                Confirm Password
+                Confirm New Password
               </FormLabel>
               <Input
                 type="password"
