@@ -44,11 +44,6 @@ export default function Report(report_mode) {
 
   var state;
 
-  //temp
-  /* must get report id somehow
-  setData(getReport(reportId));
-  */
-
   if (report_mode === "View") {
     state = true;
   } else state = false;
