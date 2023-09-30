@@ -31,7 +31,7 @@ export async function getReport(reportData) {
   return report;
 }
 
-// The second, eponymous, parameter, is either respectively the index for loading additional reports, or the current date
+// The second eponymous parameter, is either respectively the index for loading additional reports, or the current date
 export async function getUserReports(email, parameter) {
   await mongoDB();
   const categories = ["Duties", "Conduct", "Training", "Teamwork"];
@@ -39,7 +39,7 @@ export async function getUserReports(email, parameter) {
   // console.log(parameter);
   // console.log(new Date());
 
-  if (!parameter.getMonth()) {
+  if (!parameter) {
     // Find 20 of the users most recent reports, after the given index
     reports = await ReportSchema.find({ email })
       .sort({ date: -1 })
@@ -131,6 +131,8 @@ export async function getUserReports(email, parameter) {
       let count = temp.match(/email/g).length;
       reports.push(count);
     }
+  } else {
+    reports = "ERROR";
   }
   return reports;
 }
