@@ -140,72 +140,97 @@ export default function UpdateProfile() {
             </CardHeader>
             <CardBody>
               <div>
-                <FormControl id="rank">
-                  <FormLabel mb={1} fontSize={15} color={"black"}>
-                    Rank
-                  </FormLabel>
-                  <Select
-                    isDisabled={state}
-                    placeholder="Select Rank"
-                    value={rank}
-                    variant="login"
-                    borderWidth={"2px"}
-                    borderColor={"#70A0AF"}
-                    bg="#EDF2F7"
-                    mb={3}
-                    size={"md"}
-                    _hover={{ bgColor: "#706993" }}
-                    onChange={(e) => setRank(e.target.value)}
-                  >
-                    <option value={"AB"}>Airman Basic (AB)</option>
-                    <option value={"Amn"}>Airman (Amn)</option>
-                    <option value={"A1C"}>Airman First Class (A1C)</option>
-                    <option value={"SrA"}>
-                      Senior Airman or Sergeant (SrA)
-                    </option>
-                    <option value={"SSgt"}>Staff Sergeant (SSgt)</option>
-                    <option value={"TSgt"}>Technical Sergeant (TSgt)</option>
-                    <option value={"MSgt"}>Master Sergeant (MSgt)</option>
-                    <option value={"SMSgt"}>
-                      Senior Master Sergeant (SMSgt)
-                    </option>
-                    <option value={"CMSgt"}>
-                      Chief Master Sergeant (CMSgt)
-                    </option>
-                    <option value={"CCM"}>
-                      Command Chief Master Sergeant (CCM)
-                    </option>
-                    <option value={"CMSAF"}>
-                      Chief Master Sergeant of the Air Force (CMSAF)
-                    </option>
-                    <option value={"1st Lt"}>First Lieutenant (1st Lt)</option>
-                    <option value={"Capt"}>Captain (Capt)</option>
-                    <option value={"Maj"}>Major (Maj)</option>
-                    <option value={"Lt Col"}>
-                      Lieutenant Colonel (Lt Col)
-                    </option>
-                    <option value={"Col"}>Colonel (Col)</option>
-                    <option value={"Brig Gen"}>
-                      Brigadier General (Brig Gen)
-                    </option>
-                    <option value={"Maj Gen"}>Major General (Maj Gen)</option>
-                    <option value={"Lt Gen"}>
-                      Lieutenant General (Lt Gen)
-                    </option>
-                    <option value={"Gen"}>
-                      General Air Force Chief of Staff (Gen)
-                    </option>
-                    <option value={"GOAF"}>
-                      General of the Air Force (GOAF)
-                    </option>
-                  </Select>
-                </FormControl>
+                {state ? (
+                  <>
+                    <FormControl id="rank">
+                      <FormLabel mb={1} fontSize={15} color={"black"}>
+                        Rank
+                      </FormLabel>
+                      <Input
+                        isReadOnly={state}
+                        type=""
+                        value={rank}
+                        maxLength={64}
+                        variant="login"
+                        borderWidth={"2px"}
+                        borderColor={"#70A0AF"}
+                        bg="#EDF2F7"
+                        mb={3}
+                        size={"md"}
+                      />
+                    </FormControl>
+                  </>
+                ) : (
+                  <FormControl id="rank">
+                    <FormLabel mb={1} fontSize={15} color={"black"}>
+                      Rank
+                    </FormLabel>
+                    <Select
+                      isReadOnly={state}
+                      placeholder="Select Rank"
+                      value={rank}
+                      variant="login"
+                      borderWidth={"2px"}
+                      borderColor={"#70A0AF"}
+                      bg="#EDF2F7"
+                      mb={3}
+                      size={"md"}
+                      _hover={{ bgColor: "#706993" }}
+                      onChange={(e) => setRank(e.target.value)}
+                    >
+                      <option value={"AB"}>Airman Basic (AB)</option>
+                      <option value={"Amn"}>Airman (Amn)</option>
+                      <option value={"A1C"}>Airman First Class (A1C)</option>
+                      <option value={"SrA"}>
+                        Senior Airman or Sergeant (SrA)
+                      </option>
+                      <option value={"SSgt"}>Staff Sergeant (SSgt)</option>
+                      <option value={"TSgt"}>Technical Sergeant (TSgt)</option>
+                      <option value={"MSgt"}>Master Sergeant (MSgt)</option>
+                      <option value={"SMSgt"}>
+                        Senior Master Sergeant (SMSgt)
+                      </option>
+                      <option value={"CMSgt"}>
+                        Chief Master Sergeant (CMSgt)
+                      </option>
+                      <option value={"CCM"}>
+                        Command Chief Master Sergeant (CCM)
+                      </option>
+                      <option value={"CMSAF"}>
+                        Chief Master Sergeant of the Air Force (CMSAF)
+                      </option>
+                      <option value={"1st Lt"}>
+                        First Lieutenant (1st Lt)
+                      </option>
+                      <option value={"Capt"}>Captain (Capt)</option>
+                      <option value={"Maj"}>Major (Maj)</option>
+                      <option value={"Lt Col"}>
+                        Lieutenant Colonel (Lt Col)
+                      </option>
+                      <option value={"Col"}>Colonel (Col)</option>
+                      <option value={"Brig Gen"}>
+                        Brigadier General (Brig Gen)
+                      </option>
+                      <option value={"Maj Gen"}>Major General (Maj Gen)</option>
+                      <option value={"Lt Gen"}>
+                        Lieutenant General (Lt Gen)
+                      </option>
+                      <option value={"Gen"}>
+                        General Air Force Chief of Staff (Gen)
+                      </option>
+                      <option value={"GOAF"}>
+                        General of the Air Force (GOAF)
+                      </option>
+                    </Select>
+                  </FormControl>
+                )}
+
                 <FormControl id="firstName">
                   <FormLabel mb={1} fontSize={15} color={"black"}>
                     First Name
                   </FormLabel>
                   <Input
-                    isDisabled={state}
+                    isReadOnly={state}
                     type=""
                     value={firstName}
                     maxLength={64}
@@ -223,7 +248,7 @@ export default function UpdateProfile() {
                     Last Name
                   </FormLabel>
                   <Input
-                    isDisabled={state}
+                    isReadOnly={state}
                     type=""
                     value={lastName}
                     maxLength={64}
@@ -241,7 +266,7 @@ export default function UpdateProfile() {
                     Suffix
                   </FormLabel>
                   <Input
-                    isDisabled={state}
+                    isReadOnly={state}
                     type=""
                     value={suffix}
                     maxLength={6}
