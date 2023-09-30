@@ -64,7 +64,7 @@ export default function Page() {
                     color={"#331E38"}
                     _hover={{ bgColor: "#706993", color: "white" }}
                   >
-                    Cancel
+                    Back
                   </Button>
                 </Link>
                 <Button
