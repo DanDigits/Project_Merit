@@ -32,7 +32,13 @@ export default function UpdatePassword() {
   const handleSubmitInfo = (e) => {
     e.preventDefault();
 
-    if (newPassword === newPassword2) {
+    if (password === "" || newPassword === "" || newPassword2 === "") {
+      setStatus("missing");
+    } else if (newPassword.length < 8) {
+      setStatus("length");
+    } else if (password === newPassword) {
+      setStatus("nochange");
+    } else if (newPassword === newPassword2) {
       updatePassword({ email, password, newPassword }).then((response) => {
         if (response.ok) {
           {
@@ -123,6 +129,13 @@ export default function UpdatePassword() {
             {status === "new" && <p>Confirmation must match new password.</p>}
             {status === "success" && <p>Password Updated</p>}
             {status === "old" && <p>Current password is incorrect.</p>}
+            {status === "missing" && <p>All fields are required.</p>}
+            {status === "length" && (
+              <p>New password must be a minimum of 8 characters.</p>
+            )}
+            {status === "nochange" && (
+              <p>New password is the same as current password.</p>
+            )}
           </div>
         </CardBody>
         <CardFooter>
