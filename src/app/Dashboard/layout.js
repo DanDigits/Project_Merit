@@ -3,7 +3,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { customTheme } from "../styles/customTheme";
 import React from "react";
 import { useEffect, useState } from "react";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import {
   IconButton,
   Box,
@@ -182,12 +182,15 @@ const MobileNav = ({ onOpen, ...rest }) => {
   const [rank, setRank] = useState("");
   const [lastName, setLastName] = useState("");
   const [suffix, setSuffix] = useState("");
+  const { update } = useSession();
 
   useEffect(() => {
-    getSession().then((session) => setRank(session.user.rank));
-    getSession().then((session) => setLastName(session.user.lastName));
-    getSession().then((session) => setSuffix(session.user.suffix));
-  }, []);
+    getSession().then((session) => {
+      setRank(session.user.rank);
+      setLastName(session.user.lastName);
+      setSuffix(session.user.suffix);
+    });
+  }, [update]);
 
   return (
     <Flex

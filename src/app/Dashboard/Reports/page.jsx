@@ -1,7 +1,7 @@
 "use client";
-
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { AbsoluteCenter, Spinner, Text, Button } from "@chakra-ui/react";
+import { Center, Spinner, Text, Button } from "@chakra-ui/react";
 import ReportTable from "./ReportTable";
 import { getSession } from "next-auth/react";
 import { getUserReports } from "./../../actions/Report.js";
@@ -35,6 +35,7 @@ export default function Page() {
   const [hasError, setHasError] = useState(false);
   const [hasEmail, setHasEmail] = useState(false);
   const [hasReport, setHasReport] = useState(false);
+  const [index, setIndex] = useState("0");
 
   const handleSubmitInfo = useCallback(
     (reportId) => {
@@ -57,7 +58,7 @@ export default function Page() {
       console.log("hasEmail && !hasreport", email, hasReport);
       setIsLoading(true);
       setHasError(false);
-      getUserReports({ email }).then((response) => {
+      getUserReports({ email, index }).then((response) => {
         response.ok
           ? response
               .json()
@@ -70,7 +71,7 @@ export default function Page() {
       console.log("hasEmail && hasreport", email, hasReport);
       setIsLoading(false);
     }
-  }, [hasEmail, hasReport, email]);
+  }, [hasEmail, hasReport, email, index]);
 
   const columns = React.useMemo(
     () => [
@@ -144,7 +145,7 @@ export default function Page() {
       {hasError && <Text>SOMETHING WENT WRONG</Text>}
       {isLoading ? (
         <>
-          <AbsoluteCenter>
+          <Center>
             <Spinner
               thickness="4px"
               speed="0.65s"
@@ -152,7 +153,7 @@ export default function Page() {
               color="#70A0Af"
               size="xl"
             />
-          </AbsoluteCenter>
+          </Center>
         </>
       ) : (
         <>

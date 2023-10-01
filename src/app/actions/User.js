@@ -71,6 +71,23 @@ export const updateUser = async ({
   return response;
 };
 
+export const updatePassword = async ({ email, password, newPassword }) => {
+  const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
+    method: "PATCH",
+    mode: "same-origin",
+    headers: {
+      user: email,
+    },
+    body: JSON.stringify({
+      password,
+      newPassword,
+    }),
+  });
+  console.log("Update Response:", response.statusText);
+
+  return response;
+};
+
 export const deleteUser = async ({ email }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.delete, {
     method: "DELETE",

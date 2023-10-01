@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import bcrypt from "bcryptjs";
 import mongoDB from "../dbConnection";
 import UserSchema from "../models/User";
@@ -39,6 +38,7 @@ export async function signUp(userData) {
         rank: userData.rank,
         reportType: userData.reportType,
         verified: userData.verified,
+        isPasswordLocked: true,
       }).catch(function (err) {
         return err;
       })
@@ -48,40 +48,92 @@ export async function signUp(userData) {
     });
 }
 
-export async function getUser(userID) {
+export async function getUser(userId) {
   await mongoDB();
-  const user = await UserSchema.findOne({ userID }).catch(function (err) {
+  const user = await UserSchema.findOne(
+    { email: userId },
+    "-password -__v -_id"
+    //"-__v -_id"
+  ).catch(function (err) {
     return err;
   });
   return user;
 }
 
-export async function modifyUser(userId, userInfo) {
+export async function modifyUser(userId, userData) {
   await mongoDB();
-  const report = await UserSchema.findByIdAndUpdate(userId, { userInfo }).catch(
-    function (err) {
-      return err;
+  let user,
+    password = userData?.password,
+    newPassword = userData?.newPassword;
+  if (userId.includes("@")) {
+    user = await UserSchema.findOne({ email: userId });
+  } else {
+    user = await UserSchema.findOne({ _id: userId });
+    userId = user.email;
+  }
+
+  if ((password && newPassword) != undefined) {
+    const didMatch = await bcrypt.compare(userData.password, user.password);
+    if (!didMatch) {
+      user.message = "INCORRECT";
+    } else if (didMatch) {
+      //} else if (didMatch && userData.isPasswordLocked == false) {
+      return bcrypt
+        .hash(userData.newPassword, 10)
+        .then((hashedPassword) =>
+          UserSchema.findOneAndUpdate(
+            { email: userId },
+            { password: hashedPassword }
+          ).catch(function (err) {
+            return err;
+          })
+        )
+        .then((user) => {
+          return user;
+        });
+    } else {
+      user.message = "UNABLE";
     }
-  );
-  return report;
+  } else {
+    user = await UserSchema.findOneAndUpdate({ email: userId }, userData).catch(
+      function (err) {
+        return err;
+      }
+    );
+  }
+  return user;
 }
 
 export async function deleteUser(userId) {
   await mongoDB();
-  const report = await UserSchema.findByIdAndDelete(userId).catch(function (
-    err
-  ) {
-    return err;
-  });
-  return report;
+  const user = await UserSchema.findOneAndDelete({ email: userId }).catch(
+    function (err) {
+      return err;
+    }
+  );
+  return user;
 }
 
 export async function verifyUser(userId) {
   await mongoDB();
-  const user = await UserSchema.findByIdAndUpdate(userId, {
-    verified: true,
-  }).catch(function (err) {
-    return err;
-  });
-  return user;
+  let user = await UserSchema.findOne(userId);
+  if (user.verified == true && user.isPasswordLocked == true) {
+    user = await UserSchema.findByIdAndUpdate(userId, {
+      isPasswordLocked: false,
+    }).catch(function (err) {
+      console.log(err);
+    });
+    setTimeout(60000 * 5);
+    user = await UserSchema.findByIdAndUpdate(userId, {
+      isPasswordLocked: true,
+    }).catch(function (err) {
+      console.log(err);
+    });
+  } else if (user.verified == false && user.isPasswordLocked == true) {
+    user = await UserSchema.findByIdAndUpdate(userId, {
+      verified: true,
+    }).catch(function (err) {
+      console.log(err);
+    });
+  }
 }
