@@ -107,7 +107,15 @@ export default function Report(report_mode) {
         }
       }
     }
-  }, [hasEntry, hasReportId, reportId, entry, report_mode, router]);
+  }, [
+    hasEntry,
+    hasReportId,
+    reportId,
+    entry,
+    report_mode,
+    router,
+    longCategory,
+  ]);
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();

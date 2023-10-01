@@ -81,7 +81,7 @@ export default function UpdateProfile() {
         console.log("Arr is empty");
       }
     }
-  }, [hasEmail, hasProfile, email, profile]);
+  }, [hasEmail, hasProfile, email, profile, hasError, isLoading]);
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();

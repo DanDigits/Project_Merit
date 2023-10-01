@@ -71,7 +71,7 @@ export default function Page() {
       console.log("hasEmail && hasreport", email, hasReport);
       setIsLoading(false);
     }
-  }, [hasEmail, hasReport, email]);
+  }, [hasEmail, hasReport, email, index]);
 
   const columns = React.useMemo(
     () => [
