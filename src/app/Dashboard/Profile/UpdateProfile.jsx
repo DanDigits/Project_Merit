@@ -34,6 +34,7 @@ export default function UpdateProfile() {
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState(false);
+  const [msg, setMsg] = useState("");
   const { data: session, update } = useSession();
 
   var state;
@@ -44,7 +45,6 @@ export default function UpdateProfile() {
 
   useEffect(() => {
     if (!hasEmail) {
-      //console.log("!hasemail");
       setIsLoading(true);
       setHasError(false);
       getSession()
@@ -52,9 +52,7 @@ export default function UpdateProfile() {
         .then(() => setHasEmail(true));
     }
     if (hasEmail && !hasProfile) {
-      console.log("hasEmail && !hasProfile", email, hasProfile);
       setIsLoading(true);
-      console.log("isLoading: ", isLoading);
       setHasError(false);
       getUser({ email }).then((response) => {
         response.ok
@@ -67,22 +65,13 @@ export default function UpdateProfile() {
       });
     }
     if (hasEmail && hasProfile) {
-      console.log("hasEmail && hasProfile", hasEmail, hasProfile);
-      console.log("Profile: ", profile);
       var arr = JSON.parse(JSON.stringify(profile));
       if (arr) {
-        console.log(arr.rank);
-        console.log(arr.firstName);
-        console.log(arr.lastName);
-        console.log(arr.suffix);
-
         setRank(arr.rank);
         setFirstName(arr.firstName);
         setLastName(arr.lastName);
         setSuffix(arr.suffix);
         setIsLoading(false);
-      } else {
-        console.log("Arr is empty");
       }
     }
   }, [hasEmail, hasProfile, email, profile, hasError, isLoading]);
@@ -90,18 +79,23 @@ export default function UpdateProfile() {
   const handleSubmitInfo = (e) => {
     e.preventDefault();
 
-    updateUser({ email, rank, firstName, lastName, suffix }).then(
-      (response) => {
-        if (response.ok) {
-          {
-            setMode("View");
-            updateSession({ rank, lastName, suffix });
+    if (rank === "" || firstName === "" || lastName === "") {
+      setMsg("missing");
+    } else {
+      updateUser({ email, rank, firstName, lastName, suffix }).then(
+        (response) => {
+          if (response.ok) {
+            {
+              setMode("View");
+              setMsg("");
+              updateSession({ rank, lastName, suffix });
+            }
+          } else {
+            alert("User could not be updated. Please try again.");
           }
-        } else {
-          alert("User could not be updated. Please try again.");
         }
-      }
-    );
+      );
+    }
   };
 
   const updateSession = async ({ rank, lastName, suffix }) => {
@@ -284,6 +278,9 @@ export default function UpdateProfile() {
                     onChange={(e) => setSuffix(e.target.value)}
                   />
                 </FormControl>
+                {msg === "missing" && (
+                  <p>All fields except suffix are required.</p>
+                )}
               </div>
             </CardBody>
             <CardFooter>
