@@ -6,17 +6,20 @@ import {
   Center,
   Card,
   Button,
-  ButtonGroup,
   CardBody,
   CardHeader,
   CardFooter,
+  Flex,
   FormControl,
   FormLabel,
+  HStack,
   Input,
   Select,
+  Spacer,
   Spinner,
 } from "@chakra-ui/react";
 import { getUser, updateUser } from "src/app/actions/User";
+import DeleteDialog from "./DeleteDialog.jsx";
 
 export default function UpdateProfile() {
   const [mode, setMode] = useState("View");
@@ -30,6 +33,7 @@ export default function UpdateProfile() {
   const [hasProfile, setHasProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [deleteStatus, setDeleteStatus] = useState(false);
   const { data: session, update } = useSession();
 
   var state;
@@ -114,6 +118,7 @@ export default function UpdateProfile() {
 
   return (
     <>
+      {DeleteDialog(deleteStatus)}
       {isLoading ? (
         <>
           <Center>
@@ -282,21 +287,32 @@ export default function UpdateProfile() {
               </div>
             </CardBody>
             <CardFooter>
-              <ButtonGroup>
-                {mode === "View" && (
-                  <>
-                    <Button
-                      bgColor={"#70A0AF"}
-                      color={"white"}
-                      _hover={{ bgColor: "#706993", color: "white" }}
-                      onClick={() => setMode("Edit")}
-                    >
-                      Edit
-                    </Button>
-                  </>
-                )}
-                {mode === "Edit" && (
-                  <>
+              {mode === "View" && (
+                <Flex width={"100%"}>
+                  <Button
+                    justifySelf={"right"}
+                    bgColor={"#70A0AF"}
+                    color={"white"}
+                    _hover={{ bgColor: "#706993", color: "white" }}
+                    onClick={() => setMode("Edit")}
+                  >
+                    Edit Profile
+                  </Button>
+                  <Spacer />
+                  <Button
+                    justifySelf={"left"}
+                    bgColor={"red"}
+                    color={"white"}
+                    _hover={{ bgColor: "#706993", color: "white" }}
+                    onClick={() => setDeleteStatus(true)}
+                  >
+                    Delete Account
+                  </Button>
+                </Flex>
+              )}
+              {mode === "Edit" && (
+                <flex>
+                  <HStack justify={"flex-end"}>
                     <Button
                       bgColor={"#A0C1B9"}
                       color={"#331E38"}
@@ -305,6 +321,7 @@ export default function UpdateProfile() {
                     >
                       Cancel
                     </Button>
+                    <Spacer />
                     <Button
                       bgColor={"#70A0AF"}
                       color={"white"}
@@ -315,9 +332,9 @@ export default function UpdateProfile() {
                     >
                       Update
                     </Button>
-                  </>
-                )}
-              </ButtonGroup>
+                  </HStack>
+                </flex>
+              )}
             </CardFooter>
           </Card>
         </>
