@@ -122,7 +122,11 @@ export default function Page() {
           <>
             <Button
               textColor={"white"}
-              bg={"#706993"}
+              bg={"#1c303c"}
+              opacity={0.85}
+              borderColor={"#354751"}
+              borderWidth={"thin"}
+              _hover={{ color: "black", bg: "white", opacity: 1 }}
               onClick={() => handleSubmitInfo(cell.row.original._id)}
             >
               View

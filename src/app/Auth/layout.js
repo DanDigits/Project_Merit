@@ -16,13 +16,13 @@ export default function layoutLogin({ children }) {
         justify={"center"}
         bgColor={"gray.100"}
       >
-        <Box h={"5"} bg={"#331E38"}></Box>
+        <Box h={"5"} bg={"#38a4b1"}></Box>
         <Stack overflow={"auto"} pos="fixed" h="full" w={"full"} spacing={8}>
           <Icon
             my={"12"}
             alignSelf={"center"}
             as={AiOutlineFileProtect}
-            color="#70A0AF"
+            color="#031926"
             boxSize={"20"}
           />
           {children}

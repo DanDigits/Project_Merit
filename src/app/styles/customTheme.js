@@ -27,7 +27,7 @@ const variantFlushed = () => ({
   },
 });
 
-const loginVariant = () => ({
+const trimVariant = () => ({
   field: {
     _focus: {
       borderColor: "purple.300",
@@ -60,12 +60,27 @@ export const customTheme = extendTheme({
     outline: "0 0 0 3px var(--chakra-ui-focus-ring-color)",
   },
   components: {
+    Table: {
+      variants: {
+        mytable: {
+          th: {
+            background: "#068D9D",
+          },
+          tr: {
+            _even: {
+              background: "#6abbc4",
+            },
+            _odd: { background: "#e6f4f5" },
+          },
+        },
+      },
+    },
     Input: {
       variants: {
         outline: variantOutlined,
         filled: variantFilled,
         flushed: variantFlushed,
-        login: loginVariant,
+        login: trimVariant,
       },
     },
     Select: {
@@ -73,6 +88,7 @@ export const customTheme = extendTheme({
         outline: variantOutlined,
         filled: variantFilled,
         flushed: variantFlushed,
+        trim: trimVariant,
       },
     },
     Textarea: {
@@ -80,6 +96,7 @@ export const customTheme = extendTheme({
         outline: () => variantOutlined().field,
         filled: () => variantFilled().field,
         flushed: () => variantFlushed().field,
+        trim: () => trimVariant().field,
       },
     },
   },

@@ -179,7 +179,7 @@ export default function Report(report_mode) {
             <Select
               isDisabled={state}
               placeholder="Select Category"
-              variant="login"
+              variant="trim"
               borderWidth={"2px"}
               borderColor={"#70A0AF"}
               bg="#F7FAFC"
@@ -220,7 +220,7 @@ export default function Report(report_mode) {
             name={"thesaurus"}
             id={"thesaurusSwitch"}
             isDisabled={state}
-            colorScheme={"teal"}
+            colorScheme={"cyan"}
             onChange={(e) => setToggle(!toggle)}
           />
         </FormControl>
@@ -240,7 +240,7 @@ export default function Report(report_mode) {
               placeholder="What would you like to report?"
               type="text"
               varient="outline"
-              variant="login"
+              variant="trim"
               borderWidth={"2px"}
               borderColor={"#70A0AF"}
               bg="#F7FAFC"

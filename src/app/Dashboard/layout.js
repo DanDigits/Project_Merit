@@ -27,8 +27,8 @@ import { FaUser } from "react-icons/fa";
 import {
   AiOutlineFileProtect,
   AiFillHome,
-  AiOutlineFile,
-  AiOutlineFolder,
+  AiFillFile,
+  AiFillFolder,
   AiOutlineFileAdd,
 } from "react-icons/ai";
 import { useRouter } from "next/navigation";
@@ -79,7 +79,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
     <Box
       boxShadow={"md"}
       transition="3s ease"
-      bg={"#F4E8C1"}
+      bg={"#38a4b1"}
       w={{ base: "full", md: 60 }}
       pos="fixed"
       h="full"
@@ -89,7 +89,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
         <Icon
           my={"18"}
           as={AiOutlineFileProtect}
-          color="#331E38"
+          color="#031926"
           boxSize={"14"}
         />
         <CloseButton
@@ -100,14 +100,13 @@ const SidebarContent = ({ onClose, ...rest }) => {
         />
       </Flex>
       <VStack mt="50px" ml={10} spacing={14} alignItems="left" w="100%">
-        <NextLink href="/Dashboard/Home">
+        <NextLink href="/Dashboard/Home" passHref>
           <Button
             variant="ghost"
             onClick={onClose}
-            fontSize={20}
-            textColor={"#331E38"}
-            colorScheme="purple"
-            _hover={{ bg: "#706993", color: "white" }}
+            fontSize={{ base: "2xl", md: "xl" }}
+            textColor={"#031926"}
+            _hover={{ bg: "#1c303c", color: "white" }}
             leftIcon={<AiFillHome />}
           >
             Home
@@ -118,11 +117,10 @@ const SidebarContent = ({ onClose, ...rest }) => {
           <Button
             variant="ghost"
             onClick={onClose}
-            fontSize={20}
-            textColor={"#331E38"}
-            colorScheme="purple"
-            _hover={{ bg: "#706993", color: "white" }}
-            leftIcon={<AiOutlineFolder />}
+            fontSize={{ base: "2xl", md: "xl" }}
+            textColor={"#031926"}
+            _hover={{ bg: "#1c303c", color: "white" }}
+            leftIcon={<AiFillFolder />}
           >
             Reports
           </Button>
@@ -132,11 +130,10 @@ const SidebarContent = ({ onClose, ...rest }) => {
           <Button
             variant="ghost"
             onClick={onClose}
-            fontSize={20}
-            textColor={"#331E38"}
-            colorScheme="purple"
-            _hover={{ bg: "#706993", color: "white" }}
-            leftIcon={<AiOutlineFile />}
+            fontSize={{ base: "2xl", md: "xl" }}
+            textColor={"#031926"}
+            _hover={{ bg: "#1c303c", color: "white" }}
+            leftIcon={<AiFillFile />}
           >
             Guidelines
           </Button>
@@ -199,8 +196,8 @@ const MobileNav = ({ onOpen, ...rest }) => {
       px={{ base: 4, md: 4 }}
       height="20"
       alignItems="center"
-      bg={"white"}
-      justifyContent={{ base: "space-between" }}
+      bg={"#031926"}
+      justifyContent={{ base: "space-between", md: "flex-end" }}
       {...rest}
     >
       <IconButton
@@ -208,7 +205,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
         onClick={onOpen}
         variant="outline"
         aria-label="open menu"
-        color={"#706993"}
+        color={"white"}
         icon={<FiMenu />}
       />
       <Box justifyContent={{ base: "space-between", md: "flex-end" }}>
@@ -216,9 +213,8 @@ const MobileNav = ({ onOpen, ...rest }) => {
           variant="ghost"
           onClick={() => router.push("/Dashboard/NewReport")}
           fontSize={20}
-          textColor={"#706993"}
-          colorScheme="purple"
-          _hover={{ bg: "#706993", color: "white" }}
+          textColor={"white"}
+          _hover={{ bg: "white", color: "#031926" }}
           textOverflow={"inherit"}
           leftIcon={<AiOutlineFileAdd />}
         >
@@ -230,8 +226,8 @@ const MobileNav = ({ onOpen, ...rest }) => {
             as={Button}
             variant="ghost"
             fontSize={20}
-            textColor={"#706993"}
-            _hover={{ bg: "#706993", color: "white" }}
+            textColor={"white"}
+            _hover={{ bg: "white", color: "#031926" }}
             leftIcon={<FaUser />}
           >
             <Text display={{ base: "none", md: "flex" }}>

@@ -81,23 +81,23 @@ export default function ReportTable({ columns, data }) {
         />
         <HStack>
           <Button
-            bgColor={"#B38080"}
+            bgColor={"#DF2935"}
             color={"white"}
-            _hover={{ bgColor: "#706993", color: "white" }}
+            _hover={{ bgColor: "#031926", color: "white" }}
           >
             Delete
           </Button>
           <Button
-            bgColor={"#70A0AF"}
-            color={"white"}
-            _hover={{ bgColor: "#706993", color: "white" }}
+            bgColor={"#7eb67d"}
+            color={"black"}
+            _hover={{ bgColor: "#031926", color: "white" }}
           >
             Export
           </Button>
         </HStack>
       </HStack>
       <Box overflowX={"auto"}>
-        <Table variant={"striped"} bgColor="#70A0AF">
+        <Table variant={"mytable"} color={"black"}>
           <Thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <Tr key={headerGroup.id}>

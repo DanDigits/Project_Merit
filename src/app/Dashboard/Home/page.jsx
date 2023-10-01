@@ -5,108 +5,127 @@ import {
   CardBody,
   CardFooter,
   Button,
+  Icon,
+  AbsoluteCenter,
+  Spinner,
+  SimpleGrid,
+  Spacer,
 } from "@chakra-ui/react";
-import { Stack, Text, VStack, HStack, Heading } from "@chakra-ui/layout";
+import {
+  PiClipboardTextDuotone,
+  PiBarbellDuotone,
+  PiUsersThreeDuotone,
+  PiSealCheckDuotone,
+  PiCheckCircleDuotone,
+  PiXCircleDuotone,
+  PiFilesDuotone,
+} from "react-icons/pi";
+import { Stack, Text, HStack, Heading } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
+import StatusBox from "./StatusBox";
+
+const duties = {
+  catagory: "Primary / Additional Duties",
+  shorten: "duties",
+  total: 6,
+  needed: 8,
+};
+const teamwork = {
+  catagory: "Teamwork / Fellowership",
+  shorten: "teamwork",
+  total: 2,
+  needed: 2,
+};
+const training = {
+  catagory: "Training Requirements",
+  shorten: "training",
+  total: 3,
+  needed: 2,
+};
+const conduct = {
+  catagory: "Standards, Conduct, Character & Military Bearings",
+  shorten: "conduct",
+  total: 4,
+  needed: 5,
+};
 
 export default function Page() {
   const [rank, setRank] = useState("");
   const [lastName, setLastName] = useState("");
   const [suffix, setSuffix] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getSession().then((session) => setRank(session.user.rank));
     getSession().then((session) => setLastName(session.user.lastName));
     getSession().then((session) => setSuffix(session.user.suffix));
+    setIsLoading(false);
   }, []);
 
   return (
     <>
-      <Card
-        p={5}
-        alignSelf={"center"}
-        alignItems={"center"}
-        size={{ base: "sm", md: "md" }}
-        w={{ md: "lg" }}
-        bgColor={"white"}
-      >
-        <Stack>
-          <Heading
-            fontSize={{ base: "25px", md: "30px" }}
-            color="#331E38"
-            py={"5"}
-          >
-            Welcome {rank} {lastName} {suffix}
-          </Heading>
-          ;
-          <Text fontSize={20} color="#331E38" py={"2"}>
-            You have written...
-          </Text>
-          <HStack spacing={4} alignSelf={"center"}>
+      {isLoading ? (
+        <>
+          <AbsoluteCenter>
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="#70A0Af"
+              size="xl"
+            />
+          </AbsoluteCenter>
+        </>
+      ) : (
+        <Card
+          p={2}
+          alignSelf={"center"}
+          size={{ base: "sm", md: "lg" }}
+          w={'{ md: "lg" }'}
+          bgColor={"white"}
+        >
+          <Stack m="5vh">
+            <Heading
+              fontSize={{ base: "25px", md: "30px" }}
+              color="#031926"
+              py={"5"}
+            >
+              Welcome {rank} {lastName} {suffix}
+            </Heading>
+
+            <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
+              <StatusBox content={duties}></StatusBox>
+              <StatusBox content={teamwork}></StatusBox>
+              <StatusBox content={training}></StatusBox>
+              <StatusBox content={conduct}></StatusBox>
+            </SimpleGrid>
+
             <Card
-              bgColor={"#A0C1B9"}
+              bgColor={"#72bfc8"}
               size={{ base: "sm", md: "lg" }}
               variant={"outline"}
-              align={"center"}
+              align={"left"}
+              mt={6}
+              width={{ base: "100%", lg: "md" }}
             >
-              <CardBody>
-                <VStack>
-                  <Text color={"#331E38"} fontSize={30} fontWeight={"semibold"}>
-                    #
-                  </Text>
-                  <Text color={"#331E38"}>reports for Q#</Text>
-                </VStack>
+              <CardHeader pb={"5"}>
+                <Heading fontSize={{ base: "smaller", md: "lg" }}>
+                  View Last Report
+                </Heading>
+              </CardHeader>
+              <CardBody pt={"0"} pb={"5"}>
+                <Text>Written: 09/30/2023</Text>
               </CardBody>
+              <CardFooter pt={"0"}>
+                <Button bg="white" _hover={{ bg: "#031926", color: "white" }}>
+                  View
+                </Button>
+              </CardFooter>
             </Card>
-            <Card
-              bgColor={"#70A0AF"}
-              size={{ base: "sm", md: "lg" }}
-              variant={"outline"}
-              align={"center"}
-            >
-              <CardBody>
-                <VStack>
-                  <Text color={"#331E38"} fontSize={30} fontWeight={"semibold"}>
-                    #
-                  </Text>
-                  <Text color={"#331E38"}>reports for 2023</Text>
-                </VStack>
-              </CardBody>
-            </Card>
-          </HStack>
-          <Text
-            fontSize={20}
-            color="#331E38"
-            pt={"8"}
-            pe={"5"}
-            alignSelf={"center"}
-          >
-            Your last report was written # days ago.
-          </Text>
-          <Card
-            bgColor={"#706993"}
-            size={{ base: "sm", md: "lg" }}
-            variant={"outline"}
-            align={"left"}
-            width={{ md: "md" }}
-          >
-            <CardHeader pb={"5"}>
-              <Heading fontSize={"20"}>2023 Q# July 1</Heading>
-            </CardHeader>
-            <CardBody pt={"0"} pb={"5"}>
-              <Text color={"#331E38"} fontSize={"15"} fontWeight={"semibold"}>
-                Preview
-              </Text>
-            </CardBody>
-            <CardFooter pt={"0"}>
-              <Button bg="white" _hover={{ bg: "#331E38", color: "white" }}>
-                View Last Report
-              </Button>
-            </CardFooter>
-          </Card>
-        </Stack>
-      </Card>
+          </Stack>
+        </Card>
+      )}
     </>
   );
 }

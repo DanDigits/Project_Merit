@@ -12,10 +12,10 @@ const InfoBox = ({ content }) => {
 
   return (
     <Card
-      backgroundColor="#706993"
+      backgroundColor="#b3babe"
       p="1.5em"
       w="100%"
-      color="white"
+      color="black"
       fontSize={{ base: "sm" }}
     >
       <CardHeader
