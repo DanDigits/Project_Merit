@@ -27,14 +27,14 @@ const StatusBox = ({ content, icon }) => {
   return (
     <>
       <Card
-        bg={complete ? "#f1f7f1" : "#fceaeb"}
+        //bg={complete ? "#DDEEBF" : "#F3B9BF"}
         boxShadow={
           complete
-            ? "0 0px 8px 0px rgb(112 174 110 / 85%)"
-            : "0 0px 8px 0px rgb(223 41 53 / 85%)"
+            ? "0 0px 8px 0px rgb(112 174 110 / 60%)"
+            : "0 0px 8px 0px rgb(223 41 53 / 60%)"
         }
         size={"sm"}
-        variant={"outline"}
+        //variant={"outline"}
       >
         <CardHeader>
           <HStack justify={"space-between"}>
@@ -60,13 +60,14 @@ const StatusBox = ({ content, icon }) => {
               </Text>
             </HStack>
             <Icon
-              boxSize={{ base: "4", md: "6" }}
+              boxSize={{ base: "8", md: "10" }}
+              color={complete ? "#688E26" : "#E05260"}
               as={complete ? PiCheckCircleDuotone : PiXCircleDuotone}
             />
           </HStack>
         </CardHeader>
         <CardBody mt="-4">
-          <HStack justify={"space-between"}>
+          <HStack>
             <Text ms={3} fontSize={"3xl"} color={"black"}>
               {total}
             </Text>
