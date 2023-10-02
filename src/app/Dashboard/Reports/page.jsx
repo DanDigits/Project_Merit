@@ -102,6 +102,12 @@ export default function Page() {
       {
         accessorKey: "category",
         header: () => "Category",
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterCategories) => {
+          if (filterCategories.length === 0) return true;
+          const category = row.getValue(columnId);
+          return filterCategories.includes(category);
+        },
       },
       {
         accessorKey: "date",

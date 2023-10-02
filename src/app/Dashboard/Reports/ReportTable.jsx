@@ -25,7 +25,7 @@ import {
   Flex,
   HStack,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
+import Filters from "./Filters";
 
 const IndeterminateCheckbox = React.forwardRef(
   ({ indeterminate, ...rest }, ref) => {
@@ -49,6 +49,7 @@ export default function ReportTable({ columns, data }) {
 
   const [rowSelection, setRowSelection] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const [columnFilters, setColumnFilters] = React.useState([]);
 
   const table = useReactTable({
     data,
@@ -56,10 +57,10 @@ export default function ReportTable({ columns, data }) {
     state: {
       rowSelection,
       globalFilter: globalFilter,
+      columnFilters,
     },
     onGlobalFilterChange: setGlobalFilter,
     enableRowSelection: true, //enable row selection for all rows
-    // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -97,6 +98,10 @@ export default function ReportTable({ columns, data }) {
         </HStack>
       </HStack>
       <Box overflowX={"auto"}>
+        <Filters
+          columnFilters={columnFilters}
+          setColumnFilters={setColumnFilters}
+        />
         <Table variant={"mytable"} color={"black"}>
           <Thead>
             {table.getHeaderGroups().map((headerGroup) => (

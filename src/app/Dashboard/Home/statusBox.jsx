@@ -6,7 +6,7 @@ import {
   HStack,
   Icon,
 } from "@chakra-ui/react";
-import { useState } from "react";
+
 import {
   PiClipboardTextDuotone,
   PiBarbellDuotone,
@@ -16,7 +16,7 @@ import {
   PiXCircleDuotone,
 } from "react-icons/pi";
 
-const StatusBox = ({ content, icon }) => {
+const StatusBox = ({ content }) => {
   const { catagory, shorten, total, needed } = content;
   var complete;
 

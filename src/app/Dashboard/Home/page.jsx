@@ -5,22 +5,11 @@ import {
   CardBody,
   CardFooter,
   Button,
-  Icon,
   AbsoluteCenter,
   Spinner,
   SimpleGrid,
-  Spacer,
 } from "@chakra-ui/react";
-import {
-  PiClipboardTextDuotone,
-  PiBarbellDuotone,
-  PiUsersThreeDuotone,
-  PiSealCheckDuotone,
-  PiCheckCircleDuotone,
-  PiXCircleDuotone,
-  PiFilesDuotone,
-} from "react-icons/pi";
-import { Stack, Text, HStack, Heading } from "@chakra-ui/layout";
+import { Stack, Text, Heading } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 import StatusBox from "./StatusBox";
