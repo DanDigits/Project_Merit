@@ -11,7 +11,7 @@ import { SearchIcon } from "@chakra-ui/icons";
 import FilterPopover from "./FilterPopover";
 
 const Filters = ({ columnFilters, setColumnFilters }) => {
-  const taskName = columnFilters.find((f) => f.id === "title")?.value || "";
+  const title = columnFilters.find((f) => f.id === "title")?.value || "";
 
   const onFilterChange = (id, value) =>
     setColumnFilters((prev) =>
@@ -27,8 +27,8 @@ const Filters = ({ columnFilters, setColumnFilters }) => {
         <Input
           type="text"
           variant="input"
-          placeholder="task name"
-          value={taskName}
+          placeholder="search titles.."
+          value={title}
           onChange={(e) => onFilterChange("title", e.target.value)}
         />
       </InputGroup>
