@@ -42,8 +42,8 @@ export async function getUserReports(email, parameter) {
     // Find 20 of the users most recent reports, after the given index
     reports = await ReportSchema.find({ email })
       .sort({ date: -1 })
-      .skip(index * 20)
-      .limit(20)
+      //.skip(index * 20)
+      //.limit(20)
       .catch(function (err) {
         return err;
       });
