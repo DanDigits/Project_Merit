@@ -29,6 +29,7 @@ export default function Report(report_mode) {
   const [dialogStatus, setDialogStatus] = useState(false);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
+  const [longCategory, setLongCategory] = useState("");
   const [date, setDate] = useState(""); // needs to default to current date
   const [report, setReport] = useState("");
   const [email, setEmail] = useState("");
@@ -43,11 +44,6 @@ export default function Report(report_mode) {
   );
 
   var state;
-
-  //temp
-  /* must get report id somehow
-  setData(getReport(reportId));
-  */
 
   if (report_mode === "View") {
     state = true;
@@ -89,20 +85,37 @@ export default function Report(report_mode) {
         console.log("hasReportId && hasEntry", reportId, hasEntry);
         var arr = JSON.parse(JSON.stringify(entry));
         if (arr) {
-          console.log(arr.title);
-          console.log(arr.category);
-          console.log(arr.date);
-          console.log(arr.report);
-
           setTitle(arr.title);
           setCategory(arr.category);
           setDate(arr.date);
           setReport(arr.report);
           setIsLoading(false);
+
+          if (arr.category === "Duties") {
+            setLongCategory("Primary / Additional Duties");
+          } else if (arr.category === "Conduct") {
+            setLongCategory("Standards, Conduct, Character & Military Bearing");
+          } else if (arr.category === "Training") {
+            setLongCategory("Training Requirements");
+          } else if (arr.category === "Teamwork") {
+            setLongCategory("Teamwork / Followership");
+          } else {
+            setLongCategory(arr.category);
+          }
+
+          console.log("Long Category: ", longCategory);
         }
       }
     }
-  }, [hasEntry, hasReportId, reportId, entry, report_mode, router]);
+  }, [
+    hasEntry,
+    hasReportId,
+    reportId,
+    entry,
+    report_mode,
+    router,
+    longCategory,
+  ]);
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
@@ -158,7 +171,7 @@ export default function Report(report_mode) {
             Title
           </FormLabel>
           <Input
-            isDisabled={state}
+            isReadOnly={state}
             type=""
             value={title}
             maxLength={64}
@@ -172,36 +185,72 @@ export default function Report(report_mode) {
           />
         </FormControl>
         <HStack mb="3">
-          <FormControl id="category" isRequired>
-            <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-              Category
-            </FormLabel>
-            <Select
-              isDisabled={state}
-              placeholder="Select Category"
-              variant="login"
-              borderWidth={"2px"}
-              borderColor={"#70A0AF"}
-              bg="#F7FAFC"
-              mb={3}
-              size={"md"}
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              <option value={"Duties"}>Primary / Additional Duties</option>
-              <option value={"Conduct"}>
-                Standards, Conduct, Character & Military Bearing
-              </option>
-              <option value={"Training"}>Training Requirements</option>
-              <option value={"Teamwork"}>Teamwork / Followership</option>
-            </Select>
-          </FormControl>
+          {state ? (
+            <>
+              <FormControl id="category" isRequired>
+                <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                  Category
+                </FormLabel>
+                <Select
+                  isReadOnly={state}
+                  alpha={"1.0"}
+                  variant="login"
+                  borderWidth={"2px"}
+                  borderColor={"#70A0AF"}
+                  bg="#F7FAFC"
+                  mb={3}
+                  size={"md"}
+                  value={category}
+                >
+                  <option value={"Duties"} disabled>
+                    Primary / Additional Duties
+                  </option>
+                  <option value={"Conduct"} disabled>
+                    Standards, Conduct, Character & Military Bearing
+                  </option>
+                  <option value={"Training"} disabled>
+                    Training Requirements
+                  </option>
+                  <option value={"Teamwork"} disabled>
+                    Teamwork / Followership
+                  </option>
+                </Select>
+              </FormControl>
+            </>
+          ) : (
+            <>
+              <FormControl id="category" isRequired>
+                <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                  Category
+                </FormLabel>
+                <Select
+                  isReadOnly={state}
+                  placeholder="Select Category"
+                  variant="login"
+                  borderWidth={"2px"}
+                  borderColor={"#70A0AF"}
+                  bg="#F7FAFC"
+                  mb={3}
+                  size={"md"}
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                >
+                  <option value={"Duties"}>Primary / Additional Duties</option>
+                  <option value={"Conduct"}>
+                    Standards, Conduct, Character & Military Bearing
+                  </option>
+                  <option value={"Training"}>Training Requirements</option>
+                  <option value={"Teamwork"}>Teamwork / Followership</option>
+                </Select>
+              </FormControl>
+            </>
+          )}
           <FormControl id="date" isRequired>
             <FormLabel mb={1} fontSize={15} color={"#331E38"}>
               Date
             </FormLabel>
             <Input
-              isDisabled={state}
+              isReadOnly={state}
               type="date"
               value={date}
               variant="login"
@@ -219,7 +268,7 @@ export default function Report(report_mode) {
           <Switch
             name={"thesaurus"}
             id={"thesaurusSwitch"}
-            isDisabled={state}
+            isReadOnly={state}
             colorScheme={"teal"}
             onChange={(e) => setToggle(!toggle)}
           />
@@ -236,7 +285,7 @@ export default function Report(report_mode) {
               Report
             </FormLabel>
             <Textarea
-              isDisabled={state}
+              isReadOnly={state}
               placeholder="What would you like to report?"
               type="text"
               varient="outline"

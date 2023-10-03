@@ -19,40 +19,42 @@ export async function POST(Request) {
     return new Response(res.message, { status: 400 });
   } else if (res.id) {
     return new Response(res.id, { status: 201 });
+  } else {
+    return new Response("ERROR", { status: 400 });
   }
 }
 
 export async function GET() {
-  const headersInstance = headers();
-  const request = headersInstance.get("request");
+  const requestHeaders = headers();
+  const request = requestHeaders.get("request");
   let res;
 
   // Switch case to differentiate GET requests
   switch (request) {
     case "1": {
       // Get 20 of a Users reports, ordered by date most recent
-      const user = headersInstance.get("user"); // or "email";
-      const index = headersInstance.get("index");
+      const user = requestHeaders.get("user"); // or "email";
+      const index = requestHeaders.get("index");
       res = await getUserReports(user, index);
       break;
     }
     case "2": {
       // Get most recent user report with user username/email
-      const user = headersInstance.get("user");
+      const user = requestHeaders.get("user");
       res = await getReport(user);
       break;
     }
     case "3": {
       // Get total number of reports for fiscal year and quarter,
       // and number for each category for the given quarter
-      const user = headersInstance.get("user");
+      const user = requestHeaders.get("user");
       const date = new Date();
       res = await getUserReports(user, date);
       break;
     }
     case "4": {
       // Get specific report with report ID
-      const report = headersInstance.get("report");
+      const report = requestHeaders.get("report");
       res = await getReport(report);
       break;
     }
@@ -65,6 +67,9 @@ export async function GET() {
   if (res.name) {
     res = JSON.stringify(res);
     return new Response(res, { status: 404 });
+  } else if (res === "ERROR") {
+    res = JSON.stringify(res);
+    return new Response(res, { status: 400 });
   } else if (res) {
     res = JSON.stringify(res);
     return new Response(res, { status: 200 });
@@ -75,27 +80,31 @@ export async function GET() {
 }
 
 export async function DELETE() {
-  const headersInstance = headers();
-  const report = headersInstance.get("report");
+  const requestHeaders = headers();
+  const report = requestHeaders.get("report");
   const res = await deleteReport(report);
 
   if (res.message) {
     return new Response(res.message, { status: 400 });
-  } else if (res) {
+  } else if (res.id) {
     return new Response(res.id, { status: 200 });
+  } else {
+    return new Response("ERROR", { status: 400 });
   }
 }
 
 export async function PATCH(Request) {
-  const headersInstance = headers();
-  const report = headersInstance.get("report");
+  const requestHeaders = headers();
+  const report = requestHeaders.get("report");
   const res = await modifyReport(report, await Request.json());
 
   if (res.name == "ValidationError") {
     return new Response(res, { status: 422 });
   } else if (res.message) {
     return new Response(res.message, { status: 400 });
-  } else if (res) {
+  } else if (res.id) {
     return new Response(res.id, { status: 200 });
+  } else {
+    return new Response("ERROR", { status: 400 });
   }
 }

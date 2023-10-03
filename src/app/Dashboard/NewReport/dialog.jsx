@@ -72,9 +72,6 @@ export default function Dialog(status) {
               <AlertDialogHeader fontSize="lg" fontWeight="bold">
                 Report successfully updated.
               </AlertDialogHeader>
-
-              <AlertDialogBody>Return to Reports Page.</AlertDialogBody>
-
               <AlertDialogFooter>
                 <Link href="/Dashboard/Reports">
                   <Button

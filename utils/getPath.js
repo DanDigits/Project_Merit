@@ -30,6 +30,9 @@ export default {
     },
     user: {
       signUp: "/api/user/",
+      get: "/api/user/",
+      update: "/api/user/",
+      delete: "/api/user/",
       verify: "/api/user/",
     },
   },

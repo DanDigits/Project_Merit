@@ -15,6 +15,7 @@ import {
   Input,
   Button,
   ButtonGroup,
+  Link,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
@@ -33,7 +34,6 @@ export default function Page() {
     deleteReport({ reportId }).then((response) => {
       if (response.ok) {
         {
-          console.log("report deleted: ", reportId);
           window.location.replace("/Dashboard/Reports");
         }
       } else {
@@ -48,6 +48,7 @@ export default function Page() {
         p={2}
         alignSelf={"center"}
         size={{ base: "sm", md: "lg" }}
+        w={'{ md: "lg" }'}
         bgColor={"white"}
       >
         <VStack m="5vh">
@@ -56,14 +57,25 @@ export default function Page() {
           {mode === "View" && (
             <>
               {Report(mode)}
-              <Button
-                bgColor={"#70A0AF"}
-                color={"white"}
-                _hover={{ bgColor: "#706993", color: "white" }}
-                onClick={() => setMode("Edit")}
-              >
-                Edit
-              </Button>
+              <ButtonGroup>
+                <Link href="/Dashboard/Reports">
+                  <Button
+                    bgColor={"#A0C1B9"}
+                    color={"#331E38"}
+                    _hover={{ bgColor: "#706993", color: "white" }}
+                  >
+                    Back
+                  </Button>
+                </Link>
+                <Button
+                  bgColor={"#70A0AF"}
+                  color={"white"}
+                  _hover={{ bgColor: "#706993", color: "white" }}
+                  onClick={() => setMode("Edit")}
+                >
+                  Edit
+                </Button>
+              </ButtonGroup>
             </>
           )}
           {mode === "Edit" && (
