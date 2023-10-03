@@ -26,7 +26,9 @@ import {
   Select,
   HStack,
   Stack,
+  Icon,
 } from "@chakra-ui/react";
+import { FiFilter } from "react-icons/fi";
 import Filters from "./Filters";
 
 const IndeterminateCheckbox = React.forwardRef(
@@ -93,6 +95,7 @@ export default function ReportTable({ columns, data }) {
             bgColor={"black"}
             color={"white"}
             _hover={{ bgColor: "teal", color: "white" }}
+            leftIcon={<Icon as={FiFilter} color="white" />}
             onClick={() => setOpenFilter(!openFilter)}
           >
             Filter

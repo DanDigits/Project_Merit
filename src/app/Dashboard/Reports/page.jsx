@@ -105,6 +105,7 @@ export default function Page() {
         cell: ({ cell }) => (
           <>
             <Button
+              size={{ base: "sm", lg: "md" }}
               textColor={"white"}
               bg={"#1c303c"}
               opacity={0.85}
@@ -121,6 +122,20 @@ export default function Page() {
       {
         accessorKey: "date",
         header: "Date",
+        enableColumnFilter: true,
+        filterFn: (row, columnId, value) => {
+          const date = row.getValue(columnId);
+          const [start, end] = value; // value => two date input values
+          //If one filter defined and date is null filter it
+          if ((start || end) && !date) return false;
+          if (start && !end) {
+            return date >= start;
+          } else if (!start && end) {
+            return date <= end;
+          } else if (start && end) {
+            return date >= start && date <= end;
+          } else return true;
+        },
       },
       {
         accessorKey: "category",

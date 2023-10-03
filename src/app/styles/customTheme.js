@@ -27,6 +27,15 @@ const variantFlushed = () => ({
   },
 });
 
+const filterVariant = () => ({
+  _hover: {
+    background: "black",
+    color: "white",
+  },
+  background: "gray.50",
+  color: "black",
+});
+
 const trimVariant = () => ({
   field: {
     _focus: {
@@ -60,6 +69,11 @@ export const customTheme = extendTheme({
     outline: "0 0 0 3px var(--chakra-ui-focus-ring-color)",
   },
   components: {
+    Button: {
+      variants: {
+        filter: filterVariant,
+      },
+    },
     Table: {
       variants: {
         mytable: {
