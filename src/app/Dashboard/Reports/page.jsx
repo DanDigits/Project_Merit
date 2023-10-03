@@ -100,29 +100,6 @@ export default function Page() {
         ),
       },
       {
-        accessorKey: "category",
-        header: () => "Category",
-        enableColumnFilter: true,
-        filterFn: (row, columnId, filterCategories) => {
-          if (filterCategories.length === 0) return true;
-          const category = row.getValue(columnId);
-          return filterCategories.includes(category);
-        },
-      },
-      {
-        accessorKey: "date",
-        header: "Date",
-      },
-      {
-        accessorKey: "title",
-        header: "Title",
-      },
-      {
-        accessorKey: "report",
-        header: "Content",
-      },
-
-      {
         id: "view",
         header: "View/Edit",
         cell: ({ cell }) => (
@@ -140,6 +117,25 @@ export default function Page() {
             </Button>
           </>
         ),
+      },
+      {
+        accessorKey: "date",
+        header: "Date",
+      },
+      {
+        accessorKey: "category",
+        header: () => "Category",
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterCategories) => {
+          if (filterCategories.length === 0) return true;
+          const category = row.getValue(columnId);
+          return filterCategories.includes(category);
+        },
+      },
+
+      {
+        accessorKey: "title",
+        header: "Title",
       },
     ],
 

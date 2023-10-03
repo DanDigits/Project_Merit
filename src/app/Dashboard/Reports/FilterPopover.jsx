@@ -9,6 +9,31 @@ const options = [
   { id: "Duties", text: "Duties" },
 ];
 
+const styles = {
+  container: (base) => ({
+    ...base,
+    display: "inline-block",
+    width: "250px",
+    minHeight: "1px",
+    textAlign: "left",
+    border: "none",
+  }),
+  control: (base) => ({
+    ...base,
+    width: "250px",
+  }),
+  dropdownIndicator: (base) => ({
+    ...base,
+    paddingTop: 0,
+    paddingBottom: 0,
+  }),
+  clearIndicator: (base) => ({
+    ...base,
+    paddingTop: 0,
+    paddingBottom: 0,
+  }),
+};
+
 const FilterPopover = ({ columnFilters, setColumnFilters }) => {
   const filterCategories =
     columnFilters.find((f) => f.id === "category")?.value || [];
@@ -63,6 +88,7 @@ const FilterPopover = ({ columnFilters, setColumnFilters }) => {
       getOptionLabel={(option) => option.text}
       getOptionValue={(option) => option.text}
       onChange={onChange}
+      styles={styles}
     />
   );
 };
