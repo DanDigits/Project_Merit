@@ -119,12 +119,12 @@ export default function Page() {
       console.log("totals:", totals);
       var totalArr = JSON.parse(JSON.stringify(totals));
       if (totalArr) {
-        setTotalReports(arr.totalReports);
-        setQuarterReports(arr.quarterReports);
-        duties["total"] = arr.duties;
-        conduct["total"] = arr.conduct;
-        training["total"] = arr.training;
-        teamwork["total"] = arr.teamwork;
+        setTotalReports(totalArr.totalReports);
+        setQuarterReports(totalArr.quarterReports);
+        duties["total"] = totalArr.duties;
+        conduct["total"] = totalArr.conduct;
+        training["total"] = totalArr.training;
+        teamwork["total"] = totalArr.teamwork;
         console.log("Duties Object:", duties);
       } else {
         console.log("totalArr empty");
