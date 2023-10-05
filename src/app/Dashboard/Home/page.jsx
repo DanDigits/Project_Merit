@@ -15,65 +15,78 @@ import { getSession } from "next-auth/react";
 import { getLastReport, getTotals } from "./../../actions/Report.js";
 import StatusBox from "./StatusBox";
 
-const duties = {
-  catagory: "Primary / Additional Duties",
-  shorten: "duties",
-  total: 6,
-  needed: 8,
-};
-const teamwork = {
-  catagory: "Teamwork / Fellowership",
-  shorten: "teamwork",
-  total: 2,
-  needed: 2,
-};
-const training = {
-  catagory: "Training Requirements",
-  shorten: "training",
-  total: 3,
-  needed: 2,
-};
-const conduct = {
-  catagory: "Standards, Conduct, Character & Military Bearings",
-  shorten: "conduct",
-  total: 4,
-  needed: 5,
-};
-
 export default function Page() {
+  const [hasEmail, setHasEmail] = useState(false);
   const [email, setEmail] = useState("");
   const [rank, setRank] = useState("");
   const [lastName, setLastName] = useState("");
   const [suffix, setSuffix] = useState("");
-  const [totals, setTotals] = useState("");
-  const [report, setReport] = useState("");
+
   const [hasError, setHasError] = useState(false);
-  const [hasEmail, setHasEmail] = useState(false);
-  const [hasTotals, setHasTotals] = useState(false);
-  const [hasReport, setHasReport] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    getSession().then((session) => setEmail(session.user.email));
-    getSession().then((session) => setRank(session.user.rank));
-    getSession().then((session) => setLastName(session.user.lastName));
-    getSession().then((session) => setSuffix(session.user.suffix));
-    setIsLoading(false);
-  }, []);
+  const [hasReport, setHasReport] = useState(false);
+  const [report, setReport] = useState({
+    title: "",
+    category: "",
+    date: "",
+    data: "",
+  });
+  /*
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [date, setDate] = useState("");
+  const [reportData, setReportData] = useState(""); */
+
+  const [hasTotals, setHasTotals] = useState(false);
+  const [totals, setTotals] = useState("");
+  const [totalReports, setTotalReports] = useState("");
+  const [quarterReports, setQuarterReports] = useState("");
+  const [duties, setDuties] = useState({
+    catagory: "Primary / Additional Duties",
+    shorten: "duties",
+    total: 0,
+    needed: 8,
+  });
+  const [conduct, setConduct] = useState({
+    catagory: "Standards, Conduct, Character & Military Bearings",
+    shorten: "conduct",
+    total: 0,
+    needed: 5,
+  });
+  const [training, setTraining] = useState({
+    catagory: "Training Requirements",
+    shorten: "training",
+    total: 0,
+    needed: 2,
+  });
+  const [teamwork, setTeamwork] = useState({
+    catagory: "Teamwork / Fellowership",
+    shorten: "teamwork",
+    total: 0,
+    needed: 2,
+  });
 
   useEffect(() => {
     if (!hasEmail) {
-      //console.log("!hasemail");
       setIsLoading(true);
       setHasError(false);
       getSession()
         .then((session) => setEmail(session.user.email))
         .then(() => setHasEmail(true));
     }
+
+    if (hasEmail) {
+      getSession().then((session) => setRank(session.user.rank));
+      getSession().then((session) => setLastName(session.user.lastName));
+      getSession().then((session) => setSuffix(session.user.suffix));
+    }
+
     if (hasEmail && !hasTotals) {
       console.log("hasEmail && !hasTotals", email, hasTotals);
       setIsLoading(true);
       setHasError(false);
+
       getTotals({ email }).then((response) => {
         response.ok
           ? response
@@ -84,6 +97,7 @@ export default function Page() {
         console.log("hasError:", hasError);
       });
     }
+
     if (hasEmail && !hasReport) {
       console.log("hasEmail && !hasReport", email, hasReport);
       setIsLoading(true);
@@ -98,17 +112,36 @@ export default function Page() {
         console.log("hasError:", hasError);
       });
     }
-    if (hasEmail && hasTotals && hasReport) {
-      console.log(
-        "hasEmail && hasTotals && hasReport",
-        email,
-        hasTotals,
-        hasReport
-      );
+
+    if (hasEmail && hasTotals) {
+      console.log("hasEmail && hasTotals", email, hasTotals);
       setIsLoading(false);
-      console.log("isLoading:", isLoading);
       console.log("totals:", totals);
+      var totalArr = JSON.parse(JSON.stringify(totals));
+      if (totalArr) {
+        setTotalReports(arr.totalReports);
+        setQuarterReports(arr.quarterReports);
+        duties["total"] = arr.duties;
+        conduct["total"] = arr.conduct;
+        training["total"] = arr.training;
+        teamwork["total"] = arr.teamwork;
+        console.log("Duties Object:", duties);
+      } else {
+        console.log("totalArr empty");
+      }
+    }
+
+    if (hasEmail && hasReport) {
+      console.log("hasEmail && hasReport", email, hasReport);
       console.log("report:", report);
+      console.log("Title: ", report[0].title);
+      console.log("Category: ", report[0].category);
+      console.log("Date: ", report[0].date);
+      console.log("Data: ", report[0].report);
+    }
+
+    if (hasEmail && hasTotals && hasReport) {
+      setIsLoading(false);
     }
   }, [hasEmail, hasTotals, email]);
 
@@ -164,7 +197,7 @@ export default function Page() {
                 </Heading>
               </CardHeader>
               <CardBody pt={"0"} pb={"5"}>
-                <Text>Written: 09/30/2023</Text>
+                <Text>Written: {report[0].date}</Text>
               </CardBody>
               <CardFooter pt={"0"}>
                 <Button bg="white" _hover={{ bg: "#031926", color: "white" }}>
