@@ -42,14 +42,14 @@ export async function getUserReports(email, parameter) {
     // Find 20 of the users most recent reports, after the given index
     reports = await ReportSchema.find({ email })
       .sort({ date: -1 })
-      .skip(index * 20)
-      .limit(20)
+      //.skip(index * 20)
+      //.limit(20)
       .catch(function (err) {
         return err;
       });
   } else if (parameter?.getMonth() != undefined) {
     date = parameter;
-    reports = [];
+    reports = "{";
     // Find total reports for the fiscal year Oct-Sept
     if (date.getMonth() >= 10) {
       temp = await ReportSchema.find({
@@ -63,7 +63,7 @@ export async function getUserReports(email, parameter) {
       });
       temp = JSON.stringify(temp);
       let count = temp.match(/email/g).length;
-      reports.push(count);
+      reports += ` "totalReports": ${count},`;
     } else if (date.getMonth() <= 9) {
       temp = await ReportSchema.find({
         email,
@@ -77,9 +77,9 @@ export async function getUserReports(email, parameter) {
       temp = JSON.stringify(temp);
       let count = temp?.match(/email/g)?.length;
       if (count === undefined) {
-        reports.push(0);
+        reports += ` "totalReports": ${0},`;
       } else {
-        reports.push(count);
+        reports += ` "totalReports": ${count},`;
       }
     }
 
@@ -119,9 +119,9 @@ export async function getUserReports(email, parameter) {
     temp = JSON.stringify(temp);
     let count = temp?.match(/email/g)?.length;
     if (count === undefined) {
-      reports.push(0);
+      reports += ` "quarterReports": ${0},`;
     } else {
-      reports.push(count);
+      reports += ` "quarterReports": ${count},`;
     }
 
     // Find total reports for each category, for the quarter
@@ -137,11 +137,14 @@ export async function getUserReports(email, parameter) {
       temp = JSON.stringify(temp);
       let count = temp?.match(/email/g)?.length;
       if (count === undefined) {
-        reports.push(0);
+        reports += ` "${category}": ${0},`;
       } else {
-        reports.push(count);
+        reports += ` "${category}": ${count},`;
       }
     }
+    reports = reports.slice(0, -1);
+    reports += " }";
+    reports = JSON.parse(reports);
   } else {
     reports = "ERROR";
   }

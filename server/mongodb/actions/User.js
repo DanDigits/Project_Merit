@@ -20,12 +20,12 @@ export async function login({ email, password }) {
 }
 
 export async function signUp(userData) {
+  await mongoDB();
   const user = await UserSchema.findOne({ email: userData.email });
   if (user) {
     const res = "ConflictError";
     return res;
   }
-  await mongoDB();
   return bcrypt
     .hash(userData.password, 10)
     .then((hashedPassword) =>
@@ -37,7 +37,7 @@ export async function signUp(userData) {
         suffix: userData.suffix,
         rank: userData.rank,
         reportType: userData.reportType,
-        verified: userData.verified,
+        verified: false,
         isPasswordLocked: true,
       }).catch(function (err) {
         return err;

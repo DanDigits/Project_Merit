@@ -6,17 +6,20 @@ import {
   Center,
   Card,
   Button,
-  ButtonGroup,
   CardBody,
   CardHeader,
   CardFooter,
+  Flex,
   FormControl,
   FormLabel,
+  HStack,
   Input,
   Select,
+  Spacer,
   Spinner,
 } from "@chakra-ui/react";
 import { getUser, updateUser } from "src/app/actions/User";
+import DeleteDialog from "./DeleteDialog.jsx";
 
 export default function UpdateProfile() {
   const [mode, setMode] = useState("View");
@@ -30,6 +33,8 @@ export default function UpdateProfile() {
   const [hasProfile, setHasProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [deleteStatus, setDeleteStatus] = useState(false);
+  const [msg, setMsg] = useState("");
   const { data: session, update } = useSession();
 
   var state;
@@ -40,7 +45,6 @@ export default function UpdateProfile() {
 
   useEffect(() => {
     if (!hasEmail) {
-      //console.log("!hasemail");
       setIsLoading(true);
       setHasError(false);
       getSession()
@@ -48,9 +52,7 @@ export default function UpdateProfile() {
         .then(() => setHasEmail(true));
     }
     if (hasEmail && !hasProfile) {
-      console.log("hasEmail && !hasProfile", email, hasProfile);
       setIsLoading(true);
-      console.log("isLoading: ", isLoading);
       setHasError(false);
       getUser({ email }).then((response) => {
         response.ok
@@ -63,22 +65,13 @@ export default function UpdateProfile() {
       });
     }
     if (hasEmail && hasProfile) {
-      console.log("hasEmail && hasProfile", hasEmail, hasProfile);
-      console.log("Profile: ", profile);
       var arr = JSON.parse(JSON.stringify(profile));
       if (arr) {
-        console.log(arr.rank);
-        console.log(arr.firstName);
-        console.log(arr.lastName);
-        console.log(arr.suffix);
-
         setRank(arr.rank);
         setFirstName(arr.firstName);
         setLastName(arr.lastName);
         setSuffix(arr.suffix);
         setIsLoading(false);
-      } else {
-        console.log("Arr is empty");
       }
     }
   }, [hasEmail, hasProfile, email, profile, hasError, isLoading]);
@@ -86,18 +79,23 @@ export default function UpdateProfile() {
   const handleSubmitInfo = (e) => {
     e.preventDefault();
 
-    updateUser({ email, rank, firstName, lastName, suffix }).then(
-      (response) => {
-        if (response.ok) {
-          {
-            setMode("View");
-            updateSession({ rank, lastName, suffix });
+    if (rank === "" || firstName === "" || lastName === "") {
+      setMsg("missing");
+    } else {
+      updateUser({ email, rank, firstName, lastName, suffix }).then(
+        (response) => {
+          if (response.ok) {
+            {
+              setMode("View");
+              setMsg("");
+              updateSession({ rank, lastName, suffix });
+            }
+          } else {
+            alert("User could not be updated. Please try again.");
           }
-        } else {
-          alert("User could not be updated. Please try again.");
         }
-      }
-    );
+      );
+    }
   };
 
   const updateSession = async ({ rank, lastName, suffix }) => {
@@ -114,6 +112,7 @@ export default function UpdateProfile() {
 
   return (
     <>
+      {DeleteDialog(deleteStatus)}
       {isLoading ? (
         <>
           <Center>
@@ -279,24 +278,38 @@ export default function UpdateProfile() {
                     onChange={(e) => setSuffix(e.target.value)}
                   />
                 </FormControl>
+                {msg === "missing" && (
+                  <p>All fields except suffix are required.</p>
+                )}
               </div>
             </CardBody>
             <CardFooter>
-              <ButtonGroup>
-                {mode === "View" && (
-                  <>
-                    <Button
-                      bgColor={"#70A0AF"}
-                      color={"white"}
-                      _hover={{ bgColor: "#706993", color: "white" }}
-                      onClick={() => setMode("Edit")}
-                    >
-                      Edit
-                    </Button>
-                  </>
-                )}
-                {mode === "Edit" && (
-                  <>
+              {mode === "View" && (
+                <Flex width={"100%"}>
+                  <Button
+                    justifySelf={"right"}
+                    bgColor={"#70A0AF"}
+                    color={"white"}
+                    _hover={{ bgColor: "#706993", color: "white" }}
+                    onClick={() => setMode("Edit")}
+                  >
+                    Edit Profile
+                  </Button>
+                  <Spacer />
+                  <Button
+                    justifySelf={"left"}
+                    bgColor={"red"}
+                    color={"white"}
+                    _hover={{ bgColor: "#706993", color: "white" }}
+                    onClick={() => setDeleteStatus(true)}
+                  >
+                    Delete Account
+                  </Button>
+                </Flex>
+              )}
+              {mode === "Edit" && (
+                <flex>
+                  <HStack justify={"flex-end"}>
                     <Button
                       bgColor={"#A0C1B9"}
                       color={"#331E38"}
@@ -305,6 +318,7 @@ export default function UpdateProfile() {
                     >
                       Cancel
                     </Button>
+                    <Spacer />
                     <Button
                       bgColor={"#70A0AF"}
                       color={"white"}
@@ -315,9 +329,9 @@ export default function UpdateProfile() {
                     >
                       Update
                     </Button>
-                  </>
-                )}
-              </ButtonGroup>
+                  </HStack>
+                </flex>
+              )}
             </CardFooter>
           </Card>
         </>

@@ -69,7 +69,7 @@ export default function DeleteDialog(deleteStatus) {
               <Button
                 bgColor={"#70A0AF"}
                 color={"white"}
-                _hover={{ bgColor: "#706993", color: "white" }}
+                _hover={{ bgColor: "red", color: "white" }}
                 ml={3}
                 onClick={() => handleDelete()}
               >

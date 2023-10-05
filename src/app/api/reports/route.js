@@ -64,7 +64,7 @@ export async function GET() {
   }
 
   // Coordinate responses respectively
-  if (res.name) {
+  if (res?.name != undefined) {
     res = JSON.stringify(res);
     return new Response(res, { status: 404 });
   } else if (res === "ERROR") {
