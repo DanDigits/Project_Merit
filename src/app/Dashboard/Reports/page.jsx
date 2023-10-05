@@ -100,36 +100,57 @@ export default function Page() {
         ),
       },
       {
-        accessorKey: "category",
-        header: () => "Category",
-      },
-      {
-        accessorKey: "date",
-        header: "Date",
-      },
-      {
-        accessorKey: "title",
-        header: "Title",
-      },
-      {
-        accessorKey: "report",
-        header: "Content",
-      },
-
-      {
         id: "view",
         header: "View/Edit",
         cell: ({ cell }) => (
           <>
             <Button
+              size={{ base: "sm", lg: "md" }}
               textColor={"white"}
-              bg={"#706993"}
+              bg={"#1c303c"}
+              opacity={0.85}
+              borderColor={"#354751"}
+              borderWidth={"thin"}
+              _hover={{ color: "black", bg: "white", opacity: 1 }}
               onClick={() => handleSubmitInfo(cell.row.original._id)}
             >
               View
             </Button>
           </>
         ),
+      },
+      {
+        accessorKey: "date",
+        header: "Date",
+        enableColumnFilter: true,
+        filterFn: (row, columnId, value) => {
+          const date = row.getValue(columnId);
+          const [start, end] = value; // value => two date input values
+          //If one filter defined and date is null filter it
+          if ((start || end) && !date) return false;
+          if (start && !end) {
+            return date >= start;
+          } else if (!start && end) {
+            return date <= end;
+          } else if (start && end) {
+            return date >= start && date <= end;
+          } else return true;
+        },
+      },
+      {
+        accessorKey: "category",
+        header: () => "Category",
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterCategories) => {
+          if (filterCategories.length === 0) return true;
+          const category = row.getValue(columnId);
+          return filterCategories.includes(category);
+        },
+      },
+
+      {
+        accessorKey: "title",
+        header: "Title",
       },
     ],
 

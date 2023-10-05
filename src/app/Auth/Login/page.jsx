@@ -117,13 +117,11 @@ export default function Page() {
                 <Select
                   placeholder="Select Rank"
                   value={rank}
-                  variant="login"
-                  borderWidth={"2px"}
+                  variant="trim"
                   borderColor={"#70A0AF"}
-                  bg="#F7FAFC"
+                  borderWidth={"2px"}
                   mb={3}
                   size={"md"}
-                  _hover={{ bgColor: "#706993" }}
                   onChange={(e) => setRank(e.target.value)}
                 >
                   <option value={"AB"}>Airman Basic (AB)</option>
@@ -279,9 +277,9 @@ export default function Page() {
           <VStack align={"left"} w={"100%"}>
             <Button
               onClick={(e) => handleSubmitInfo(e)}
-              bgColor={"#70A0AF"}
+              bgColor={"#38a4b1"}
               color={"white"}
-              _hover={{ bgColor: "#706993", color: "white" }}
+              _hover={{ bgColor: "#031926", color: "white" }}
             >
               {mode === "Login" ? (
                 <Text align={"center"}>Log In</Text>
@@ -300,7 +298,7 @@ export default function Page() {
         )}
         <Button
           mb={"10"}
-          color={"#331E38"}
+          color={"#031926"}
           w={"sm"}
           variant={"link"}
           alignSelf={"center"}

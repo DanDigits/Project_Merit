@@ -236,37 +236,37 @@ export default function Page() {
             <TabList m="1em" spacing={10}>
               <Tab
                 fontSize={{ base: "sm", md: "md" }}
-                backgroundColor="#70A0AF"
-                color={"#ECECEC"}
+                backgroundColor="#9cd2d8"
+                color={"black"}
                 mx={{ base: "0.5", md: "1em" }}
-                _selected={{ color: "white", bg: "#331E38" }}
+                _selected={{ color: "white", bg: "#031926" }}
               >
                 General
               </Tab>
               <Tab
                 fontSize={{ base: "sm", md: "md" }}
-                backgroundColor="#70A0AF"
-                color={"#ECECEC"}
+                backgroundColor="#9cd2d8"
+                color={"black"}
                 mx={{ base: "0.5", md: "1em" }}
-                _selected={{ color: "white", bg: "#331E38" }}
+                _selected={{ color: "white", bg: "#031926" }}
               >
                 OPR
               </Tab>
               <Tab
                 fontSize={{ base: "sm", md: "md" }}
-                backgroundColor="#70A0AF"
-                color={"#ECECEC"}
+                backgroundColor="#9cd2d8"
+                color={"black"}
                 mx={{ base: "0.5", md: "1em" }}
-                _selected={{ color: "white", bg: "#331E38" }}
+                _selected={{ color: "white", bg: "#031926" }}
               >
                 EPR
               </Tab>
               <Tab
                 fontSize={{ base: "sm", md: "md" }}
-                backgroundColor="#70A0AF"
-                color={"#ECECEC"}
+                backgroundColor="#9cd2d8"
+                color={"black"}
                 mx={{ base: "0.5", md: "1em" }}
-                _selected={{ color: "white", bg: "#331E38" }}
+                _selected={{ color: "white", bg: "#031926" }}
               >
                 Examples
               </Tab>
