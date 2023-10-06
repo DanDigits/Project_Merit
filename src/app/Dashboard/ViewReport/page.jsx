@@ -45,10 +45,11 @@ export default function Page() {
   return (
     <>
       <Card
-        p={2}
+        p={{ base: 0, md: 2 }}
+        mx={{ base: -4, md: 0 }}
         alignSelf={"center"}
         size={{ base: "sm", md: "lg" }}
-        w={'{ md: "lg" }'}
+        w={{ md: "100%" }}
         bgColor={"white"}
       >
         <VStack m="5vh">

@@ -7,8 +7,8 @@ import {
   TabPanel,
   VStack,
   Center,
+  Card,
 } from "@chakra-ui/react";
-import { Box } from "@chakra-ui/react";
 
 import InfoBox from "./InfoBox";
 
@@ -230,8 +230,15 @@ const oprEx = {
 export default function Page() {
   return (
     <div>
-      <Box backgroundColor="white">
-        <Tabs variant="solid-rounded" fontSize={{ base: "sm", md: "md" }}>
+      <Card
+        p={{ base: 0, md: 2 }}
+        mx={{ base: -4, md: 0 }}
+        alignSelf={"center"}
+        size={{ base: "sm", md: "lg" }}
+        w={{ md: "100%" }}
+        bgColor={"white"}
+      >
+        <Tabs variant="solid-rounded" size={{ base: "sm", md: "md" }}>
           <Center>
             <TabList m="1em" spacing={10}>
               <Tab
@@ -304,7 +311,7 @@ export default function Page() {
             </TabPanel>
           </TabPanels>
         </Tabs>
-      </Box>
+      </Card>
     </div>
   );
 }
