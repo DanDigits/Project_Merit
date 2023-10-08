@@ -116,24 +116,28 @@ export async function deleteUser(userId) {
 
 export async function verifyUser(userId) {
   await mongoDB();
-  let user = await UserSchema.findOne(userId);
+  let user = await UserSchema.findOne({ _id: userId });
   if (user.verified == true && user.isPasswordLocked == true) {
     user = await UserSchema.findByIdAndUpdate(userId, {
       isPasswordLocked: false,
     }).catch(function (err) {
       console.log(err);
+      return "ERROR";
     });
     setTimeout(60000 * 5);
     user = await UserSchema.findByIdAndUpdate(userId, {
       isPasswordLocked: true,
     }).catch(function (err) {
       console.log(err);
+      return "ERROR";
     });
   } else if (user.verified == false && user.isPasswordLocked == true) {
     user = await UserSchema.findByIdAndUpdate(userId, {
       verified: true,
     }).catch(function (err) {
       console.log(err);
+      return "ERROR";
     });
   }
+  return "OK";
 }

@@ -17,9 +17,8 @@ export async function getReport(reportData) {
 
   // Find specific report, or find most recent user report
   if (reportData.toLowerCase().includes("@")) {
-    report = await ReportSchema.find({ email: reportData })
+    report = await ReportSchema.findOne({ email: reportData })
       .sort({ date: -1 })
-      .limit(1)
       .catch(function (err) {
         return err;
       });

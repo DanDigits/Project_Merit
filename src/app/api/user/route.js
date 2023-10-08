@@ -60,12 +60,9 @@ export async function GET(Request) {
     res = await getUser(user);
   }
 
-  if (res && user) {
+  if (res) {
     res = JSON.stringify(res);
     return new Response(res, { status: 200 });
-  } else if (res && !user) {
-    res = JSON.stringify(res);
-    return new Response({ status: 200 });
   } else {
     return new Response("ERROR", { status: 400 });
   }
