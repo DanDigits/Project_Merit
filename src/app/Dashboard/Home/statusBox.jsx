@@ -38,7 +38,8 @@ const StatusBox = ({ content }) => {
           <HStack justify={"space-between"}>
             <HStack>
               <Icon
-                boxSize={{ base: "6", md: "9" }}
+                display={{ base: "none", md: "initial" }}
+                boxSize={"9"}
                 as={
                   shorten === "duties"
                     ? PiClipboardTextDuotone
@@ -66,7 +67,11 @@ const StatusBox = ({ content }) => {
         </CardHeader>
         <CardBody mt="-4">
           <HStack>
-            <Text ms={3} fontSize={"3xl"} color={"black"}>
+            <Text
+              ms={3}
+              fontSize={{ base: "xl", md: "2xl", lg: "3xl" }}
+              color={"black"}
+            >
               {total}
             </Text>
 

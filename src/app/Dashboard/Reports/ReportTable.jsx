@@ -74,14 +74,16 @@ export default function ReportTable({ columns, data }) {
   });
 
   return (
-    <div>
+    <Box mx={{ base: -4, md: 0 }}>
       <Stack
         direction={{ base: "column", lg: "row" }}
         justifyContent={"space-between"}
         pb={"5"}
+        spacing={"5"}
       >
         <HStack justify={{ base: "space-between", lg: "space-evenly" }}>
           <Input
+            size={{ base: "sm", md: "md" }}
             w={{ base: "50", md: "xs" }}
             variant="login"
             borderWidth={"1px"}
@@ -92,6 +94,7 @@ export default function ReportTable({ columns, data }) {
             placeholder="Search all columns..."
           />
           <Button
+            size={{ base: "sm", md: "md" }}
             bgColor={"black"}
             color={"white"}
             _hover={{ bgColor: "teal", color: "white" }}
@@ -103,6 +106,7 @@ export default function ReportTable({ columns, data }) {
         </HStack>
         <HStack justify={{ base: "flex-end", lg: "space-evenly" }}>
           <Button
+            size={{ base: "sm", md: "md" }}
             bgColor={"#DF2935"}
             color={"white"}
             _hover={{ bgColor: "#031926", color: "white" }}
@@ -110,6 +114,7 @@ export default function ReportTable({ columns, data }) {
             Delete
           </Button>
           <Button
+            size={{ base: "sm", md: "md" }}
             bgColor={"#7eb67d"}
             color={"black"}
             _hover={{ bgColor: "#031926", color: "white" }}
@@ -154,7 +159,8 @@ export default function ReportTable({ columns, data }) {
             ))}
           </Tbody>
         </Table>
-
+      </Box>
+      <div>
         <Stack
           direction={{ base: "column", lg: "row" }}
           my={"5"}
@@ -228,11 +234,9 @@ export default function ReportTable({ columns, data }) {
             </HStack>
           </Stack>
         </Stack>
-      </Box>
-      <div>
         {Object.keys(rowSelection).length} of{" "}
         {table.getPreFilteredRowModel().rows.length} Total Rows Selected
       </div>
-    </div>
+    </Box>
   );
 }

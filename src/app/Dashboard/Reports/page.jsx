@@ -1,12 +1,13 @@
 "use client";
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Center, Spinner, Text, Button } from "@chakra-ui/react";
+import { Center, Spinner, Text, Button, Icon } from "@chakra-ui/react";
 import ReportTable from "./ReportTable";
 import { getSession } from "next-auth/react";
 import { getUserReports } from "./../../actions/Report.js";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
+import { PiEyeBold } from "react-icons/pi";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   const ref = useRef(null);
@@ -101,7 +102,7 @@ export default function Page() {
       },
       {
         id: "view",
-        header: "View/Edit",
+        header: "View",
         cell: ({ cell }) => (
           <>
             <Button
@@ -114,7 +115,7 @@ export default function Page() {
               _hover={{ color: "black", bg: "white", opacity: 1 }}
               onClick={() => handleSubmitInfo(cell.row.original._id)}
             >
-              View
+              <Icon as={PiEyeBold} />
             </Button>
           </>
         ),
