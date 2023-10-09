@@ -8,6 +8,11 @@ import {
   AbsoluteCenter,
   Spinner,
   SimpleGrid,
+  Progress,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
 } from "@chakra-ui/react";
 import { Stack, Text, Heading } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
@@ -30,41 +35,44 @@ export default function Page() {
     title: "",
     category: "",
     date: "",
-    data: "",
+    report: "",
   });
-  /*
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
-  const [date, setDate] = useState("");
-  const [reportData, setReportData] = useState(""); */
 
   const [hasTotals, setHasTotals] = useState(false);
-  const [totals, setTotals] = useState("");
-  const [totalReports, setTotalReports] = useState("");
-  const [quarterReports, setQuarterReports] = useState("");
-  const [duties, setDuties] = useState({
+  const [progress, setProgress] = useState(0);
+  const [totals, setTotals] = useState({
+    totalReports: "",
+    currentQuarter: "",
+    quarterReports: "",
+    Duties: "",
+    Conduct: "",
+    Training: "",
+    Teamwork: "",
+  });
+
+  const [duties] = useState({
     catagory: "Primary / Additional Duties",
     shorten: "duties",
     total: 0,
-    needed: 8,
+    needed: 5,
   });
-  const [conduct, setConduct] = useState({
+  const [conduct] = useState({
     catagory: "Standards, Conduct, Character & Military Bearings",
     shorten: "conduct",
     total: 0,
-    needed: 5,
+    needed: 3,
   });
-  const [training, setTraining] = useState({
+  const [training] = useState({
     catagory: "Training Requirements",
     shorten: "training",
     total: 0,
-    needed: 2,
+    needed: 3,
   });
-  const [teamwork, setTeamwork] = useState({
+  const [teamwork] = useState({
     catagory: "Teamwork / Fellowership",
     shorten: "teamwork",
     total: 0,
-    needed: 2,
+    needed: 3,
   });
 
   useEffect(() => {
@@ -102,6 +110,7 @@ export default function Page() {
       console.log("hasEmail && !hasReport", email, hasReport);
       setIsLoading(true);
       setHasError(false);
+
       getLastReport({ email }).then((response) => {
         response.ok
           ? response
@@ -115,35 +124,54 @@ export default function Page() {
 
     if (hasEmail && hasTotals) {
       console.log("hasEmail && hasTotals", email, hasTotals);
-      setIsLoading(false);
-      console.log("totals:", totals);
-      var totalArr = JSON.parse(JSON.stringify(totals));
-      if (totalArr) {
-        setTotalReports(totalArr.totalReports);
-        setQuarterReports(totalArr.quarterReports);
-        duties["total"] = totalArr.duties;
-        conduct["total"] = totalArr.conduct;
-        training["total"] = totalArr.training;
-        teamwork["total"] = totalArr.teamwork;
-        console.log("Duties Object:", duties);
-      } else {
-        console.log("totalArr empty");
+      console.log("totals", totals);
+      console.log("Fiscal Year: ", totals.totalReports);
+      console.log("Current Quarter: ", totals.currentQuarter);
+      console.log("Quarter Total: ", totals.quarterReports);
+      console.log("Duties: ", totals.Duties);
+      console.log("Conduct: ", totals.Conduct);
+      console.log("Training: ", totals.Training);
+      console.log("Teamwork: ", totals.Teamwork);
+
+      if (totals.Duties !== "") {
+        duties.total = totals.Duties;
       }
+
+      if (totals.Conduct !== "") {
+        conduct.total = totals.Conduct;
+      }
+
+      if (totals.Training !== "") {
+        training.total = totals.Training;
+      }
+
+      if (totals.Teamwork !== "") {
+        teamwork.total = totals.Teamwork;
+      }
+      setProgress(
+        (totals.totalReports /
+          (duties.needed +
+            conduct.needed +
+            training.needed +
+            teamwork.needed)) *
+          100
+      );
+      console.log("Progress: ", progress);
     }
 
     if (hasEmail && hasReport) {
       console.log("hasEmail && hasReport", email, hasReport);
       console.log("report:", report);
-      console.log("Title: ", report[0].title);
-      console.log("Category: ", report[0].category);
-      console.log("Date: ", report[0].date);
-      console.log("Data: ", report[0].report);
+      console.log("Title: ", report.title);
+      console.log("Category: ", report.category);
+      console.log("Date: ", report.date);
+      console.log("Data: ", report.report);
     }
 
     if (hasEmail && hasTotals && hasReport) {
       setIsLoading(false);
     }
-  }, [hasEmail, hasTotals, email]);
+  }, [hasEmail, hasTotals, hasReport, email, report, totals]);
 
   return (
     <>
@@ -168,43 +196,54 @@ export default function Page() {
           bgColor={"white"}
         >
           <Stack m="5vh">
-            <Heading
-              fontSize={{ base: "25px", md: "30px" }}
-              color="#031926"
-              py={"5"}
+            <Card
+              bgColor={"#ffffff"}
+              borderColor={"#72bfc8"}
+              borderWidth={"thin"}
+              boxShadow={"md"}
+              size={{ base: "sm", md: "xl" }}
+              variant={"outline"}
+              align-contents={"center"}
+              alignSelf={"center"}
+              m={6}
+              width={"fit"}
             >
-              Welcome {rank} {lastName} {suffix}
-            </Heading>
-
+              <CardBody pt={"3"} pb={"3"}>
+                <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={6}>
+                  <Stat>
+                    <StatLabel>Fiscal Year Total</StatLabel>
+                    <StatNumber>{totals.totalReports}</StatNumber>
+                    <StatHelpText>Oct 1 - Sept 30</StatHelpText>
+                  </Stat>
+                  <Stat>
+                    <StatLabel>Quarter Total</StatLabel>
+                    <StatNumber>{totals.quarterReports}</StatNumber>
+                    <StatHelpText>Quarter {totals.currentQuarter}</StatHelpText>
+                  </Stat>
+                  <Stat>
+                    <StatLabel>Most Recent</StatLabel>
+                    <StatNumber>{report.date}</StatNumber>
+                    <StatHelpText>Report Date</StatHelpText>
+                  </Stat>
+                </SimpleGrid>
+                <text>Progress</text>
+                <Progress
+                  hasStripe
+                  size={"lg"}
+                  color={"#72bfc8"}
+                  colorScheme="teal"
+                  borderWidth={"thin"}
+                  m={1}
+                  value={progress}
+                />
+              </CardBody>
+            </Card>
             <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
               <StatusBox content={duties}></StatusBox>
               <StatusBox content={teamwork}></StatusBox>
               <StatusBox content={training}></StatusBox>
               <StatusBox content={conduct}></StatusBox>
             </SimpleGrid>
-
-            <Card
-              bgColor={"#72bfc8"}
-              size={{ base: "sm", md: "lg" }}
-              variant={"outline"}
-              align={"left"}
-              mt={6}
-              width={{ base: "100%", lg: "md" }}
-            >
-              <CardHeader pb={"5"}>
-                <Heading fontSize={{ base: "smaller", md: "lg" }}>
-                  View Last Report
-                </Heading>
-              </CardHeader>
-              <CardBody pt={"0"} pb={"5"}>
-                <Text>Written: {report[0].date}</Text>
-              </CardBody>
-              <CardFooter pt={"0"}>
-                <Button bg="white" _hover={{ bg: "#031926", color: "white" }}>
-                  View
-                </Button>
-              </CardFooter>
-            </Card>
           </Stack>
         </Card>
       )}

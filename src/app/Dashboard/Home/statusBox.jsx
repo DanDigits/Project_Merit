@@ -27,14 +27,12 @@ const StatusBox = ({ content }) => {
   return (
     <>
       <Card
-        //bg={complete ? "#DDEEBF" : "#F3B9BF"}
         boxShadow={
           complete
             ? "0 0px 8px 0px rgb(112 174 110 / 60%)"
             : "0 0px 8px 0px rgb(223 41 53 / 60%)"
         }
         size={"sm"}
-        //variant={"outline"}
       >
         <CardHeader>
           <HStack justify={"space-between"}>
