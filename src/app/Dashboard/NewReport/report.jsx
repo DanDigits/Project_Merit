@@ -194,7 +194,7 @@ export default function Report(report_mode) {
                 <Select
                   isReadOnly={state}
                   alpha={"1.0"}
-                  variant="login"
+                  variant="trim"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
                   bg="#F7FAFC"
@@ -226,7 +226,7 @@ export default function Report(report_mode) {
                 <Select
                   isReadOnly={state}
                   placeholder="Select Category"
-                  variant="login"
+                  variant="trim"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
                   bg="#F7FAFC"
@@ -269,7 +269,7 @@ export default function Report(report_mode) {
             name={"thesaurus"}
             id={"thesaurusSwitch"}
             isReadOnly={state}
-            colorScheme={"teal"}
+            colorScheme={"cyan"}
             onChange={(e) => setToggle(!toggle)}
           />
         </FormControl>
@@ -289,7 +289,7 @@ export default function Report(report_mode) {
               placeholder="What would you like to report?"
               type="text"
               varient="outline"
-              variant="login"
+              variant="trim"
               borderWidth={"2px"}
               borderColor={"#70A0AF"}
               bg="#F7FAFC"

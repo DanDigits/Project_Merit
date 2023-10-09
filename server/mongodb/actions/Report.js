@@ -82,32 +82,19 @@ export async function getUserReports(email, parameter) {
       }
     }
 
+    var month = date.getMonth() + 1;
     // Find total reports for the quarter
-    if (
-      date.getMonth() == 10 ||
-      date.getMonth() == 11 ||
-      date.getMonth() == 12
-    ) {
+    if (month == 10 || month == 11 || month == 12) {
       quarter = 1;
-    } else if (
-      date.getMonth() == 1 ||
-      date.getMonth() == 2 ||
-      date.getMonth() == 3
-    ) {
+    } else if (month == 1 || month == 2 || month == 3) {
       quarter = 2;
-    } else if (
-      date.getMonth() == 4 ||
-      date.getMonth() == 5 ||
-      date.getMonth() == 6
-    ) {
+    } else if (month == 4 || month == 5 || month == 6) {
       quarter = 3;
-    } else if (
-      date.getMonth() == 7 ||
-      date.getMonth() == 8 ||
-      date.getMonth() == 9
-    ) {
+    } else if (month == 7 || month == 8 || month == 9) {
       quarter = 4;
     }
+
+    reports += ` "currentQuarter": ${quarter},`;
 
     temp = await ReportSchema.find({
       email,
