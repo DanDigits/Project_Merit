@@ -3,8 +3,6 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
-  Button,
   AbsoluteCenter,
   Spinner,
   SimpleGrid,
@@ -14,7 +12,7 @@ import {
   StatNumber,
   StatHelpText,
 } from "@chakra-ui/react";
-import { Stack, Text, Heading } from "@chakra-ui/layout";
+import { Stack, Heading } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 import { getLastReport, getTotals } from "./../../actions/Report.js";
@@ -195,7 +193,12 @@ export default function Page() {
           w={'{ md: "lg" }'}
           bgColor={"white"}
         >
-          <Stack m="5vh">
+          <CardHeader p={3} align={"center"}>
+            <Heading>
+              Dashboard for {rank} {lastName} {suffix}
+            </Heading>
+          </CardHeader>
+          <Stack m="2vh">
             <Card
               bgColor={"#ffffff"}
               borderColor={"#72bfc8"}
@@ -205,10 +208,13 @@ export default function Page() {
               variant={"outline"}
               align-contents={"center"}
               alignSelf={"center"}
-              m={6}
-              width={"fit"}
             >
-              <CardBody pt={"3"} pb={"3"}>
+              <CardBody
+                align-contents={"center"}
+                alignSelf={"center"}
+                pt={"3"}
+                pb={"3"}
+              >
                 <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={6}>
                   <Stat>
                     <StatLabel>Fiscal Year Total</StatLabel>
@@ -226,18 +232,18 @@ export default function Page() {
                     <StatHelpText>Report Date</StatHelpText>
                   </Stat>
                 </SimpleGrid>
-                <text>Progress</text>
-                <Progress
-                  hasStripe
-                  size={"lg"}
-                  color={"#72bfc8"}
-                  colorScheme="teal"
-                  borderWidth={"thin"}
-                  m={1}
-                  value={progress}
-                />
               </CardBody>
             </Card>
+            <b>Progress</b>
+            <Progress
+              hasStripe
+              size={"lg"}
+              color={"#72bfc8"}
+              colorScheme="teal"
+              borderWidth={"thin"}
+              mb={3}
+              value={progress}
+            />
             <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
               <StatusBox content={duties}></StatusBox>
               <StatusBox content={teamwork}></StatusBox>
