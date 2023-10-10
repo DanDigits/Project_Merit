@@ -11,10 +11,10 @@ export async function login({ email, password }) {
   if (user != null) {
     const didMatch = await bcrypt.compare(password, user.password);
     if (!didMatch) {
-      throw new Error("The password you entered is incorrect!");
+      throw new Error("Invalid credentials");
     }
   } else {
-    throw new Error("User does not exist!");
+    throw new Error("Invalid credentials");
   }
   return user;
 }
