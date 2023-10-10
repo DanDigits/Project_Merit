@@ -7,8 +7,8 @@ import {
   TabPanel,
   VStack,
   Center,
+  Card,
 } from "@chakra-ui/react";
-import { Box } from "@chakra-ui/react";
 
 import InfoBox from "./InfoBox";
 
@@ -230,43 +230,50 @@ const oprEx = {
 export default function Page() {
   return (
     <div>
-      <Box backgroundColor="white">
-        <Tabs variant="solid-rounded" fontSize={{ base: "sm", md: "md" }}>
+      <Card
+        p={{ base: 0, md: 2 }}
+        mx={{ base: -4, md: 0 }}
+        alignSelf={"center"}
+        size={{ base: "sm", md: "lg" }}
+        w={{ md: "100%" }}
+        bgColor={"white"}
+      >
+        <Tabs variant="solid-rounded" size={{ base: "sm", md: "md" }}>
           <Center>
             <TabList m="1em" spacing={10}>
               <Tab
                 fontSize={{ base: "sm", md: "md" }}
-                backgroundColor="#70A0AF"
-                color={"#ECECEC"}
+                backgroundColor="#9cd2d8"
+                color={"black"}
                 mx={{ base: "0.5", md: "1em" }}
-                _selected={{ color: "white", bg: "#331E38" }}
+                _selected={{ color: "white", bg: "#031926" }}
               >
                 General
               </Tab>
               <Tab
                 fontSize={{ base: "sm", md: "md" }}
-                backgroundColor="#70A0AF"
-                color={"#ECECEC"}
+                backgroundColor="#9cd2d8"
+                color={"black"}
                 mx={{ base: "0.5", md: "1em" }}
-                _selected={{ color: "white", bg: "#331E38" }}
+                _selected={{ color: "white", bg: "#031926" }}
               >
                 OPR
               </Tab>
               <Tab
                 fontSize={{ base: "sm", md: "md" }}
-                backgroundColor="#70A0AF"
-                color={"#ECECEC"}
+                backgroundColor="#9cd2d8"
+                color={"black"}
                 mx={{ base: "0.5", md: "1em" }}
-                _selected={{ color: "white", bg: "#331E38" }}
+                _selected={{ color: "white", bg: "#031926" }}
               >
                 EPR
               </Tab>
               <Tab
                 fontSize={{ base: "sm", md: "md" }}
-                backgroundColor="#70A0AF"
-                color={"#ECECEC"}
+                backgroundColor="#9cd2d8"
+                color={"black"}
                 mx={{ base: "0.5", md: "1em" }}
-                _selected={{ color: "white", bg: "#331E38" }}
+                _selected={{ color: "white", bg: "#031926" }}
               >
                 Examples
               </Tab>
@@ -304,7 +311,7 @@ export default function Page() {
             </TabPanel>
           </TabPanels>
         </Tabs>
-      </Box>
+      </Card>
     </div>
   );
 }

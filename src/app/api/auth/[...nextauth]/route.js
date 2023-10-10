@@ -43,7 +43,7 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user, session }) {
+    async jwt({ token, trigger, user, session }) {
       console.log("jwt callback", { token, user, session });
 
       // pass in id, email, rank, lastName, and suffix to token
@@ -57,6 +57,11 @@ export const authOptions = {
           suffix: user.suffix,
         };
       }
+
+      if (trigger === "update") {
+        return { ...token, ...session.user };
+      }
+
       return token;
     },
     async session({ session, token, user }) {

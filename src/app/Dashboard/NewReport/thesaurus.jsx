@@ -71,7 +71,7 @@ export default function Thesaurus() {
           <Textarea
             boxShadow={"inner"}
             type="text"
-            varient="outline"
+            variant="trim"
             maxLength={500}
             borderWidth={"2px"}
             borderColor={"#70A0AF"}

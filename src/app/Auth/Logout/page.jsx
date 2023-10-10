@@ -18,9 +18,9 @@ export default function Page() {
         <Link href="/Auth/Login">
           <Button
             mb={"5"}
-            bgColor={"#70A0AF"}
+            bgColor={"#38a4b1"}
             color={"white"}
-            _hover={{ bgColor: "#706993", color: "white" }}
+            _hover={{ bgColor: "#031926", color: "white" }}
           >
             Login
           </Button>

@@ -55,13 +55,14 @@ export const updateReport = async ({
 };
 
 /** Get list of reports for user */
-export const getUserReports = async ({ email }) => {
+export const getUserReports = async ({ email, index }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.reports.get, {
     method: "GET",
     mode: "same-origin",
     headers: {
       request: "1",
       user: email,
+      index: index,
     },
   });
   console.log(response.statusText);

@@ -27,7 +27,11 @@ const UserSchema = new Schema({
   },
   verified: {
     type: Boolean,
-    required: true,
+    required: false,
+  },
+  isPasswordLocked: {
+    type: Boolean,
+    required: false,
   },
 });
 
