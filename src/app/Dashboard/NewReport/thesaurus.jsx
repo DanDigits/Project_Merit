@@ -13,16 +13,18 @@ import {
 } from "@chakra-ui/react";
 import { BsSearch } from "react-icons/bs";
 import { getSynonyms } from "./../../actions/Thesaurus.js";
-import { set } from "mongoose";
 
 export default function Thesaurus() {
   const [word, setWord] = useState("");
   const [results, setResults] = useState("");
 
   const handleSearch = () => {
-    var list = getSynonyms({ word });
-    setResults(JSON.stringify(list));
-    console.log(results);
+    if (word !== "") {
+      var response = getSynonyms({ word });
+
+      setResults(response);
+      console.log("Results: " + { results });
+    }
   };
 
   return (
@@ -79,7 +81,7 @@ export default function Thesaurus() {
             mb={3}
             size={"md"}
             width="100%"
-            value={results}
+            value={{ results }}
           />
         </FormControl>
       </Card>
