@@ -59,16 +59,17 @@ const StatusBox = ({ content }) => {
               </Text>
             </HStack>
             <Icon
-              boxSize={{ base: "8", md: "10" }}
+              boxSize={{ base: "5", md: "10" }}
               color={complete ? "#688E26" : "#E05260"}
               as={complete ? PiCheckCircleDuotone : PiXCircleDuotone}
             />
           </HStack>
         </CardHeader>
-        <CardBody mt="-4">
-          <HStack>
+        <CardBody alignContent={"left"} mt="-6">
+          <HStack align={"baseline"}>
             <Text
-              ms={3}
+              ms={{ base: 1, md: 3 }}
+              //fontWeight={{ base: "semibold", md: "normal" }}
               fontSize={{ base: "xl", md: "2xl", lg: "3xl" }}
               color={"black"}
             >
