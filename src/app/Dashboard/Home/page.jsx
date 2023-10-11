@@ -16,7 +16,7 @@ import { Stack, Heading } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 import { getLastReport, getTotals } from "./../../actions/Report.js";
-import StatusBox from "./StatusBox";
+import StatusBox from "./statusBox";
 
 export default function Page() {
   const [hasEmail, setHasEmail] = useState(false);

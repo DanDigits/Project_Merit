@@ -50,7 +50,7 @@ export async function getUserReports(email, parameter) {
     date = parameter;
     reports = "{";
     // Find total reports for the fiscal year Oct-Sept
-    if (date.getMonth() >= 10) {
+    if (date.getMonth() >= 9) {
       temp = await ReportSchema.find({
         email,
         date: {
@@ -63,7 +63,7 @@ export async function getUserReports(email, parameter) {
       temp = JSON.stringify(temp);
       let count = temp.match(/email/g).length;
       reports += ` "totalReports": ${count},`;
-    } else if (date.getMonth() <= 9) {
+    } else if (date.getMonth() <= 8) {
       temp = await ReportSchema.find({
         email,
         date: {
@@ -82,8 +82,8 @@ export async function getUserReports(email, parameter) {
       }
     }
 
-    var month = date.getMonth() + 1;
     // Find total reports for the quarter
+    var month = date.getMonth() + 1;
     if (month == 10 || month == 11 || month == 12) {
       quarter = 1;
     } else if (month == 1 || month == 2 || month == 3) {
@@ -93,15 +93,31 @@ export async function getUserReports(email, parameter) {
     } else if (month == 7 || month == 8 || month == 9) {
       quarter = 4;
     }
-
     reports += ` "currentQuarter": ${quarter},`;
 
-    temp = await ReportSchema.find({
-      email,
-      quarter,
-    }).catch(function (err) {
-      return err;
-    });
+    if (quarter == 1) {
+      temp = await ReportSchema.find({
+        email,
+        quarter,
+        date: {
+          $gte: `${date.getFullYear()}-10-01`,
+          $lte: `${date.getFullYear() + 1}-09-30`,
+        },
+      }).catch(function (err) {
+        return err;
+      });
+    } else {
+      temp = await ReportSchema.find({
+        email,
+        quarter,
+        date: {
+          $gte: `${date.getFullYear() - 1}-10-01`,
+          $lte: `${date.getFullYear()}-09-30`,
+        },
+      }).catch(function (err) {
+        return err;
+      });
+    }
     temp = JSON.stringify(temp);
     let count = temp?.match(/email/g)?.length;
     if (count === undefined) {
@@ -113,13 +129,31 @@ export async function getUserReports(email, parameter) {
     // Find total reports for each category, for the quarter
     for (let i = 0; i < categories.length; i++) {
       const category = categories[i];
-      temp = await ReportSchema.find({
-        email,
-        quarter,
-        category,
-      }).catch(function (err) {
-        return err;
-      });
+      if (quarter == 1) {
+        temp = await ReportSchema.find({
+          email,
+          quarter,
+          category,
+          date: {
+            $gte: `${date.getFullYear()}-10-01`,
+            $lte: `${date.getFullYear() + 1}-09-30`,
+          },
+        }).catch(function (err) {
+          return err;
+        });
+      } else {
+        temp = await ReportSchema.find({
+          email,
+          quarter,
+          category,
+          date: {
+            $gte: `${date.getFullYear() - 1}-10-01`,
+            $lte: `${date.getFullYear()}-09-30`,
+          },
+        }).catch(function (err) {
+          return err;
+        });
+      }
       temp = JSON.stringify(temp);
       let count = temp?.match(/email/g)?.length;
       if (count === undefined) {
