@@ -39,6 +39,8 @@ export const authOptions = {
         // (i.e., the request IP address)
         const user = login(credentials);
         console.log(user);
+
+        return user;
       },
     }),
   ],
