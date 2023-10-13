@@ -76,7 +76,6 @@ export default function Page() {
         signIn("credentials", {
           email: email,
           password: password,
-          callbackUrl: "/Dashboard/Home",
           redirect: false,
         })
           .then((response) => {
@@ -84,6 +83,7 @@ export default function Page() {
               console.log(response);
               setStatus("credentials");
             } else {
+              window.location.replace("/Dashboard/Home");
               console.log(response);
             }
           })
