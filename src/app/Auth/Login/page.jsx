@@ -48,12 +48,21 @@ export default function Page() {
           alert("User creation failed, please try again.");
         }
       });
-    } else {
+    }
+    if (mode === "Register") {
       signIn("credentials", {
         email: email,
         password: password,
         callbackUrl: "/Dashboard/Home",
       });
+    }
+
+    if (mode === "Reset Password") {
+      console.log(mode + " not implemented yet");
+    }
+
+    if (mode === "Update Password") {
+      console.log(mode + " not implemented yet");
     }
   };
 
@@ -105,6 +114,80 @@ export default function Page() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+              </FormControl>
+              <Button
+                color={"#031926"}
+                variant={"link"}
+                onClick={() => {
+                  setMode("Reset Password");
+                }}
+              >
+                Forgot Password
+              </Button>
+            </div>
+          )}
+          {mode === "Reset Password" && (
+            <div>
+              <FormControl id="email">
+                <FormLabel mb={1} fontSize={15} color={"black"}>
+                  Email
+                </FormLabel>
+                <Input
+                  variant="login"
+                  borderWidth={"2px"}
+                  bg="#F7FAFC"
+                  borderColor={"#70A0AF"}
+                  mb={3}
+                  size={"md"}
+                  type="email"
+                  value={email}
+                  maxLength={255}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </FormControl>
+            </div>
+          )}
+          {mode === "Update Password" && (
+            <div>
+              <FormControl id="password" isRequired>
+                <FormLabel mb={1} fontSize={15} color={"black"}>
+                  Password
+                </FormLabel>
+                <Input
+                  type="password"
+                  value={password}
+                  variant="login"
+                  borderWidth={"2px"}
+                  borderColor={"#70A0AF"}
+                  bg="#F7FAFC"
+                  mb={3}
+                  size={"md"}
+                  minLength={8}
+                  maxLength={32}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <FormErrorMessage>Password is required.</FormErrorMessage>
+              </FormControl>
+              <FormControl id="confirmPassword" isRequired>
+                <FormLabel mb={1} fontSize={15} color={"black"}>
+                  Confirm Password
+                </FormLabel>
+                <Input
+                  type="password"
+                  value={password2}
+                  variant="login"
+                  borderWidth={"2px"}
+                  borderColor={"#70A0AF"}
+                  bg="#F7FAFC"
+                  mb={3}
+                  size={"md"}
+                  minLength={8}
+                  maxLength={32}
+                  onChange={(e) => setPassword2(e.target.value)}
+                />
+                <FormErrorMessage>
+                  Password confirmation is required.
+                </FormErrorMessage>
               </FormControl>
             </div>
           )}
@@ -281,33 +364,54 @@ export default function Page() {
               color={"white"}
               _hover={{ bgColor: "#031926", color: "white" }}
             >
-              {mode === "Login" ? (
-                <Text align={"center"}>Log In</Text>
-              ) : (
-                <Text align={"center"}>Sign Up</Text>
+              {mode === "Login" && <Text align={"center"}>Log In</Text>}
+              {mode === "Register" && <Text align={"center"}>Sign Up</Text>}
+              {mode === "Reset Password" && (
+                <Text align={"center"}>{mode}</Text>
+              )}
+              {mode === "Update Password" && (
+                <Text align={"center"}>{mode}</Text>
               )}
             </Button>
           </VStack>
         </CardFooter>
       </Card>
       <VStack>
-        {mode === "Login" ? (
-          <Text align={"center"}>Need an account?</Text>
-        ) : (
+        {mode === "Login" && <Text align={"center"}>Need an account?</Text>}
+        {mode === "Register" && (
           <Text align={"center"}>Already have an account?</Text>
         )}
-        <Button
-          mb={"10"}
-          color={"#031926"}
-          w={"sm"}
-          variant={"link"}
-          alignSelf={"center"}
-          onClick={() => {
-            setMode(mode === "Login" ? "Register" : "Login");
-          }}
-        >
-          {mode === "Login" ? "Register" : "Login"}
-        </Button>
+        {(mode === "Update Password" || mode === "Reset Password") && (
+          <div>
+            <Text align={"center"}>Change your mind?</Text>
+            <Button
+              mb={"10"}
+              color={"#031926"}
+              w={"sm"}
+              variant={"link"}
+              alignSelf={"center"}
+              onClick={() => {
+                setMode("Login");
+              }}
+            >
+              Login
+            </Button>
+          </div>
+        )}
+        {(mode === "Login" || mode === "Register") && (
+          <Button
+            mb={"10"}
+            color={"#031926"}
+            w={"sm"}
+            variant={"link"}
+            alignSelf={"center"}
+            onClick={() => {
+              setMode(mode === "Login" ? "Register" : "Login");
+            }}
+          >
+            {mode === "Login" ? "Register" : "Login"}
+          </Button>
+        )}
       </VStack>
     </>
   );
