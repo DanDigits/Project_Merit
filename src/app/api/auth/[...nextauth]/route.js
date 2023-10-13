@@ -40,7 +40,7 @@ export const authOptions = {
         const user = login(credentials);
         let test = JSON.stringify(user);
         console.log(user);
-        if (test.includes("error")) {
+        if (user) {
           throw new Error(JSON.stringify({ error: user.error, status: 400 }));
         } else {
           return user;
