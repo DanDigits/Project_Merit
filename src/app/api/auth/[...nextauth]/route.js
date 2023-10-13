@@ -38,13 +38,7 @@ export const authOptions = {
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address)
         const user = login(credentials);
-        let test = JSON.stringify(user);
         console.log(user);
-        if (user) {
-          throw new Error(JSON.stringify({ error: user.error, status: 400 }));
-        } else {
-          return user;
-        }
       },
     }),
   ],
