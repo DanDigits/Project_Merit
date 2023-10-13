@@ -36,6 +36,8 @@ export default function Page() {
     setStatus("");
 
     if (mode === "Register") {
+      let emailRegex = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/;
+
       if (
         password === "" ||
         password2 === "" ||
@@ -49,6 +51,8 @@ export default function Page() {
         setStatus("length");
       } else if (password !== password2) {
         setStatus("confirm");
+      } else if (!emailRegex.test(email)) {
+        setStatus("email");
       } else {
         signUp({
           email,
