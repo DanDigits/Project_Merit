@@ -38,7 +38,7 @@ export const authOptions = {
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address)
         const user = login(credentials);
-        if (user.includes("error")) {
+        if (user.error == "Invalid credentials") {
           throw new Error("Invalid Credentials");
         } else {
           return user;
