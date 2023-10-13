@@ -195,7 +195,7 @@ export default function Page() {
           bgColor={"white"}
         >
           <CardHeader p={3} align={"center"}>
-            <Heading>
+            <Heading fontSize={{ base: "xl", md: "3xl" }}>
               Dashboard for {rank} {lastName} {suffix}
             </Heading>
           </CardHeader>
@@ -206,31 +206,70 @@ export default function Page() {
               borderWidth={"thin"}
               boxShadow={"md"}
               size={{ base: "sm", md: "xl" }}
+              w={{ base: "100%", lg: "initial" }}
               variant={"outline"}
               align-contents={"center"}
               alignSelf={"center"}
             >
               <CardBody
                 align-contents={"center"}
-                alignSelf={"center"}
-                pt={"3"}
-                pb={"3"}
+                alignSelf={{ base: "left", md: "center" }}
+                py={{ base: "1", md: "3" }}
               >
-                <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={6}>
+                <SimpleGrid
+                  columns={{ base: 1, md: 3 }}
+                  spacing={{ base: 0, md: 6 }}
+                >
                   <Stat>
-                    <StatLabel>Fiscal Year Total</StatLabel>
-                    <StatNumber>{totals.totalReports}</StatNumber>
-                    <StatHelpText>Oct 1 - Sept 30</StatHelpText>
+                    <SimpleGrid
+                      alignItems={"baseline"}
+                      columns={{ base: 2, md: 1 }}
+                    >
+                      <StatLabel>Fiscal Year Total</StatLabel>
+                      <StatNumber
+                        justifySelf={{ base: "flex-end", md: "auto" }}
+                        fontSize={{ base: "lg", lg: "2xl" }}
+                      >
+                        {totals.totalReports}
+                      </StatNumber>
+                      <StatHelpText fontSize={{ base: "xs", md: "sm" }}>
+                        Oct 1 - Sept 30
+                      </StatHelpText>
+                    </SimpleGrid>
                   </Stat>
                   <Stat>
-                    <StatLabel>Quarter Total</StatLabel>
-                    <StatNumber>{totals.quarterReports}</StatNumber>
-                    <StatHelpText>Quarter {totals.currentQuarter}</StatHelpText>
+                    <SimpleGrid
+                      alignItems={"baseline"}
+                      columns={{ base: 2, md: 1 }}
+                    >
+                      <StatLabel>Quarter Total</StatLabel>
+                      <StatNumber
+                        justifySelf={{ base: "flex-end", md: "auto" }}
+                        fontSize={{ base: "lg", lg: "2xl" }}
+                      >
+                        {totals.quarterReports}
+                      </StatNumber>
+                      <StatHelpText fontSize={{ base: "xs", md: "sm" }}>
+                        Quarter {totals.currentQuarter}
+                      </StatHelpText>
+                    </SimpleGrid>
                   </Stat>
                   <Stat>
-                    <StatLabel>Most Recent</StatLabel>
-                    <StatNumber>{report.date}</StatNumber>
-                    <StatHelpText>Report Date</StatHelpText>
+                    <SimpleGrid
+                      alignItems={"baseline"}
+                      columns={{ base: 2, md: 1 }}
+                    >
+                      <StatLabel>Most Recent</StatLabel>
+                      <StatNumber
+                        justifySelf={{ base: "flex-end", md: "auto" }}
+                        fontSize={{ base: "lg", lg: "2xl" }}
+                      >
+                        {report.date}
+                      </StatNumber>
+                      <StatHelpText fontSize={{ base: "xs", md: "sm" }}>
+                        Report Date
+                      </StatHelpText>
+                    </SimpleGrid>
                   </Stat>
                 </SimpleGrid>
               </CardBody>
@@ -245,7 +284,10 @@ export default function Page() {
               mb={3}
               value={progress}
             />
-            <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
+            <SimpleGrid
+              columns={{ base: 1, lg: 2 }}
+              spacing={{ base: 4, md: 6 }}
+            >
               <StatusBox content={duties}></StatusBox>
               <StatusBox content={teamwork}></StatusBox>
               <StatusBox content={training}></StatusBox>
