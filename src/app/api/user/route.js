@@ -32,6 +32,7 @@ export async function GET(Request) {
 
   // INCOMPLETE
   if (forgot != undefined && user) {
+    const req = await Request.json();
     const mailData = {
       from: process.env.EMAIL_FROM,
       to: req.email,
