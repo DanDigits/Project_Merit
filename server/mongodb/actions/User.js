@@ -72,12 +72,12 @@ export async function modifyUser(userId, userData) {
     userId = user.email;
   }
 
-  if ((password && newPassword) != undefined) {
+  if (password != undefined && newPassword != undefined) {
     const didMatch = await bcrypt.compare(userData.password, user.password);
     if (!didMatch) {
       user.message = "INCORRECT";
     } else if (didMatch) {
-      //} else if (didMatch && userData.isPasswordLocked == false) {
+      //} else if (didMatch && user.isPasswordLocked == false) {
       return bcrypt
         .hash(userData.newPassword, 10)
         .then((hashedPassword) =>
@@ -94,6 +94,26 @@ export async function modifyUser(userId, userData) {
     } else {
       user.message = "UNABLE";
     }
+  } else if (
+    password == undefined &&
+    newPassword != undefined &&
+    userData?.firstName == undefined &&
+    userData?.lastName == undefined &&
+    userData?.suffix == undefined
+  ) {
+    return bcrypt
+      .hash(userData.newPassword, 10)
+      .then((hashedPassword) =>
+        UserSchema.findOneAndUpdate(
+          { email: userId },
+          { password: hashedPassword }
+        ).catch(function (err) {
+          return err;
+        })
+      )
+      .then((user) => {
+        return user;
+      });
   } else {
     user = await UserSchema.findOneAndUpdate({ email: userId }, userData).catch(
       function (err) {
