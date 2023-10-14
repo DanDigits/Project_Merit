@@ -49,6 +49,7 @@ export const requestReset = async ({ email }) => {
     mode: "same-origin",
     headers: {
       user: email,
+      forgot: "forgotPassword",
     },
   });
   console.log(response.statusText);
