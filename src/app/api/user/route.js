@@ -49,8 +49,11 @@ export async function GET(Request) {
     });
   } else if (!user) {
     const url = new URL(Request.url);
-    const userId = url.searchParams.get("num");
-    if (userId) {
+    let userId = url?.searchParams?.get("num");
+    if (userId == undefined) {
+      userId = requestHeaders?.get("num");
+    }
+    if (userId != undefined) {
       verifyUser(userId);
       res = "OK";
     } else {
