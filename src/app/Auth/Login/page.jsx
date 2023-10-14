@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   Text,
@@ -15,9 +15,9 @@ import {
   Select,
   VStack,
 } from "@chakra-ui/react";
-
+import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { signUp, getUser } from "src/app/actions/User";
+import { signUp, requestReset } from "src/app/actions/User";
 
 export default function Page() {
   const [mode, setMode] = useState("Login");
@@ -28,6 +28,16 @@ export default function Page() {
   const [suffix, setSuffix] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
+
+  const params = useSearchParams();
+
+  useEffect(() => {
+    var num = params.get("num");
+
+    if (num) {
+      setMode("Update Password");
+    }
+  }, [params]);
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
@@ -58,7 +68,7 @@ export default function Page() {
     }
 
     if (mode === "Reset Password") {
-      getUser({ email }).then((response) => {
+      requestReset({ email }).then((response) => {
         if (response.ok) {
           {
             console.log(response);
