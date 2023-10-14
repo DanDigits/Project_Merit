@@ -38,7 +38,7 @@ export async function GET(Request) {
       subject: process.env.EMAIL_SUBJECT,
       text: "Sent from: " + process.env.EMAIL_FROM,
       html: `<div>${`Hello! Please click this link to reset your password ${
-        urls.baseUrl + urls.api.user.verify
+        urls.baseUrl + "/Auth/Login/"
       }?num=${res.id}`}</div>`,
     };
     transporter.sendMail(mailData, function (err) {
