@@ -43,13 +43,25 @@ export const getUser = async ({ email }) => {
   return response;
 };
 
+export const requestReset = async ({ email }) => {
+  const response = await fetch(getPath.baseUrl + getPath.api.user.get, {
+    method: "GET",
+    mode: "same-origin",
+    headers: {
+      user: email,
+    },
+  });
+  console.log(response.statusText);
+
+  return response;
+};
+
 export const updateUser = async ({
   email,
   rank,
   firstName,
   lastName,
   suffix,
-  password,
 }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
     method: "PATCH",
@@ -63,7 +75,6 @@ export const updateUser = async ({
       firstName,
       lastName,
       suffix,
-      password,
     }),
   });
   console.log("Update Response:", response.statusText);

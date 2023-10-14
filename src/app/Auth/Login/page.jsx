@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 
 import { signIn } from "next-auth/react";
-import { signUp } from "src/app/actions/User";
+import { signUp, getUser } from "src/app/actions/User";
 
 export default function Page() {
   const [mode, setMode] = useState("Login");
@@ -58,7 +58,18 @@ export default function Page() {
     }
 
     if (mode === "Reset Password") {
-      console.log(mode + " not implemented yet");
+      getUser({ email }).then((response) => {
+        if (response.ok) {
+          {
+            console.log(response);
+            console.log("Email sent");
+          }
+        } else {
+          alert("Request failed, please try again.");
+        }
+      });
+
+      console.log(mode + " in development");
     }
 
     if (mode === "Update Password") {
@@ -151,7 +162,7 @@ export default function Page() {
             <div>
               <FormControl id="password" isRequired>
                 <FormLabel mb={1} fontSize={15} color={"black"}>
-                  Password
+                  New Password
                 </FormLabel>
                 <Input
                   type="password"
@@ -170,7 +181,7 @@ export default function Page() {
               </FormControl>
               <FormControl id="confirmPassword" isRequired>
                 <FormLabel mb={1} fontSize={15} color={"black"}>
-                  Confirm Password
+                  Confirm New Password
                 </FormLabel>
                 <Input
                   type="password"
