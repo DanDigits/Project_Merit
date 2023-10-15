@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { signUp, requestReset } from "src/app/actions/User";
+import { signUp, requestReset, resetPassword } from "src/app/actions/User";
 
 export default function Page() {
   const [mode, setMode] = useState("Login");
@@ -28,16 +28,19 @@ export default function Page() {
   const [suffix, setSuffix] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [num, setNum] = useState("");
 
   const params = useSearchParams();
 
   useEffect(() => {
-    var num = params.get("num");
+    var urlNum = params.get("num");
 
-    if (num) {
+    if (urlNum) {
+      setNum(urlNum);
       setMode("Update Password");
     }
-  }, [params]);
+  }, [params, num]);
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
@@ -83,7 +86,18 @@ export default function Page() {
     }
 
     if (mode === "Update Password") {
-      console.log(mode + " not implemented yet");
+      resetPassword({ num, newPassword }).then((response) => {
+        if (response.ok) {
+          {
+            console.log(response);
+            console.log("Password Reset");
+          }
+        } else {
+          alert("Request failed, please try again.");
+        }
+      });
+
+      console.log(mode + " in development");
     }
   };
 
@@ -170,13 +184,13 @@ export default function Page() {
           )}
           {mode === "Update Password" && (
             <div>
-              <FormControl id="password" isRequired>
+              <FormControl id="newPassword" isRequired>
                 <FormLabel mb={1} fontSize={15} color={"black"}>
                   New Password
                 </FormLabel>
                 <Input
                   type="password"
-                  value={password}
+                  value={newPassword}
                   variant="login"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
