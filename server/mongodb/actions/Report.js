@@ -61,8 +61,12 @@ export async function getUserReports(email, parameter) {
         return err;
       });
       temp = JSON.stringify(temp);
-      let count = temp.match(/email/g).length;
-      reports += ` "totalReports": ${count},`;
+      let count = temp?.match(/email/g)?.length;
+      if (count == undefined) {
+        reports += ` "totalReports": ${0},`;
+      } else {
+        reports += ` "totalReports": ${count},`;
+      }
     } else if (date.getMonth() <= 8) {
       temp = await ReportSchema.find({
         email,
