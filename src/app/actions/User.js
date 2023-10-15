@@ -36,6 +36,7 @@ export const getUser = async ({ email }) => {
     mode: "same-origin",
     headers: {
       user: email,
+      request: "2",
     },
   });
   console.log(response.statusText);
@@ -43,12 +44,29 @@ export const getUser = async ({ email }) => {
   return response;
 };
 
+// send password reset email
 export const requestReset = async ({ email }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.get, {
     method: "GET",
     mode: "same-origin",
     headers: {
       forgot: email,
+      request: "1",
+    },
+  });
+  console.log(response.statusText);
+
+  return response;
+};
+
+// resend password request email
+export const resendRequest = async ({ email }) => {
+  const response = await fetch(getPath.baseUrl + getPath.api.user.get, {
+    method: "GET",
+    mode: "same-origin",
+    headers: {
+      forgot: email,
+      request: "3",
     },
   });
   console.log(response.statusText);
