@@ -71,7 +71,7 @@ export async function modifyUser(userId, userData) {
   if (userId.includes("@")) {
     user = await UserSchema.findOne({ email: userId });
   } else {
-    user = await UserSchema.findOne({ _id: userId });
+    user = await UserSchema.findOne({ emailVerification: userId });
     userId = user.email;
   }
 
