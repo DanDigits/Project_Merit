@@ -99,7 +99,7 @@ export default function Page() {
               .json()
               .then((response) => setTotals(response))
               .then(setHasTotals(true))
-          : setHasError(true);
+          : setTotals({ date: "N/A" });
         console.log("hasError:", hasError);
       });
     }
@@ -121,6 +121,7 @@ export default function Page() {
     }
 
     if (hasEmail && hasTotals) {
+      /*
       console.log("hasEmail && hasTotals", email, hasTotals);
       console.log("totals", totals);
       console.log("Fiscal Year: ", totals.totalReports);
@@ -129,7 +130,7 @@ export default function Page() {
       console.log("Duties: ", totals.Duties);
       console.log("Conduct: ", totals.Conduct);
       console.log("Training: ", totals.Training);
-      console.log("Teamwork: ", totals.Teamwork);
+      console.log("Teamwork: ", totals.Teamwork); */
 
       if (totals.Duties !== "") {
         duties.total = totals.Duties;
@@ -158,12 +159,10 @@ export default function Page() {
     }
 
     if (hasEmail && hasReport) {
-      console.log("hasEmail && hasReport", email, hasReport);
-      console.log("report:", report);
-      console.log("Title: ", report.title);
-      console.log("Category: ", report.category);
-      console.log("Date: ", report.date);
-      console.log("Data: ", report.report);
+      if (!report.date) {
+        setReport({ date: "N/A" });
+      }
+      console.log("Date is now" + report.date);
     }
 
     if (hasEmail && hasTotals && hasReport) {
