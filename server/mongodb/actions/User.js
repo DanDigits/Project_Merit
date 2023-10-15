@@ -54,8 +54,8 @@ export async function getUser(userId) {
   await mongoDB();
   const user = await UserSchema.findOne(
     { email: userId },
-    //"-password -__v -_id -isPasswordLocked"
-    "-__v -_id"
+    "-password -__v -_id -isPasswordLocked"
+    //"-__v -_id"
   ).catch(function (err) {
     return err;
   });

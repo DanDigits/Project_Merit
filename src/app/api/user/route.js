@@ -46,7 +46,7 @@ export async function GET(Request) {
         }?num=${res.emailVerification}`}</div>`,
       };
       transporter.sendMail(mailData, function (err) {
-        console.log(mailData);
+        //console.log(mailData);
         if (err) {
           console.log(err);
         }
