@@ -25,7 +25,7 @@ import {
 } from "src/app/actions/User";
 
 export default function Page() {
-  const [mode, setMode] = useState("Login");
+  const [mode, setMode] = useState("Verification Needed");
   const [rank, setRank] = useState("");
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -36,6 +36,7 @@ export default function Page() {
   const [newPassword, setNewPassword] = useState("");
   const [num, setNum] = useState("");
   const [status, setStatus] = useState("");
+  const [expired, setExpired] = useState("");
   const params = useSearchParams();
 
   useEffect(() => {
@@ -49,7 +50,7 @@ export default function Page() {
 
     if (urlExpired) {
       setMode("Verification Needed");
-      setStatus("expired");
+      setExpired(true);
     }
   }, [params, num]);
 
@@ -206,11 +207,20 @@ export default function Page() {
         <CardBody>
           {mode === "Verification Needed" && (
             <div>
-              <Text align={"center"}>
-                Please check your email for a verification link. If you have not
-                received an email, please use the form below to make another
-                request.
-              </Text>
+              {expired ? (
+                <div>
+                  <Text align={"center"}>
+                    This link is no longer valid. Please request a new link.
+                  </Text>
+                  <br />
+                </div>
+              ) : (
+                <Text align={"center"}>
+                  Please check your email for a verification link. If you have
+                  not received an email, please use the form below to make
+                  another request.
+                </Text>
+              )}
               <FormControl id="email">
                 <FormLabel mb={1} fontSize={15} color={"black"}>
                   Email
