@@ -165,7 +165,7 @@ export async function verifyUser(code) {
       console.log(err);
       return "ERROR";
     });
-    passwordLock(user.id);
+    passwordLock(user.email);
     return "OK";
   } else if (user?.verified == true) {
     user = await UserSchema.findByIdAndUpdate(user.id, {
@@ -174,7 +174,7 @@ export async function verifyUser(code) {
       console.log(err);
       return "ERROR";
     });
-    setTimeout(passwordLock, 60000 * 5, user.id);
+    setTimeout(passwordLock, 60000 * 5, user.email);
     return "NUM";
   } else {
     return "ERROR";
@@ -183,7 +183,7 @@ export async function verifyUser(code) {
 
 export async function passwordLock(userId) {
   let random = await bcrypt.hash("gouewyrnpvsuoyashodpifjnbosuihsofb~", 3);
-  const user = await UserSchema.findOneAndUpdate(
+  let user = await UserSchema.findOneAndUpdate(
     { email: userId },
     {
       isPasswordLocked: true,
@@ -193,5 +193,6 @@ export async function passwordLock(userId) {
     console.log(err);
     return "ERROR";
   });
+  user.emailVerification = random;
   return user;
 }
