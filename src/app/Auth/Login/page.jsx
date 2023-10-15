@@ -17,7 +17,12 @@ import {
 } from "@chakra-ui/react";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { signUp, requestReset, resetPassword } from "src/app/actions/User";
+import {
+  signUp,
+  requestReset,
+  resetPassword,
+  resendRequest,
+} from "src/app/actions/User";
 
 export default function Page() {
   const [mode, setMode] = useState("Login");
@@ -36,7 +41,7 @@ export default function Page() {
   useEffect(() => {
     var urlNum = params.get("num");
 
-    if (urlNum) {
+    if (urlNum && mode !== "Verification Needed") {
       setNum(urlNum);
       setMode("Update Password");
     }
@@ -97,7 +102,11 @@ export default function Page() {
           .then((response) => {
             if (!response.ok) {
               console.log(response);
-              setStatus("credentials");
+              if (response.error === "Invalid Credentials") {
+                setStatus("credentials");
+              } else if (response.error === "Unverified account") {
+                setMode("Verification Needed");
+              }
             } else {
               window.location.replace("/Dashboard/Home");
               console.log(response);
@@ -107,6 +116,9 @@ export default function Page() {
             console.log("error: " + error);
             if (error === "Invalid Credentials") {
               setStatus("credentials");
+            }
+            if (error === "Unverified account") {
+              setMode("Verification Needed");
             }
           });
       }
@@ -119,6 +131,26 @@ export default function Page() {
         setStatus("email");
       } else {
         requestReset({ email }).then((response) => {
+          if (response.ok) {
+            {
+              console.log(response);
+              console.log("Email sent");
+              setStatus("sent");
+            }
+          } else {
+            alert("Request failed, please try again.");
+          }
+        });
+      }
+    }
+
+    if (mode === "Verification Needed") {
+      let emailRegex = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/;
+
+      if (email === "" || !emailRegex.test(email)) {
+        setStatus("email");
+      } else {
+        resendRequest({ email }).then((response) => {
           if (response.ok) {
             {
               console.log(response);
@@ -167,9 +199,30 @@ export default function Page() {
         </CardHeader>
         <CardBody>
           {mode === "Verification Needed" && (
-            <Text align={"center"}>
-              Please check your email for a verification link.
-            </Text>
+            <div>
+              <Text align={"center"}>
+                Please check your email for a verification link. If you have not
+                received an email, please use the form below to make another
+                request.
+              </Text>
+              <FormControl id="email">
+                <FormLabel mb={1} fontSize={15} color={"black"}>
+                  Email
+                </FormLabel>
+                <Input
+                  variant="login"
+                  borderWidth={"2px"}
+                  bg="#F7FAFC"
+                  borderColor={"#70A0AF"}
+                  mb={3}
+                  size={"md"}
+                  type="email"
+                  value={email}
+                  maxLength={255}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </FormControl>
+            </div>
           )}
           {mode === "Login" && (
             <div>
@@ -494,7 +547,7 @@ export default function Page() {
             )}
             {mode === "Verification Needed" && (
               <Button
-                onClick={console.log("need resend link")}
+                onClick={(e) => handleSubmitInfo(e)}
                 bgColor={"#38a4b1"}
                 color={"white"}
                 _hover={{ bgColor: "#031926", color: "white" }}
