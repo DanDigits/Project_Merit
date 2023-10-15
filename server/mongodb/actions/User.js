@@ -26,6 +26,7 @@ export async function signUp(userData) {
     const res = "ConflictError";
     return res;
   }
+  let random = await bcrypt.hash("gouewyrnpvsuoyashodpifjnbosuihsofb~", 3);
   return bcrypt
     .hash(userData.password, 10)
     .then((hashedPassword) =>
@@ -39,6 +40,7 @@ export async function signUp(userData) {
         reportType: userData.reportType,
         verified: false,
         isPasswordLocked: true,
+        emailVerification: random,
       }).catch(function (err) {
         return err;
       })
@@ -52,8 +54,8 @@ export async function getUser(userId) {
   await mongoDB();
   const user = await UserSchema.findOne(
     { email: userId },
-    "-password -__v -_id"
-    //"-__v -_id"
+    //"-password -__v -_id -isPasswordLocked"
+    "-__v -_id"
   ).catch(function (err) {
     return err;
   });
@@ -62,6 +64,7 @@ export async function getUser(userId) {
 
 export async function modifyUser(userId, userData) {
   await mongoDB();
+  await verifyUser(userData?.emailVerification);
   let user,
     password = userData?.password,
     newPassword = userData?.newPassword;
@@ -72,6 +75,7 @@ export async function modifyUser(userId, userData) {
     userId = user.email;
   }
 
+  // Resetting password while being logged in (e.g. enter old, enter new)
   if (password != undefined && newPassword != undefined) {
     const didMatch = await bcrypt.compare(userData.password, user.password);
     if (!didMatch) {
@@ -94,19 +98,21 @@ export async function modifyUser(userId, userData) {
     } else {
       user.message = "UNABLE";
     }
+
+    // Forgot password, verifyUser() verifies email code
   } else if (
     password == undefined &&
     newPassword != undefined &&
-    userData?.firstName == undefined &&
-    userData?.lastName == undefined &&
-    userData?.suffix == undefined
+    user.isPasswordLocked == false
   ) {
+    let random = await bcrypt.hash("gouewyrnpvsuoyashodpifjnbosuihsofb~", 3);
     return bcrypt
       .hash(userData.newPassword, 10)
       .then((hashedPassword) =>
         UserSchema.findOneAndUpdate(
           { email: userId },
-          { password: hashedPassword }
+          { password: hashedPassword },
+          { emailVerification: random }
         ).catch(function (err) {
           return err;
         })
@@ -114,12 +120,23 @@ export async function modifyUser(userId, userData) {
       .then((user) => {
         return user;
       });
-  } else {
+
+    // General user information update
+  } else if (
+    password == undefined &&
+    newPassword == undefined &&
+    user.isPasswordLocked == true
+  ) {
     user = await UserSchema.findOneAndUpdate({ email: userId }, userData).catch(
       function (err) {
         return err;
       }
     );
+
+    // Error response if no conditions are met
+  } else {
+    user.message = "ERROR";
+    return user;
   }
   return user;
 }
@@ -134,30 +151,44 @@ export async function deleteUser(userId) {
   return user;
 }
 
-export async function verifyUser(userId) {
+export async function verifyUser(code) {
   await mongoDB();
-  let user = await UserSchema.findOne({ _id: userId });
-  if (user.verified == true && user.isPasswordLocked == true) {
-    user = await UserSchema.findByIdAndUpdate(userId, {
-      isPasswordLocked: false,
-    }).catch(function (err) {
-      console.log(err);
-      return "ERROR";
-    });
-    setTimeout(60000 * 5);
-    user = await UserSchema.findByIdAndUpdate(userId, {
-      isPasswordLocked: true,
-    }).catch(function (err) {
-      console.log(err);
-      return "ERROR";
-    });
-  } else if (user.verified == false && user.isPasswordLocked == true) {
-    user = await UserSchema.findByIdAndUpdate(userId, {
+  let user = await UserSchema?.findOne({ emailVerification: code });
+
+  if (user?.verified == false) {
+    user = await UserSchema.findByIdAndUpdate(user.id, {
       verified: true,
     }).catch(function (err) {
       console.log(err);
       return "ERROR";
     });
+    passwordLock(user.id);
+    return "OK";
+  } else if (user?.verified == true) {
+    user = await UserSchema.findByIdAndUpdate(user.id, {
+      isPasswordLocked: false,
+    }).catch(function (err) {
+      console.log(err);
+      return "ERROR";
+    });
+    setTimeout(passwordLock, 60000 * 5, user.id);
+    return "NUM";
+  } else {
+    return "ERROR";
   }
-  return "OK";
+}
+
+export async function passwordLock(userId) {
+  let random = await bcrypt.hash("gouewyrnpvsuoyashodpifjnbosuihsofb~", 3);
+  const user = await UserSchema.findOneAndUpdate(
+    { email: userId },
+    {
+      isPasswordLocked: true,
+      emailVerification: random,
+    }
+  ).catch(function (err) {
+    console.log(err);
+    return "ERROR";
+  });
+  return user;
 }
