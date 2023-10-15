@@ -166,6 +166,11 @@ export default function Page() {
           {mode}
         </CardHeader>
         <CardBody>
+          {mode === "Verification Needed" && (
+            <Text align={"center"}>
+              Please check your email for a verification link.
+            </Text>
+          )}
           {mode === "Login" && (
             <div>
               <FormControl id="email" isRequired>
@@ -460,7 +465,7 @@ export default function Page() {
         </CardBody>
         <CardFooter>
           <VStack align={"left"} w={"100%"}>
-            {mode !== "Reset Successful" && (
+            {mode !== "Reset Successful" && mode !== "Verification Needed" && (
               <Button
                 onClick={(e) => handleSubmitInfo(e)}
                 bgColor={"#38a4b1"}
@@ -487,6 +492,16 @@ export default function Page() {
                 <Text align={"center"}>Log In</Text>
               </Button>
             )}
+            {mode === "Verification Needed" && (
+              <Button
+                onClick={console.log("need resend link")}
+                bgColor={"#38a4b1"}
+                color={"white"}
+                _hover={{ bgColor: "#031926", color: "white" }}
+              >
+                <Text align={"center"}>Resend Verification Email</Text>
+              </Button>
+            )}
           </VStack>
         </CardFooter>
       </Card>
@@ -494,6 +509,9 @@ export default function Page() {
         {mode === "Login" && <Text align={"center"}>Need an account?</Text>}
         {mode === "Register" && (
           <Text align={"center"}>Already have an account?</Text>
+        )}
+        {mode === "Verification Needed" && (
+          <Text align={"center"}>Ready to try again?</Text>
         )}
         {(mode === "Update Password" || mode === "Reset Password") && (
           <div>
@@ -512,7 +530,9 @@ export default function Page() {
             </Button>
           </div>
         )}
-        {(mode === "Login" || mode === "Register") && (
+        {(mode === "Login" ||
+          mode === "Register" ||
+          mode === "Verification Needed") && (
           <Button
             mb={"10"}
             color={"#031926"}
