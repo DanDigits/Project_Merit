@@ -158,7 +158,9 @@ export async function verifyUser(code) {
   await mongoDB();
   let user = await UserSchema?.findOne({ emailVerification: code });
 
-  if (user?.verified == false) {
+  if (user == undefined) {
+    return "EXPIRED";
+  } else if (user?.verified == false) {
     user = await UserSchema.findByIdAndUpdate(user.id, {
       verified: true,
     }).catch(function (err) {
@@ -177,7 +179,7 @@ export async function verifyUser(code) {
     setTimeout(passwordLock, 60000 * 5, user.email);
     return "NUM";
   } else {
-    return "EXPIRED";
+    return "ERROR";
   }
 }
 

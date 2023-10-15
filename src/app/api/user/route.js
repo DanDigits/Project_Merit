@@ -124,9 +124,12 @@ export async function GET(Request) {
     // Email 2FA code exists in URL, verify user either for new signup or for forgot password reset
     let extension = "";
     res = await verifyUser(verificationCode);
+
     // Below fixes the redirect URL for the respective case
     if (res == "NUM") {
       extension = "?num=" + verificationCode;
+    } else if (res == "EXPIRED") {
+      extension = "?expired=true";
     }
     redirect(urls.baseUrl + "/Auth/Login" + extension);
   } else {
