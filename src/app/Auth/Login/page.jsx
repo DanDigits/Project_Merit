@@ -40,10 +40,16 @@ export default function Page() {
 
   useEffect(() => {
     var urlNum = params.get("num");
+    var urlExpired = params.get("expired");
 
     if (urlNum && mode !== "Verification Needed") {
       setNum(urlNum);
       setMode("Update Password");
+    }
+
+    if (urlExpired) {
+      setMode("Verification Needed");
+      setStatus("expired");
     }
   }, [params, num]);
 
@@ -506,6 +512,9 @@ export default function Page() {
           )}
           {status === "missingLog" && <p>Email and password are required.</p>}
           {status === "credentials" && <p>Invalid email or password.</p>}
+          {status === "expired" && (
+            <p>This link has expired. Please request a new link.</p>
+          )}
           {status === "confirm" && <p>Confirmation must match password.</p>}
           {status === "email" && <p>Please enter a valid email address.</p>}
           {status === "length" && (
@@ -514,7 +523,12 @@ export default function Page() {
           {status === "invalid" && (
             <p>Link is either expired or invalid. Please create new request.</p>
           )}
-          {status === "sent" && <p>Request sent. Please check your email.</p>}
+          {status === "sent" && (
+            <div>
+              <p>Request sent, please check your email.</p>
+              <p>This link is only valid for 5 minutes.</p>
+            </div>
+          )}
         </CardBody>
         <CardFooter>
           <VStack align={"left"} w={"100%"}>
