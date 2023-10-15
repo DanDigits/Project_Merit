@@ -30,14 +30,12 @@ const transporter = nodemailer.createTransport({
 export async function resendMail(userId, subject) {
   // New verification code for every email
   let userData = await passwordLock(userId);
-  //console.log(userData);
 
   // Email user search/shuffle failed
   if (userData?.email == undefined) {
     return "ERROR";
-
-    // Send verification email if user is new
   } else if (subject == "signup") {
+    // Send verification email if user is new
     const mailData = {
       from: process.env.EMAIL_FROM,
       to: userData.email,
@@ -48,15 +46,13 @@ export async function resendMail(userId, subject) {
       }?num=${userData.emailVerification}`}</div>`,
     };
     transporter.sendMail(mailData, function (err) {
-      //console.log(mailData);
       if (err) {
         console.log(err);
       }
     });
     setTimeout(deleteUser, 60000 * 30, userData.email);
-
-    // Send 2FA email for forgotten password
   } else {
+    // Send 2FA email for forgotten password
     const mailData = {
       from: process.env.EMAIL_FROM,
       to: userData.email,
@@ -67,12 +63,10 @@ export async function resendMail(userId, subject) {
       }?num=${userData.emailVerification}`}</div>`,
     };
     transporter.sendMail(mailData, function (err) {
-      //console.log(mailData);
       if (err) {
         console.log(err);
       }
     });
-    // Expire email code/link in 5 minutes
     setTimeout(passwordLock, 60000 * 5, userData.email);
   }
   return userData;
@@ -110,6 +104,7 @@ export async function GET(Request) {
         // Resend email
         const forgot = requestHeaders?.get("forgot");
         const user = requestHeaders?.get("user");
+
         if (forgot == undefined && user == undefined) {
           return new Response("ERROR", { status: 400 });
         } else if (forgot != undefined) {
@@ -125,11 +120,11 @@ export async function GET(Request) {
         return new Response("ERROR", { status: 400 });
       }
     }
-
-    // Email 2FA code exists in URL, verify user either for new signup or for forgot password reset
   } else if (verificationCode != undefined) {
+    // Email 2FA code exists in URL, verify user either for new signup or for forgot password reset
     let extension = "";
     res = await verifyUser(verificationCode);
+    // Below fixes the redirect URL for the respective case
     if (res == "NUM") {
       extension = "?num=" + verificationCode;
     }
