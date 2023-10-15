@@ -30,7 +30,7 @@ export default function Page() {
   const [password2, setPassword2] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [num, setNum] = useState("");
-
+  const [status, setStatus] = useState("");
   const params = useSearchParams();
 
   useEffect(() => {
@@ -41,7 +41,6 @@ export default function Page() {
       setMode("Update Password");
     }
   }, [params, num]);
-  const [status, setStatus] = useState("");
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
@@ -114,33 +113,43 @@ export default function Page() {
     }
 
     if (mode === "Reset Password") {
-      requestReset({ email }).then((response) => {
-        if (response.ok) {
-          {
-            console.log(response);
-            console.log("Email sent");
-          }
-        } else {
-          alert("Request failed, please try again.");
-        }
-      });
+      let emailRegex = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/;
 
-      console.log(mode + " in development");
+      if (email === "" || !emailRegex.test(email)) {
+        setStatus("email");
+      } else {
+        requestReset({ email }).then((response) => {
+          if (response.ok) {
+            {
+              console.log(response);
+              console.log("Email sent");
+              setStatus("sent");
+            }
+          } else {
+            alert("Request failed, please try again.");
+          }
+        });
+      }
     }
 
     if (mode === "Update Password") {
-      resetPassword({ num, newPassword }).then((response) => {
-        if (response.ok) {
-          {
-            console.log(response);
-            console.log("Password Reset");
+      if (newPassword === "" || password2 === "") {
+        setStatus("missing");
+      } else if (newPassword.length < 8) {
+        setStatus("length");
+      } else if (newPassword !== password2) {
+        setStatus("confirm");
+      } else {
+        resetPassword({ num, newPassword }).then((response) => {
+          if (response.ok) {
+            {
+              setMode("Reset Successful");
+            }
+          } else {
+            setStatus("invalid");
           }
-        } else {
-          alert("Request failed, please try again.");
-        }
-      });
-
-      console.log(mode + " in development");
+        });
+      }
     }
   };
 
@@ -243,7 +252,7 @@ export default function Page() {
                   size={"md"}
                   minLength={8}
                   maxLength={32}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => setNewPassword(e.target.value)}
                 />
                 <FormErrorMessage>Password is required.</FormErrorMessage>
               </FormControl>
@@ -444,24 +453,40 @@ export default function Page() {
           {status === "length" && (
             <p>Password must be a minimum of 8 characters.</p>
           )}
+          {status === "invalid" && (
+            <p>Link is either expired or invalid. Please create new request.</p>
+          )}
+          {status === "sent" && <p>Request sent. Please check your email.</p>}
         </CardBody>
         <CardFooter>
           <VStack align={"left"} w={"100%"}>
-            <Button
-              onClick={(e) => handleSubmitInfo(e)}
-              bgColor={"#38a4b1"}
-              color={"white"}
-              _hover={{ bgColor: "#031926", color: "white" }}
-            >
-              {mode === "Login" && <Text align={"center"}>Log In</Text>}
-              {mode === "Register" && <Text align={"center"}>Sign Up</Text>}
-              {mode === "Reset Password" && (
-                <Text align={"center"}>{mode}</Text>
-              )}
-              {mode === "Update Password" && (
-                <Text align={"center"}>{mode}</Text>
-              )}
-            </Button>
+            {mode !== "Reset Successful" && (
+              <Button
+                onClick={(e) => handleSubmitInfo(e)}
+                bgColor={"#38a4b1"}
+                color={"white"}
+                _hover={{ bgColor: "#031926", color: "white" }}
+              >
+                {mode === "Login" && <Text align={"center"}>Log In</Text>}
+                {mode === "Register" && <Text align={"center"}>Sign Up</Text>}
+                {mode === "Reset Password" && (
+                  <Text align={"center"}>{mode}</Text>
+                )}
+                {mode === "Update Password" && (
+                  <Text align={"center"}>{mode}</Text>
+                )}
+              </Button>
+            )}
+            {mode === "Reset Successful" && (
+              <Button
+                onClick={() => setMode("Login")}
+                bgColor={"#38a4b1"}
+                color={"white"}
+                _hover={{ bgColor: "#031926", color: "white" }}
+              >
+                <Text align={"center"}>Log In</Text>
+              </Button>
+            )}
           </VStack>
         </CardFooter>
       </Card>
