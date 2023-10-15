@@ -17,15 +17,18 @@ export async function getReport(reportData) {
 
   // Find specific report, or find most recent user report
   if (reportData.toLowerCase().includes("@")) {
-    report = await ReportSchema.findOne({ email: reportData })
+    report = await ReportSchema?.findOne({ email: reportData })
       .sort({ date: -1 })
       .catch(function (err) {
         return err;
       });
   } else {
-    report = await ReportSchema.findById(reportData).catch(function (err) {
+    report = await ReportSchema?.findById(reportData).catch(function (err) {
       return err;
     });
+  }
+  if (report == null) {
+    report = "None";
   }
   return report;
 }
