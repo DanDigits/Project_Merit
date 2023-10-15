@@ -41,33 +41,76 @@ export default function Page() {
       setMode("Update Password");
     }
   }, [params, num]);
+  const [status, setStatus] = useState("");
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
+
+    setStatus("");
+
     if (mode === "Register") {
-      signUp({
-        email,
-        password,
-        rank,
-        firstName,
-        lastName,
-        suffix,
-      }).then((response) => {
-        if (response.ok) {
-          {
-            setMode("Login");
-          }
-        } else {
-          alert("User creation failed, please try again.");
-        }
-      });
-    }
-    if (mode === "Register") {
-      signIn("credentials", {
-        email: email,
-        password: password,
-        callbackUrl: "/Dashboard/Home",
-      });
+      let emailRegex = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/;
+
+      if (
+        password === "" ||
+        password2 === "" ||
+        email === "" ||
+        rank === "" ||
+        firstName === "" ||
+        lastName === ""
+      ) {
+        setStatus("missingReg");
+      } else if (password.length < 8) {
+        setStatus("length");
+      } else if (password !== password2) {
+        setStatus("confirm");
+      } else if (!emailRegex.test(email)) {
+        setStatus("email");
+      } else {
+        signUp({
+          email,
+          password,
+          rank,
+          firstName,
+          lastName,
+          suffix,
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(response.status);
+            } else {
+              setMode("Login");
+            }
+          })
+          .catch((error) => {
+            console.log("error: " + error);
+          });
+      }
+    } else if (mode === "Login") {
+      if (email === "" || password === "") {
+        setStatus("missingLog");
+      } else {
+        signIn("credentials", {
+          email: email,
+          password: password,
+          redirect: false,
+        })
+          .then((response) => {
+            if (!response.ok) {
+              console.log(response);
+              setStatus("credentials");
+            } else {
+              window.location.replace("/Dashboard/Home");
+              console.log(response);
+            }
+          })
+          .catch((error) => {
+            console.log("error: " + error);
+            if (error === "Invalid Credentials") {
+              setStatus("credentials");
+            }
+          });
+      }
     }
 
     if (mode === "Reset Password") {
@@ -116,7 +159,7 @@ export default function Page() {
         <CardBody>
           {mode === "Login" && (
             <div>
-              <FormControl id="email">
+              <FormControl id="email" isRequired>
                 <FormLabel mb={1} fontSize={15} color={"black"}>
                   Email
                 </FormLabel>
@@ -133,7 +176,7 @@ export default function Page() {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </FormControl>
-              <FormControl id="password">
+              <FormControl id="password" isRequired>
                 <FormLabel mb={1} fontSize={15} color={"black"}>
                   Password
                 </FormLabel>
@@ -146,6 +189,7 @@ export default function Page() {
                   type="password"
                   minLength={8}
                   maxLength={64}
+                  mb={3}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -389,6 +433,16 @@ export default function Page() {
                 </FormErrorMessage>
               </FormControl>
             </div>
+          )}
+          {status === "missingReg" && (
+            <p>All fields except suffix are required.</p>
+          )}
+          {status === "missingLog" && <p>Email and password are required.</p>}
+          {status === "credentials" && <p>Invalid email or password.</p>}
+          {status === "confirm" && <p>Confirmation must match password.</p>}
+          {status === "email" && <p>Please enter a valid email address.</p>}
+          {status === "length" && (
+            <p>Password must be a minimum of 8 characters.</p>
           )}
         </CardBody>
         <CardFooter>
