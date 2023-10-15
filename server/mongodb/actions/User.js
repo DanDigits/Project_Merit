@@ -177,7 +177,7 @@ export async function verifyUser(code) {
     setTimeout(passwordLock, 60000 * 5, user.email);
     return "NUM";
   } else {
-    return "ERROR";
+    return "EXPIRED";
   }
 }
 
