@@ -16,6 +16,9 @@ export async function login({ email, password }) {
   } else {
     throw new Error("Invalid credentials");
   }
+  if (user.verified == false) {
+    throw new Error("Unverified account");
+  }
   return user;
 }
 
