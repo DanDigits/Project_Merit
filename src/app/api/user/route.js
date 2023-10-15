@@ -88,7 +88,7 @@ export async function GET(Request) {
         const forgot = requestHeaders?.get("forgot");
         res = await getUser(forgot);
         if (res?.email != undefined && res?.emailVerification != undefined) {
-          resendMail(res.email, "forgotPassword");
+          res = resendMail(res.email, "forgotPassword");
         } else {
           return new Response("ERROR", { status: 400 });
         }
