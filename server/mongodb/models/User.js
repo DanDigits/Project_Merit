@@ -27,11 +27,15 @@ const UserSchema = new Schema({
   },
   verified: {
     type: Boolean,
-    required: false,
+    required: true,
   },
   isPasswordLocked: {
     type: Boolean,
-    required: false,
+    required: true,
+  },
+  emailVerification: {
+    type: String,
+    required: true,
   },
 });
 
