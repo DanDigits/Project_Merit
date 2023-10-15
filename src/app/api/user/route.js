@@ -32,8 +32,12 @@ export async function resendMail(userId, subject) {
   let userData = await passwordLock(userId);
   //console.log(userData);
 
-  // Send verification email if user is new
-  if (subject == "signup") {
+  // Email user search/shuffle failed
+  if (userData?.email == undefined) {
+    return "ERROR";
+
+    // Send verification email if user is new
+  } else if (subject == "signup") {
     const mailData = {
       from: process.env.EMAIL_FROM,
       to: userData.email,
@@ -48,7 +52,8 @@ export async function resendMail(userId, subject) {
       if (err) {
         console.log(err);
       }
-    }); // TODO: Expire email signup and delete unused database entry
+    });
+    setTimeout(deleteUser, 60000 * 30, userData.email);
 
     // Send 2FA email for forgotten password
   } else {
@@ -68,8 +73,9 @@ export async function resendMail(userId, subject) {
       }
     });
     // Expire email code/link in 5 minutes
-    setTimeout(passwordLock, 60000 * 5, res.email);
+    setTimeout(passwordLock, 60000 * 5, userData.email);
   }
+  return userData;
 }
 
 // Routes
@@ -107,11 +113,9 @@ export async function GET(Request) {
         if (forgot == undefined && user == undefined) {
           return new Response("ERROR", { status: 400 });
         } else if (forgot != undefined) {
-          resendMail(forgot, "forgotPassword");
-          res = "OK";
+          res = resendMail(forgot, "forgotPassword");
         } else if (user != undefined) {
-          resendMail(user, "signup");
-          res = "OK";
+          res = resendMail(user, "signup");
         } else {
           return new Response("ERROR", { status: 400 });
         }
@@ -135,7 +139,7 @@ export async function GET(Request) {
   }
 
   // HTTP Response
-  if (res) {
+  if (res?.email) {
     res = JSON.stringify(res);
     return new Response(res, { status: 200 });
   } else {
