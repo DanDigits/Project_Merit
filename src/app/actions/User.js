@@ -56,6 +56,23 @@ export const requestReset = async ({ email }) => {
   return response;
 };
 
+// Specifically for password resets when users are not already signed in
+export const resetPassword = async ({ num, newPassword }) => {
+  const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
+    method: "PATCH",
+    mode: "same-origin",
+    headers: {
+      user: num,
+    },
+    body: JSON.stringify({
+      newPassword,
+    }),
+  });
+  console.log("Update Response:", response.statusText);
+
+  return response;
+};
+
 export const updateUser = async ({
   email,
   rank,
@@ -82,6 +99,7 @@ export const updateUser = async ({
   return response;
 };
 
+// Specifically used to change password when the user is already signed in
 export const updatePassword = async ({ email, password, newPassword }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
     method: "PATCH",
