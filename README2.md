@@ -12,14 +12,8 @@
 
 <p align="center">
   <img src="https://github.com/nodeonline/nodejscart/actions/workflows/build.yml/badge.svg" alt="Github Action">
-  <a href="https://twitter.com/evershopjs">
-    <img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/evershopjs?style=social">
-  </a>
-  <a href="https://discord.gg/GSzt7dt7RM">
-    <img src="https://img.shields.io/discord/757179260417867879?label=discord" alt="Discord">
-  </a>
-  <a href="https://opensource.org/licenses/GPL-3.0">
-    <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License">
+  <a href="https://opensource.org/license/mit/">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="License">
   </a>
 </p>
 
@@ -73,11 +67,18 @@ Use Case Digrams
 Entity Relationship Diagrams
 
 
-Activity Diagram
-
+Activity Diagrams
 <p align="left">
 <img alt="Activity Diagram" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/System%20Design%20Diagram.png"/>
 </p>
+
+Endpoints
+
+
+Environment Variables
+
+
+
 
 ## Demo
 
@@ -101,35 +102,23 @@ Password: 123456
 
 ## Support
 
-If you like my work, feel free to:
-
-- ⭐ this repository. It helps.
-- [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)][tweet] about EverShop. Thank you!
-
-[tweet]: https://twitter.com/intent/tweet?url=https%3A%2F%2Fgithub.com%2Fevershopcommerce%2Fevershop&text=Awesome%20React%20Ecommerce%20Project&hashtags=react,ecommerce,expressjs,graphql
-### Ask a question about EverShop
-
-You can ask questions, and participate in discussions about EverShop-related topics in the EverShop Discord channel.
-
-<a href="https://discord.gg/GSzt7dt7RM"><img src="https://raw.githubusercontent.com/evershopcommerce/evershop/dev/.github/images/discord_banner_github.svg" /></a>
-
 ### Create a bug report
 
-If you see an error message or run into an issue, please [create bug report](https://github.com/evershopcommerce/evershop/issues/new). This effort is valued and it will help all EverShop users.
+If you see an error message or run into an issue, please [create bug report](https://github.com/DanDigits/Project_Merit/issues).
 
 
 ### Submit a feature request
 
-If you have an idea, or you're missing a capability that would make development easier and more robust, please [Submit feature request](https://github.com/evershopcommerce/evershop/issues/new).
+If you have an idea, or you're missing a capability that would make development easier and more robust, please [Submit feature request](https://github.com/DanDigits/Project_Merit/issues).
 
 If a similar feature request already exists, don't forget to leave a "+1".
-If you add some more information such as your thoughts and vision about the feature, your comments will be embraced warmly :)
+
 
 ## Contributing
 
 Project Merit is an open-source project. We are committed to making this application a success and appreciate any contributions. Whether you are recommending new features, alerting us to bugs, or just spreading the word - we are delighted to welcome you to the Project Merit community.
 
-Please refer to our [Contribution Guidelines](./CONTRIBUTING.md) and [Code of Conduct](./CODE_OF_CONDUCT.md).
+Please refer to our [Contribution Guidelines](https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/CONTRIBUTING.md) and [Code of Conduct](https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/CodeOfConduct.md).
 
 ## License
 
