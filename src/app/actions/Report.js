@@ -120,8 +120,8 @@ export const deleteReport = async ({ reportId }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.reports.delete, {
     method: "DELETE",
     mode: "same-origin",
-    headers: {
-      report: reportId,
+    body: {
+      id: reportId,
     },
   });
   console.log(response.statusText);
