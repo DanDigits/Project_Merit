@@ -24,6 +24,20 @@ import {
   resendRequest,
 } from "src/app/actions/User";
 
+const statusMessages = {
+  account: "Account not found.",
+  confirm: "Confirmation must match password.",
+  credentials: "Invalid email or password.",
+  email: "Please enter a valid email address.",
+  expired: "This link has expired. Please request a new link.",
+  invalid: "Link is either expired or invalid. Please create new request.",
+  length: "Password must be a minimum of 8 characters.",
+  missingLog: "Email and password are required.",
+  missingReg: "All fields except suffix are required.",
+  missingUpd: "Both New Password and New Password Confirmation are required.",
+  sent: "Request sent, please check your email. This link is only valid for 15 minutes. ",
+};
+
 export default function Page() {
   /**
    * mode controls which view is displayed: Login, Register, Reset Password, Update Password, Verification Needed
@@ -127,13 +141,13 @@ export default function Page() {
         firstName === "" ||
         lastName === ""
       ) {
-        setStatus("missingReg");
+        setStatus(statusMessages.missingReg);
       } else if (password.length < 8) {
-        setStatus("length");
+        setStatus(statusMessages.length);
       } else if (password !== password2) {
-        setStatus("confirm");
+        setStatus(statusMessages.confirm);
       } else if (!emailRegex.test(email)) {
-        setStatus("email");
+        setStatus(statusMessages.email);
       } else {
         signUp({
           email,
@@ -161,7 +175,7 @@ export default function Page() {
      */
     if (mode === "Login") {
       if (email === "" || password === "") {
-        setStatus("missingLog");
+        setStatus(statusMessages.missingLog);
       } else {
         signIn("credentials", {
           email: email,
@@ -171,7 +185,7 @@ export default function Page() {
           if (!response.ok) {
             console.log(response);
             if (response.error === "Invalid credentials") {
-              setStatus("credentials");
+              setStatus(statusMessages.credentials);
             } else if (response.error === "Unverified account") {
               setMode("Verification Needed");
             }
@@ -190,17 +204,17 @@ export default function Page() {
       let emailRegex = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/;
 
       if (email === "" || !emailRegex.test(email)) {
-        setStatus("email");
+        setStatus(statusMessages.email);
       } else {
         requestReset({ email }).then((response) => {
           if (response.ok) {
             {
               console.log(response);
               console.log("Email sent");
-              setStatus("sent");
+              setStatus(statusMessages.sent);
             }
           } else {
-            setStatus("account");
+            setStatus(statusMessages.account);
           }
         });
       }
@@ -211,11 +225,11 @@ export default function Page() {
      */
     if (mode === "Update Password") {
       if (newPassword === "" || password2 === "") {
-        setStatus("missing");
+        setStatus(statusMessages.missingUpd);
       } else if (newPassword.length < 8) {
-        setStatus("length");
+        setStatus(statusMessages.length);
       } else if (newPassword !== password2) {
-        setStatus("confirm");
+        setStatus(statusMessages.confirm);
       } else {
         resetPassword({ num, newPassword }).then((response) => {
           if (response.ok) {
@@ -223,7 +237,7 @@ export default function Page() {
               setMode("Reset Successful");
             }
           } else {
-            setStatus("invalid");
+            setStatus(statusMessages.invalid);
           }
         });
       }
@@ -236,14 +250,14 @@ export default function Page() {
       let emailRegex = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/;
 
       if (email === "" || !emailRegex.test(email)) {
-        setStatus("email");
+        setStatus(statusMessages.email);
       } else {
         resendRequest({ email }).then((response) => {
           if (response.ok) {
             {
               console.log(response);
               console.log("Email sent");
-              setStatus("sent");
+              setStatus(statusMessages.sent);
             }
           } else {
             alert("Request failed, please try again.");
@@ -573,29 +587,7 @@ export default function Page() {
               </FormControl>
             </div>
           )}
-          {status === "missingReg" && (
-            <p>All fields except suffix are required.</p>
-          )}
-          {status === "missingLog" && <p>Email and password are required.</p>}
-          {status === "account" && <p>Account not found.</p>}
-          {status === "credentials" && <p>Invalid email or password.</p>}
-          {status === "expired" && (
-            <p>This link has expired. Please request a new link.</p>
-          )}
-          {status === "confirm" && <p>Confirmation must match password.</p>}
-          {status === "email" && <p>Please enter a valid email address.</p>}
-          {status === "length" && (
-            <p>Password must be a minimum of 8 characters.</p>
-          )}
-          {status === "invalid" && (
-            <p>Link is either expired or invalid. Please create new request.</p>
-          )}
-          {status === "sent" && (
-            <div>
-              <p>Request sent, please check your email.</p>
-              <p>This link is only valid for 15 minutes.</p>
-            </div>
-          )}
+          {status}
         </CardBody>
         <CardFooter>
           <VStack align={"left"} w={"100%"}>
