@@ -182,7 +182,7 @@ export async function deleteReport(reportId) {
   } else {
     while (i < length) {
       const report = await ReportSchema?.findByIdAndDelete({
-        _id: reportId.id[i],
+        _id: reportId?.id[i],
       }).catch(function (err) {
         reports[i].push(report);
       });
