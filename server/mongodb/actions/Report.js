@@ -174,23 +174,22 @@ export async function getUserReports(email, parameter) {
 export async function deleteReport(reportId) {
   await mongoDB();
   let i = 0;
-  let report = "";
-  let length = reportId?.length;
+  let length = reportId?.id?.length;
+  let reports;
 
   if (length == undefined) {
-    return report;
+    return "ERROR";
   } else {
     while (i < length) {
-      const report = await ReportSchema?.findByIdAndDelete(reportId).catch(
-        function (err) {
-          console.log("ERROR ON REPORT " + reportId[i]);
-        }
-      );
+      const report = await ReportSchema?.findByIdAndDelete({
+        _id: reportId.id[i],
+      }).catch(function (err) {
+        reports[i].push(report);
+      });
       i++;
     }
   }
-
-  return report;
+  return reports;
 }
 
 export async function modifyReport(reportId, reportInfo) {

@@ -80,12 +80,13 @@ export async function GET() {
 }
 
 export async function DELETE(Request) {
-  const res = await deleteReport(Request);
+  const req = await Request.json();
+  const res = await deleteReport(req);
 
-  if (res.id) {
-    return new Response(res, { status: 200 });
+  if (res == undefined) {
+    return new Response("OK", { status: 200 });
   } else {
-    return new Response("ERROR", { status: 400 });
+    return new Response(res, { status: 400 });
   }
 }
 
