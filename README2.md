@@ -65,6 +65,20 @@ For the full installation guide, please refer to our [Installation guide](https:
 - [Theme development](https://evershop.io/docs/development/theme/theme-overview).
 
 
+## System Design
+
+Use Case Digrams
+
+
+Entity Relationship Diagrams
+
+
+Activity Diagram
+
+<p align="left">
+<img alt="Activity Diagram" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/System%20Design%20Diagram.png"/>
+</p>
+
 ## Demo
 
 Explore our demo store.
