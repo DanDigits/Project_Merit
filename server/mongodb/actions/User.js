@@ -176,7 +176,7 @@ export async function verifyUser(code) {
       console.log(err);
       return "ERROR";
     });
-    setTimeout(passwordLock, 60000 * 5, user.email);
+    setTimeout(passwordLock, 60000 * 15, user.email);
     return "NUM";
   } else {
     return "ERROR";
