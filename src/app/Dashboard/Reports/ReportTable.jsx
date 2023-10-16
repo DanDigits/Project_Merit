@@ -30,6 +30,7 @@ import {
 } from "@chakra-ui/react";
 import { FiFilter } from "react-icons/fi";
 import Filters from "./Filters";
+import { deleteReport } from "./../../actions/Report.js";
 
 const IndeterminateCheckbox = React.forwardRef(
   ({ indeterminate, ...rest }, ref) => {
@@ -72,6 +73,18 @@ export default function ReportTable({ columns, data }) {
     getPaginationRowModel: getPaginationRowModel(),
     debugTable: true,
   });
+
+  const handleDelete = () => {
+    deleteReport({ reportId }).then((response) => {
+      if (response.ok) {
+        {
+          window.location.reload();
+        }
+      } else {
+        alert("Delete failed");
+      }
+    });
+  };
 
   return (
     <Box mx={{ base: -4, md: 0 }}>
