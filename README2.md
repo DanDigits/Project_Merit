@@ -36,6 +36,14 @@ This tool will guide them to write evaluation reports according to the guideline
 Personnel will be able to export and download the reports for submission through official Air Force channels.
 
 
+## Senior Design Project (Group 15)
+
+- Daniel Cruz-Castro (Da709128@ucf.edu)
+- Amber McCullah (am324232@ucf.edu)
+- Mari Peele (ma973527@ucf.edu)
+- Emily Tao (em265354@ucf.edu)
+
+
 ## Installation Using Docker
 
 
