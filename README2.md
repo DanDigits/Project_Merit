@@ -29,7 +29,12 @@
 
 ## Introduction
 
-EverShop is a GraphQL Based and React ecommerce platform with essential commerce features. Built with React, modular and fully customizable.
+Project Merit is a quick and easy tool where Air Force personnel can write, edit, and save performance reports from any device. 
+
+This tool will guide them to write evaluation reports according to the guidelines and standards set out by the Air Force.
+
+Personnel will be able to export and download the reports for submission through official Air Force channels.
+
 
 ## Installation Using Docker
 
@@ -100,7 +105,7 @@ If you add some more information such as your thoughts and vision about the feat
 
 ## Contributing
 
-EverShop is an open-source project. We are committed to a fully transparent development process and appreciate highly any contributions. Whether you are helping us fix bugs, proposing new features, improving our documentation or spreading the word - we would love to have you as part of the EverShop community.
+Project Merit is an open-source project. We are committed to making this application a success and appreciate any contributions. Whether you are recommending new features, alerting us to bugs, or just spreading the word - we are delighted to welcome you to the Project Merit community.
 
 Please refer to our [Contribution Guidelines](./CONTRIBUTING.md) and [Code of Conduct](./CODE_OF_CONDUCT.md).
 
