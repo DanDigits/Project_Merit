@@ -26,11 +26,16 @@ import secureLocalStorage from "react-secure-storage";
 export default function Page() {
   const [mode, setMode] = useState("View");
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const reportId = [];
+  const [reportId, setReportId] = useState(
+    String(secureLocalStorage.getItem("reportID"))
+  );
+  var reportArray = [];
 
   const handleDelete = () => {
-    reportId.push(String(secureLocalStorage.getItem("reportID")));
-    deleteReport({ reportId }).then((response) => {
+    reportArray.push({ id: reportId });
+    console.log("Report Id: " + reportId);
+    console.log("Report Array: " + { reportArray });
+    deleteReport({ reportArray }).then((response) => {
       if (response.ok) {
         {
           window.location.replace("/Dashboard/Reports");
