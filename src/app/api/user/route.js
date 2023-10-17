@@ -108,9 +108,9 @@ export async function GET(Request) {
         if (forgot == undefined && user == undefined) {
           return new Response("ERROR", { status: 400 });
         } else if (forgot != undefined) {
-          res = resendMail(forgot, "forgotPassword");
+          res = await resendMail(forgot, "forgotPassword");
         } else if (user != undefined) {
-          res = resendMail(user, "signup");
+          res = await resendMail(user, "signup");
         } else {
           return new Response("ERROR", { status: 400 });
         }
@@ -138,8 +138,7 @@ export async function GET(Request) {
 
   // HTTP Response
   if (res?.email) {
-    res = JSON.stringify(res);
-    return new Response(res, { status: 200 });
+    return new Response(res.id, { status: 200 });
   } else {
     return new Response("ERROR", { status: 400 });
   }
