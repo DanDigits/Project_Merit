@@ -74,16 +74,18 @@ export default function ReportTable({ columns, data }) {
     debugTable: true,
   });
 
-  const handleDelete = () => {
-    deleteReport({ reportId }).then((response) => {
-      if (response.ok) {
-        {
-          window.location.reload();
+  const handleDelete = (reportArray) => {
+    if (reportArray && reportArray.length != 0) {
+      deleteReport({ reportArray }).then((response) => {
+        if (response.ok) {
+          {
+            window.location.reload();
+          }
+        } else {
+          alert("Delete failed");
         }
-      } else {
-        alert("Delete failed");
-      }
-    });
+      });
+    }
   };
 
   return (
@@ -123,6 +125,13 @@ export default function ReportTable({ columns, data }) {
             bgColor={"#DF2935"}
             color={"white"}
             _hover={{ bgColor: "#031926", color: "white" }}
+            onClick={() =>
+              handleDelete(
+                table
+                  .getSelectedRowModel()
+                  .flatRows.map(({ original }) => original._id)
+              )
+            }
           >
             Delete
           </Button>
