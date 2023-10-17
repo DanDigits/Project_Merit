@@ -36,6 +36,7 @@ const statusMessages = {
   missingReg: "All fields except suffix are required.",
   missingUpd: "Both New Password and New Password Confirmation are required.",
   sent: "Request sent, please check your email. This link is only valid for 15 minutes. ",
+  verified: "Account successfully verified.",
 };
 
 export default function Page() {
@@ -89,6 +90,12 @@ export default function Page() {
     if (urlExpired) {
       setMode("Verification Needed");
       setExpired(true);
+    }
+
+    var urlVerified = params.get("verified");
+
+    if (urlVerified) {
+      setStatus(statusMessages.verified);
     }
 
     setStatus("");
