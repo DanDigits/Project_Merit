@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from "react";
 import {
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  AlertTitle,
   Card,
   Text,
   Button,
@@ -37,6 +41,7 @@ const statusMessages = {
   missingUpd: "Both New Password and New Password Confirmation are required.",
   sent: "Request sent, please check your email. This link is only valid for 15 minutes. ",
   verified: "Account successfully verified.",
+  verificationFailed: "Error: Contact system administrator.",
 };
 
 export default function Page() {
@@ -50,6 +55,8 @@ export default function Page() {
   const [mode, setMode] = useState("Login");
   const [status, setStatus] = useState("");
   const [expired, setExpired] = useState("");
+  const [verified, setVerified] = useState("");
+  const [registered, setRegistered] = useState("");
   const [num, setNum] = useState("");
   const params = useSearchParams();
 
@@ -93,9 +100,12 @@ export default function Page() {
     }
 
     var urlVerified = params.get("verified");
+    console.log("urlVerified: " + urlVerified);
 
     if (urlVerified) {
-      setStatus(statusMessages.verified);
+      setVerified(true);
+    } else if (!urlVerified) {
+      setStatus(statusMessages.verificationFailed);
     }
 
     setStatus("");
@@ -168,7 +178,9 @@ export default function Page() {
             if (!response.ok) {
               throw new Error(response.status);
             } else {
-              setMode("Login");
+              setRegistered(true);
+              setVerified("");
+              setExpired("");
             }
           })
           .catch((error) => {
@@ -283,6 +295,25 @@ export default function Page() {
         w={{ md: "lg" }}
         bgColor={"white"}
       >
+        {verified && (
+          <Alert
+            status="success"
+            variant="subtle"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            textAlign="center"
+            height="200px"
+          >
+            <AlertIcon boxSize="40px" mr={0} />
+            <AlertTitle mt={4} mb={1} fontSize="lg">
+              Account Verified!
+            </AlertTitle>
+            <AlertDescription maxWidth="sm">
+              Login to start using Project Merit.
+            </AlertDescription>
+          </Alert>
+        )}
         <CardHeader mb={-5} fontSize={30} color={"black"}>
           {mode}
         </CardHeader>
@@ -646,6 +677,25 @@ export default function Page() {
                 <Text align={"center"}>Resend Verification Email</Text>
               </Button>
             )}
+            {registered && (
+              <Alert
+                status="success"
+                variant="subtle"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                textAlign="center"
+                height="200px"
+              >
+                <AlertIcon boxSize="40px" mr={0} />
+                <AlertTitle mt={4} mb={1} fontSize="lg">
+                  Account Created!
+                </AlertTitle>
+                <AlertDescription maxWidth="sm">
+                  Please check your email to verify your account.
+                </AlertDescription>
+              </Alert>
+            )}
           </VStack>
         </CardFooter>
       </Card>
@@ -683,6 +733,9 @@ export default function Page() {
             alignSelf={"center"}
             onClick={() => {
               setMode(mode === "Login" ? "Register" : "Login");
+              setRegistered("");
+              setVerified("");
+              setExpired("");
             }}
           >
             {mode === "Login" ? "Register" : "Login"}
