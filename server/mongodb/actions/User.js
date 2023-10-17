@@ -168,7 +168,7 @@ export async function verifyUser(code) {
       return "ERROR";
     });
     passwordLock(user.email);
-    return "OK";
+    return "VERIFIED";
   } else if (user?.verified == true) {
     user = await UserSchema.findByIdAndUpdate(user.id, {
       isPasswordLocked: false,

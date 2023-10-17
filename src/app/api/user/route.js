@@ -107,9 +107,9 @@ export async function GET(Request) {
 
         if (forgot == undefined && user == undefined) {
           return new Response("ERROR", { status: 400 });
-        } else if (forgot != undefined) {
+        } else if (forgot != undefined && user == undefined) {
           res = await resendMail(forgot, "forgotPassword");
-        } else if (user != undefined) {
+        } else if (user != undefined && forgot == undefined) {
           res = await resendMail(user, "signup");
         } else {
           return new Response("ERROR", { status: 400 });
@@ -130,6 +130,12 @@ export async function GET(Request) {
       extension = "?num=" + verificationCode;
     } else if (res == "EXPIRED") {
       extension = "?expired=true";
+    } else if (res == "VERIFIED") {
+      extension = "?verified=true";
+    } else if (res == "ERROR" && user != undefined) {
+      extension = "?verified=false";
+    } else {
+      extension = "?error=true";
     }
     redirect(urls.baseUrl + "/Auth/Login" + extension);
   } else {
