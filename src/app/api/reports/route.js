@@ -79,17 +79,16 @@ export async function GET() {
   }
 }
 
-export async function DELETE() {
-  const requestHeaders = headers();
-  const report = requestHeaders.get("report");
-  const res = await deleteReport(report);
+export async function DELETE(Request) {
+  console.error("\n" + (await Request));
+  const req = await Request.json();
+  console.error("\n" + req);
+  const res = await deleteReport(req);
 
-  if (res.message) {
-    return new Response(res.message, { status: 400 });
-  } else if (res.id) {
-    return new Response(res.id, { status: 200 });
+  if (res == undefined) {
+    return new Response("OK", { status: 200 });
   } else {
-    return new Response("ERROR", { status: 400 });
+    return new Response(res, { status: 400 });
   }
 }
 
