@@ -162,7 +162,7 @@ export async function POST(Request) {
   } else if (res.name == "ValidationError") {
     return new Response(res, { status: 422 });
   } else if (res == "ConflictError") {
-    return new Response("EXISTS", { status: 400 });
+    return new Response("EXISTS", { status: 400, statusText: "EXISTS" });
   } else if (res.name) {
     return new Response(res.message, { status: 400 });
   } else {

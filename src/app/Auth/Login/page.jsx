@@ -58,6 +58,7 @@ export default function Page() {
   const [expired, setExpired] = useState("");
   const [verified, setVerified] = useState("");
   const [registered, setRegistered] = useState("");
+  const [duplicate, setDuplicate] = useState("");
   const [num, setNum] = useState("");
   const params = useSearchParams();
 
@@ -176,9 +177,9 @@ export default function Page() {
           suffix,
         }).then((response) => {
           if (!response.ok) {
-            console.log("Error: " + response.error);
-            if (response.error === "EXISTS") {
-              setStatus(statusMessages.duplicate);
+            console.log(response.statusText);
+            if (response.statusText === "EXISTS") {
+              setDuplicate(true);
             }
           } else {
             setRegistered(true);
@@ -693,6 +694,25 @@ export default function Page() {
                 </AlertTitle>
                 <AlertDescription maxWidth="sm">
                   Please check your email to verify your account.
+                </AlertDescription>
+              </Alert>
+            )}
+            {duplicate && (
+              <Alert
+                status="error"
+                variant="subtle"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                textAlign="center"
+                height="200px"
+              >
+                <AlertIcon boxSize="40px" mr={0} />
+                <AlertTitle mt={4} mb={1} fontSize="lg">
+                  Account Found
+                </AlertTitle>
+                <AlertDescription maxWidth="sm">
+                  This email is already registered.
                 </AlertDescription>
               </Alert>
             )}
