@@ -40,7 +40,6 @@ export async function signUp(userData) {
         lastName: userData.lastName,
         suffix: userData.suffix,
         rank: userData.rank,
-        reportType: userData.reportType,
         verified: false,
         isPasswordLocked: true,
         emailVerification: random,
