@@ -32,6 +32,7 @@ const statusMessages = {
   account: "Account not found.",
   confirm: "Confirmation must match password.",
   credentials: "Invalid email or password.",
+  duplicate: "Account already exists.",
   email: "Please enter a valid email address.",
   expired: "This link has expired. Please request a new link.",
   invalid: "Link is either expired or invalid. Please create new request.",
@@ -173,19 +174,18 @@ export default function Page() {
           firstName,
           lastName,
           suffix,
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(response.status);
-            } else {
-              setRegistered(true);
-              setVerified("");
-              setExpired("");
+        }).then((response) => {
+          if (!response.ok) {
+            console.log("Error: " + response.error);
+            if (response.error === "EXISTS") {
+              setStatus(statusMessages.duplicate);
             }
-          })
-          .catch((error) => {
-            console.log("error: " + error);
-          });
+          } else {
+            setRegistered(true);
+            setVerified("");
+            setExpired("");
+          }
+        });
       }
     }
 
