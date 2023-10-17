@@ -32,10 +32,10 @@ export default function Page() {
   var reportArray = [];
 
   const handleDelete = () => {
-    reportArray.push({ reportId });
+    reportArray.push(reportId);
     console.log("Report Id: " + reportId);
-    console.log("Report Array: ", reportArray);
-    deleteReport(JSON.stringify(reportArray)).then((response) => {
+    console.log("Report Array is ", reportArray[0]);
+    deleteReport({ reportArray }).then((response) => {
       if (response.ok) {
         {
           window.location.replace("/Dashboard/Reports");

@@ -80,7 +80,9 @@ export async function GET() {
 }
 
 export async function DELETE(Request) {
+  console.error("\n" + (await Request));
   const req = await Request.json();
+  console.error("\n" + req);
   const res = await deleteReport(req);
 
   if (res == undefined) {

@@ -174,6 +174,7 @@ export async function getUserReports(email, parameter) {
 export async function deleteReport(reportId) {
   await mongoDB();
   let i = 0;
+  console.error(reportId);
   let length = reportId?.id?.length;
   let reports;
 
