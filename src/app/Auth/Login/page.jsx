@@ -59,7 +59,7 @@ export default function Page() {
   const [status, setStatus] = useState("");
   const [expired, setExpired] = useState("");
   const [verified, setVerified] = useState("");
-  const [sysAdmin, setSysAdmin] = useState("");
+  const [updated, setUpdated] = useState("");
   const [registered, setRegistered] = useState("");
   const [duplicate, setDuplicate] = useState("");
   const [num, setNum] = useState("");
@@ -81,6 +81,12 @@ export default function Page() {
   const urlExpired = params.get("expired");
   const urlVerified = params.get("verified");
 
+  const resetParams = () => {
+    setRegistered("");
+    setVerified("");
+    setExpired("");
+  };
+
   /**
    * Use Effect checks to see if a verification or password reset link is being used
    * and clears status messages on mode changes.
@@ -95,7 +101,7 @@ export default function Page() {
    */
   useEffect(() => {
     console.log("urlVerified: " + urlVerified);
-    if (urlNum && mode !== "Verification Needed") {
+    if (urlNum && mode !== "Verification Needed" && !updated) {
       setNum(urlNum);
       setMode("Update Password");
     }
@@ -116,6 +122,7 @@ export default function Page() {
     }
 
     console.log("verified: ", verified);
+    console.log("mode: " + mode);
 
     setStatus("");
   }, [mode]);
@@ -150,6 +157,11 @@ export default function Page() {
    */
   const handleSubmitInfo = (e) => {
     e.preventDefault();
+
+    document.getElementById("submitButton").disabled = true;
+    setTimeout(function () {
+      document.getElementById("submitButton").disabled = false;
+    }, 5000);
 
     setStatus("");
 
@@ -261,7 +273,7 @@ export default function Page() {
         resetPassword({ num, newPassword }).then((response) => {
           if (response.ok) {
             {
-              setMode("Reset Successful");
+              setUpdated("success");
             }
           } else {
             setStatus(statusMessages.invalid);
@@ -320,6 +332,22 @@ export default function Page() {
             <AlertDescription maxWidth="sm">
               Login to start using Project Merit.
             </AlertDescription>
+          </Alert>
+        )}
+        {updated === "success" && (
+          <Alert
+            status="success"
+            variant="subtle"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            textAlign="center"
+            height="200px"
+          >
+            <AlertIcon boxSize="40px" mr={0} />
+            <AlertTitle mt={4} mb={1} fontSize="lg">
+              Password Updated
+            </AlertTitle>
           </Alert>
         )}
         {verified === "error" && (
@@ -656,23 +684,26 @@ export default function Page() {
         </CardBody>
         <CardFooter>
           <VStack align={"left"} w={"100%"}>
-            {mode !== "Reset Successful" && mode !== "Verification Needed" && (
-              <Button
-                onClick={(e) => handleSubmitInfo(e)}
-                bgColor={"#38a4b1"}
-                color={"white"}
-                _hover={{ bgColor: "#031926", color: "white" }}
-              >
-                {mode === "Login" && <Text align={"center"}>Log In</Text>}
-                {mode === "Register" && <Text align={"center"}>Sign Up</Text>}
-                {mode === "Reset Password" && (
-                  <Text align={"center"}>{mode}</Text>
-                )}
-                {mode === "Update Password" && (
-                  <Text align={"center"}>{mode}</Text>
-                )}
-              </Button>
-            )}
+            {mode !== "Reset Successful" &&
+              mode !== "Verification Needed" &&
+              updated !== "success" && (
+                <Button
+                  id={"submitButton"}
+                  onClick={(e) => handleSubmitInfo(e)}
+                  bgColor={"#38a4b1"}
+                  color={"white"}
+                  _hover={{ bgColor: "#031926", color: "white" }}
+                >
+                  {mode === "Login" && <Text align={"center"}>Log In</Text>}
+                  {mode === "Register" && <Text align={"center"}>Sign Up</Text>}
+                  {mode === "Reset Password" && (
+                    <Text align={"center"}>{mode}</Text>
+                  )}
+                  {mode === "Update Password" && (
+                    <Text align={"center"}>{mode}</Text>
+                  )}
+                </Button>
+              )}
             {mode === "Login" && (
               <Button
                 color={"#031926"}
@@ -684,9 +715,9 @@ export default function Page() {
                 Forgot Password
               </Button>
             )}
-            {mode === "Reset Successful" && (
+            {updated === "success" && (
               <Button
-                onClick={() => setMode("Login")}
+                onClick={() => window.location.replace("/Auth/Login")}
                 bgColor={"#38a4b1"}
                 color={"white"}
                 _hover={{ bgColor: "#031926", color: "white" }}
@@ -696,6 +727,7 @@ export default function Page() {
             )}
             {mode === "Verification Needed" && (
               <Button
+                id={"submitButton"}
                 onClick={(e) => handleSubmitInfo(e)}
                 bgColor={"#38a4b1"}
                 color={"white"}
@@ -763,7 +795,7 @@ export default function Page() {
               variant={"link"}
               alignSelf={"center"}
               onClick={() => {
-                setMode("Login");
+                window.location.replace("/Auth/Login");
               }}
             >
               Login
@@ -779,9 +811,7 @@ export default function Page() {
             alignSelf={"center"}
             onClick={() => {
               setMode(mode === "Login" ? "Register" : "Login");
-              setRegistered("");
-              setVerified("");
-              setExpired("");
+              resetParams();
             }}
           >
             {mode === "Login" ? "Register" : "Login"}
