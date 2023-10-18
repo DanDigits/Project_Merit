@@ -29,14 +29,19 @@ export default function Page() {
   const [reportId, setReportId] = useState(
     String(secureLocalStorage.getItem("reportID"))
   );
+  var reportArray = [];
 
   const handleDelete = () => {
-    deleteReport({ reportId }).then((response) => {
+    reportArray.push(reportId);
+    console.log("Report Id: " + reportId);
+    console.log("Report Array is ", reportArray[0]);
+    deleteReport({ reportArray }).then((response) => {
       if (response.ok) {
         {
           window.location.replace("/Dashboard/Reports");
         }
       } else {
+        console.log("Error: " + response.error);
         alert("Delete failed");
       }
     });

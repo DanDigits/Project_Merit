@@ -30,6 +30,7 @@ import {
 } from "@chakra-ui/react";
 import { FiFilter } from "react-icons/fi";
 import Filters from "./Filters";
+import { deleteReport } from "./../../actions/Report.js";
 
 const IndeterminateCheckbox = React.forwardRef(
   ({ indeterminate, ...rest }, ref) => {
@@ -55,6 +56,7 @@ export default function ReportTable({ columns, data }) {
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [openFilter, setOpenFilter] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const table = useReactTable({
     data,
@@ -72,6 +74,23 @@ export default function ReportTable({ columns, data }) {
     getPaginationRowModel: getPaginationRowModel(),
     debugTable: true,
   });
+
+  const handleDelete = (reportArray) => {
+    setIsLoading(true);
+    if (reportArray && reportArray.length != 0) {
+      deleteReport({ reportArray }).then((response) => {
+        if (response.ok) {
+          {
+            setIsLoading(false);
+            window.location.reload();
+          }
+        } else {
+          setIsLoading(false);
+          alert("Delete failed");
+        }
+      });
+    }
+  };
 
   return (
     <Box mx={{ base: -4, md: 0 }}>
@@ -109,7 +128,15 @@ export default function ReportTable({ columns, data }) {
             size={{ base: "sm", md: "md" }}
             bgColor={"#DF2935"}
             color={"white"}
+            isLoading={isLoading}
             _hover={{ bgColor: "#031926", color: "white" }}
+            onClick={() =>
+              handleDelete(
+                table
+                  .getSelectedRowModel()
+                  .flatRows.map(({ original }) => original._id)
+              )
+            }
           >
             Delete
           </Button>

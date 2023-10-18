@@ -116,13 +116,11 @@ export const getReport = async ({ reportId }) => {
   return response;
 };
 
-export const deleteReport = async ({ reportId }) => {
+export const deleteReport = async ({ reportArray }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.reports.delete, {
     method: "DELETE",
     mode: "same-origin",
-    headers: {
-      report: reportId,
-    },
+    body: JSON.stringify({ id: reportArray }),
   });
   console.log(response.statusText);
 
