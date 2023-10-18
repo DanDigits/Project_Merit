@@ -208,10 +208,11 @@ export default function Page() {
           suffix,
         }).then((response) => {
           if (!response.ok) {
-            console.log(response.status);
-            if (response.status === "Conflict") {
-              setDuplicate(true);
-            }
+            response.json().then((data) => {
+              if (data === "EXISTS") {
+                setDuplicate(true);
+              }
+            });
           } else {
             setRegistered(true);
             setVerified("");
