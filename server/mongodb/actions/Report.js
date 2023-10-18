@@ -17,15 +17,18 @@ export async function getReport(reportData) {
 
   // Find specific report, or find most recent user report
   if (reportData.toLowerCase().includes("@")) {
-    report = await ReportSchema.findOne({ email: reportData })
+    report = await ReportSchema?.findOne({ email: reportData })
       .sort({ date: -1 })
       .catch(function (err) {
         return err;
       });
   } else {
-    report = await ReportSchema.findById(reportData).catch(function (err) {
+    report = await ReportSchema?.findById(reportData).catch(function (err) {
       return err;
     });
+  }
+  if (report == null) {
+    report = "None";
   }
   return report;
 }
@@ -61,8 +64,12 @@ export async function getUserReports(email, parameter) {
         return err;
       });
       temp = JSON.stringify(temp);
-      let count = temp.match(/email/g).length;
-      reports += ` "totalReports": ${count},`;
+      let count = temp?.match(/email/g)?.length;
+      if (count == undefined) {
+        reports += ` "totalReports": ${0},`;
+      } else {
+        reports += ` "totalReports": ${count},`;
+      }
     } else if (date.getMonth() <= 8) {
       temp = await ReportSchema.find({
         email,

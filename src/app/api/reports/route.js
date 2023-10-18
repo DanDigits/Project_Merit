@@ -12,7 +12,10 @@ import {
 } from "server/mongodb/actions/Report";
 
 export async function POST(Request) {
+  // Create a report
   const res = await createReport(await Request.json());
+
+  // HTTP Response
   if (res.name == "ValidationError") {
     return new Response(res, { status: 422 });
   } else if (res.message) {
@@ -63,7 +66,7 @@ export async function GET() {
     }
   }
 
-  // Coordinate responses respectively
+  // HTTP Response
   if (res?.name != undefined) {
     res = JSON.stringify(res);
     return new Response(res, { status: 404 });
@@ -93,10 +96,12 @@ export async function DELETE(Request) {
 }
 
 export async function PATCH(Request) {
+  // Update/Edit a report
   const requestHeaders = headers();
   const report = requestHeaders.get("report");
   const res = await modifyReport(report, await Request.json());
 
+  // HTTP Response
   if (res.name == "ValidationError") {
     return new Response(res, { status: 422 });
   } else if (res.message) {
