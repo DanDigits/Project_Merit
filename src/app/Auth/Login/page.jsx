@@ -208,8 +208,8 @@ export default function Page() {
           suffix,
         }).then((response) => {
           if (!response.ok) {
-            console.log(response.statusText);
-            if (response.statusText === "Conflict") {
+            console.log(response.status);
+            if (response.status === "Conflict") {
               setDuplicate(true);
             }
           } else {
