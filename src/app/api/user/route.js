@@ -50,7 +50,7 @@ export async function resendMail(userId, subject) {
         console.log(err);
       }
     });
-    setTimeout(deleteUser, 60000 * 30, userData.email);
+    setTimeout(deleteUser, 60000 * 1440 * 3, userData.email); // REPLACE THIS WITH DAILY CHECK ON DB
   } else {
     // Send 2FA email for forgotten password
     const mailData = {
