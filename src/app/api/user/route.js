@@ -99,6 +99,7 @@ export async function GET(Request) {
         const user = requestHeaders?.get("user");
         res = await getUser(user);
         if (res?.email) {
+          res = JSON.stringify(res);
           return new Response(res, { status: 200 });
         } else {
           return new Response("ERROR", { status: 400 });
