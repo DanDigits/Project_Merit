@@ -96,6 +96,7 @@ export default function Page() {
     setRegistered("");
     setVerified("");
     setExpired("");
+    setDuplicate("");
   };
 
   /**
@@ -208,7 +209,7 @@ export default function Page() {
         }).then((response) => {
           if (!response.ok) {
             console.log(response.statusText);
-            if (response.statusText === "EXISTS") {
+            if (response.statusText === "Conflict") {
               setDuplicate(true);
             }
           } else {
