@@ -51,6 +51,7 @@ export default function Page() {
    * expired is set when an expired link viewed (passed by url param)
    * verified is set when a account verification link is successfully loaded
    * registered is set when an a new account is successfully created
+   * updated is set when a password is successfully updated
    * duplicate is set when a use tries to create an accoung with an existing email address
    * num is part of the verification link use for password reset (passed by url param)
    * params is the paramaters pulled from the url in the case of verification links and password reset links
@@ -77,10 +78,20 @@ export default function Page() {
   const [password2, setPassword2] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
+  /**
+   * Parameters pulled from the url
+   * urlNum is a userId
+   * urlExpired indicates that a verification link expired
+   * urlVerified indicates success or failure of account verification
+   */
+
   const urlNum = params.get("num");
   const urlExpired = params.get("expired");
   const urlVerified = params.get("verified");
 
+  /**
+   * Resets params so that messages do not persist when switching views.
+   */
   const resetParams = () => {
     setRegistered("");
     setVerified("");
