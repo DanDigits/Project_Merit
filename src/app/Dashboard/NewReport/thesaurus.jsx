@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Card,
@@ -16,14 +16,61 @@ import { getSynonyms } from "./../../actions/Thesaurus.js";
 
 export default function Thesaurus() {
   const [word, setWord] = useState("");
+  const [text, setText] = useState("");
+  const [arr, setArr] = useState([]);
   const [results, setResults] = useState("");
+  const [resultsSet, setResultsSet] = useState(false);
+  const [textSet, setTextSet] = useState(false);
+  const [hasres, sethasres] = useState(false);
+  var temp = "";
 
-  const handleSearch = () => {
+  useEffect(() => {
+    if (resultsSet && results === "") {
+      console.log(word);
+      temp = "no " + word;
+      setResultsSet(false);
+    }
+    if (resultsSet && results != "") {
+      console.log("Results: " + results, typeof results);
+      setArr(
+        Object.values(results).slice(
+          0,
+          Object.values(results).length < 12
+            ? Object.values(results).length
+            : 12
+        )
+      );
+      sethasres(true);
+    }
+    if (hasres) {
+      for (var i = 0; i < arr.length; i++) temp += "-" + arr[i] + "  ";
+
+      setTextSet(true);
+      setResultsSet(false);
+      sethasres(false);
+    }
+    if (textSet && temp != "") {
+      setText(temp);
+      console.log(temp);
+      temp = "";
+    }
+  });
+
+  const handleSearch = (e) => {
     if (word !== "") {
-      var response = getSynonyms({ word });
-
-      setResults(response);
-      console.log("Results: " + { results });
+      getSynonyms({ word })
+        .then((response) => {
+          JSON.parse(JSON.stringify(response))["synonyms"].length == 0
+            ? setResults("")
+            : setResults(
+                JSON.parse(
+                  JSON.stringify(
+                    JSON.parse(JSON.stringify(response))["synonyms"]
+                  )
+                )
+              );
+        })
+        .then(() => setResultsSet(true));
     }
   };
 
@@ -81,7 +128,7 @@ export default function Thesaurus() {
             mb={3}
             size={"md"}
             width="100%"
-            value={{ results }}
+            value={text}
           />
         </FormControl>
       </Card>

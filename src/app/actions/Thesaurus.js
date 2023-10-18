@@ -6,14 +6,15 @@ export const getSynonyms = async ({ word }) => {
       headers: { "X-Api-Key": "3mdgGfSLAkfvU/o1sW5nmw==FF2xrIpAZaGsD7Y8" },
       contentType: "application/json",
       success: function (result) {
-        console.log(result);
+        console.log("result", result);
       },
       error: function ajaxError(jqXHR) {
         console.error("Error: ", jqXHR.responseText);
       },
     }
   );
-  console.log(response.statusText);
-
-  return response;
+  //console.log("response", response);
+  const data = await response.json();
+  console.log("data", data);
+  return data;
 };
