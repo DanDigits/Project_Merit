@@ -98,13 +98,16 @@ export async function GET(Request) {
         // Return existing user information
         const user = requestHeaders?.get("user");
         res = await getUser(user);
-        break;
+        if (res?.email) {
+          return new Response(res, { status: 200 });
+        } else {
+          return new Response("ERROR", { status: 400 });
+        }
       }
       case "3": {
         // Resend email
         const forgot = requestHeaders?.get("forgot");
         const user = requestHeaders?.get("user");
-
         if (forgot == undefined && user == undefined) {
           return new Response("ERROR", { status: 400 });
         } else if (forgot != undefined && user == undefined) {
