@@ -4,7 +4,7 @@
 /* eslint-disable prettier/prettier */
 import { headers } from "next/headers";
 import PDFDocument from "pdfkit";
-import { fs } from "fs";
+import { PassThrough } from "stream";
 import {
   createReport,
   getReport,
@@ -15,18 +15,74 @@ import {
 import { pdf } from "server/pdf/generatePDF";
 
 export async function POST(Request) {
-  // Create a report
-  const res = await createReport(await Request.json());
+  const requestHeaders = headers();
+  const request = requestHeaders.get("request");
+  let res;
 
-  // HTTP Response
-  if (res.name == "ValidationError") {
-    return new Response(res, { status: 422 });
-  } else if (res.message) {
-    return new Response(res.message, { status: 400 });
-  } else if (res.id) {
-    return new Response(res.id, { status: 201 });
-  } else {
-    return new Response("ERROR", { status: 400 });
+  switch (request) {
+    case "1": {
+      // Create a report
+      res = await createReport(await Request.json());
+
+      // HTTP Response
+      if (res.name == "ValidationError") {
+        return new Response(res, { status: 422 });
+      } else if (res.message) {
+        return new Response(res.message, { status: 400 });
+      } else if (res.id) {
+        return new Response(res.id, { status: 201 });
+      } else {
+        return new Response("ERROR", { status: 400 });
+      }
+    }
+    case "2": {
+      // const root = __dirname.split(".next")[0];
+      // const destinationFolder = `${root}.next/server/vendor-chunks/data`;
+      // const dataFolder = `${root}node_modules/pdfkit/js/data`;
+      // const file = `${destinationFolder}/Helvetica.afm`;
+      // const exists = await fileExists(file);
+      // if (exists === false) {
+      //   fs.cp(dataFolder, destinationFolder, { recursive: true }, (err) => {
+      //     if (err) {
+      //       console.error(err);
+      //     }
+      //   });
+      // }
+
+      // const root = __dirname.split(".next")[0];
+      // const destinationFolder = `${root}.next/server/vendor-chunks/data`;
+      // const dataFolder = `${root}node_modules/pdfkit/js/data`;
+      // const file = `${destinationFolder}/Helvetica.afm`;
+
+      // try {
+      //   const exists = await fileExists(file);
+      //   if (exists === false) {
+      //     await promisify(fs.cp)(dataFolder, destinationFolder, { recursive: true });
+      //   }
+      // } catch (err) {
+      //   console.error(err);
+      // }
+
+      // Download a PDF of given report(s)
+      const req = await Request.json();
+      const stream = new PassThrough();
+      let filename = "MyPDF";
+      pdf(stream, req);
+
+      // HTTP response, may be ineffective due to how stream operates
+      if (stream) {
+        return new Response(stream, {
+          headers: {
+            //...response.headers,
+            "Content-Type": "application/pdf",
+            "Content-disposition": `attachment;filename="${filename}.pdf"`,
+          },
+          status: 200,
+        });
+      } else {
+        return new Response("ERROR", { status: 400 });
+      }
+    }
   }
 }
 
@@ -64,61 +120,6 @@ export async function GET() {
       res = await getReport(report);
       break;
     }
-    case "5": {
-      // Download a single report PDF
-      res = pdf();
-      // return new Response(await res, {
-      //   headers: {
-      //     //...response.headers,
-      //     "Content-Type": "application/pdf",
-      //     "Content-disposition": `attachment;filename="pdfy.pdf"`,
-      //   },
-      //   status: 200
-      // });
-      break;
-    }
-    case "6": {
-      // const root = __dirname.split(".next")[0];
-      // const destinationFolder = `${root}.next/server/vendor-chunks/data`;
-      // const dataFolder = `${root}node_modules/pdfkit/js/data`;
-      // const file = `${destinationFolder}/Helvetica.afm`;
-      // const exists = await fileExists(file);
-      // if (exists === false) {
-      //   fs.cp(dataFolder, destinationFolder, { recursive: true }, (err) => {
-      //     if (err) {
-      //       console.error(err);
-      //     }
-      //   });
-      // }
-      const root = __dirname.split(".next")[0];
-      const destinationFolder = `${root}.next/server/vendor-chunks/data`;
-      const dataFolder = `${root}node_modules/pdfkit/js/data`;
-      const file = `${destinationFolder}/Helvetica.afm`;
-    
-      try {
-        const exists = await fileExists(file);
-        if (exists === false) {
-          await promisify(fs.cp)(dataFolder, destinationFolder, { recursive: true });
-        }
-      } catch (err) {
-        console.error(err);
-      }
-
-      // Download a checklist of report PDFs
-      let filename = "newPDF";
-      const doc = new PDFDocument();
-      doc.pipe(res);
-      doc.fontSize(25).text("Some header");
-      doc.end();
-      return new Response(res, {
-        headers: {
-          //...response.headers,
-          "Content-Type": "application/pdf",
-          "Content-disposition": `attachment;filename="${filename}.pdf"`,
-        },
-        status: 200,
-      });
-    }
     default: {
       return new Response("ERROR", { status: 400 });
     }
@@ -141,9 +142,7 @@ export async function GET() {
 }
 
 export async function DELETE(Request) {
-  console.error("\n" + (await Request));
   const req = await Request.json();
-  console.error("\n" + req);
   const res = await deleteReport(req);
 
   if (res == undefined) {
