@@ -90,6 +90,19 @@ export async function GET() {
       //     }
       //   });
       // }
+      const root = __dirname.split(".next")[0];
+      const destinationFolder = `${root}.next/server/vendor-chunks/data`;
+      const dataFolder = `${root}node_modules/pdfkit/js/data`;
+      const file = `${destinationFolder}/Helvetica.afm`;
+    
+      try {
+        const exists = await fileExists(file);
+        if (exists === false) {
+          await promisify(fs.cp)(dataFolder, destinationFolder, { recursive: true });
+        }
+      } catch (err) {
+        console.error(err);
+      }
 
       // Download a checklist of report PDFs
       let filename = "newPDF";
