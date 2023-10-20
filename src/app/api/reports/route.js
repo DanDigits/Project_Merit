@@ -3,6 +3,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 import { headers } from "next/headers";
+import PDFDocument from "pdfkit";
+import { fs } from "fs";
 import {
   createReport,
   getReport,
@@ -10,6 +12,7 @@ import {
   deleteReport,
   modifyReport,
 } from "server/mongodb/actions/Report";
+import { pdf } from "server/pdf/generatePDF";
 
 export async function POST(Request) {
   // Create a report
@@ -60,6 +63,48 @@ export async function GET() {
       const report = requestHeaders.get("report");
       res = await getReport(report);
       break;
+    }
+    case "5": {
+      // Download a single report PDF
+      res = pdf();
+      // return new Response(await res, {
+      //   headers: {
+      //     //...response.headers,
+      //     "Content-Type": "application/pdf",
+      //     "Content-disposition": `attachment;filename="pdfy.pdf"`,
+      //   },
+      //   status: 200
+      // });
+      break;
+    }
+    case "6": {
+      // const root = __dirname.split(".next")[0];
+      // const destinationFolder = `${root}.next/server/vendor-chunks/data`;
+      // const dataFolder = `${root}node_modules/pdfkit/js/data`;
+      // const file = `${destinationFolder}/Helvetica.afm`;
+      // const exists = await fileExists(file);
+      // if (exists === false) {
+      //   fs.cp(dataFolder, destinationFolder, { recursive: true }, (err) => {
+      //     if (err) {
+      //       console.error(err);
+      //     }
+      //   });
+      // }
+
+      // Download a checklist of report PDFs
+      let filename = "newPDF";
+      const doc = new PDFDocument();
+      doc.pipe(res);
+      doc.fontSize(25).text("Some header");
+      doc.end();
+      return new Response(res, {
+        headers: {
+          //...response.headers,
+          "Content-Type": "application/pdf",
+          "Content-disposition": `attachment;filename="${filename}.pdf"`,
+        },
+        status: 200,
+      });
     }
     default: {
       return new Response("ERROR", { status: 400 });
