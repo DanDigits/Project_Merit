@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 import { headers } from "next/headers";
-import PDFDocument from "pdfkit";
+import fs from "fs";
 import { PassThrough } from "stream";
 import {
   createReport,
@@ -36,31 +36,14 @@ export async function POST(Request) {
       }
     }
     case "2": {
-      // const root = __dirname.split(".next")[0];
-      // const destinationFolder = `${root}.next/server/vendor-chunks/data`;
-      // const dataFolder = `${root}node_modules/pdfkit/js/data`;
-      // const file = `${destinationFolder}/Helvetica.afm`;
-      // const exists = await fileExists(file);
-      // if (exists === false) {
-      //   fs.cp(dataFolder, destinationFolder, { recursive: true }, (err) => {
-      //     if (err) {
-      //       console.error(err);
-      //     }
+      // if (process.env.NODE_ENV == "development") {
+      //   // Patchwork for a PDFkit/NextJS bug
+      //   const root = __dirname.split(".next")[0];
+      //   const dataFolder = `${root}node_modules/pdfkit/js/data`;
+      //   const destinationFolder = `${root}.next/server/vendor-chunks/data`;
+      //   await fs.cp(dataFolder, `${root}.next/server/vendor-chunks/data`, {recursive: true}, (err) => {
+      //     return new Response("FILESYSTEM ERROR", { status: 400 });
       //   });
-      // }
-
-      // const root = __dirname.split(".next")[0];
-      // const destinationFolder = `${root}.next/server/vendor-chunks/data`;
-      // const dataFolder = `${root}node_modules/pdfkit/js/data`;
-      // const file = `${destinationFolder}/Helvetica.afm`;
-
-      // try {
-      //   const exists = await fileExists(file);
-      //   if (exists === false) {
-      //     await promisify(fs.cp)(dataFolder, destinationFolder, { recursive: true });
-      //   }
-      // } catch (err) {
-      //   console.error(err);
       // }
 
       // Download a PDF of given report(s)

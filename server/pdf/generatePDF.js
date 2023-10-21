@@ -2,13 +2,15 @@
 /* eslint-disable prettier/prettier */
 import { pullReports } from "server/mongodb/actions/Report";
 import { getUser } from "server/mongodb/actions/User";
-import PDFDocument from "pdfkit";
+//import PDFDocument from "pdfkit";
+import PDFDocument from "./pdfkit.standalone";
 import moment from "moment";
 
 // Create PDF
 export async function pdf(stream, reportId) {
   let currentYear = "";
   let currentCategory = "";
+  let doc;
 
   // Pull information from all listed reports
   let reports = await pullReports(reportId);
@@ -17,7 +19,7 @@ export async function pdf(stream, reportId) {
   let user = await getUser(reports[0].email);
 
   // Create PDF object and pipe information to parameter stream
-  const doc = new PDFDocument({ bufferPages: true });
+  doc = new PDFDocument({ bufferPages: true });
   doc.pipe(stream);
 
   // Name and rank header
