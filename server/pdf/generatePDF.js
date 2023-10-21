@@ -25,9 +25,11 @@ export async function pdf(stream, reportId) {
   // Name and rank header
   doc
     .fillColor("black")
+    .font("Times-Roman")
     .fontSize(14)
-    .text(`Name: ${user.firstName}`, { align: "right" });
-  doc.text(`Rank: ${user.rank}`, { align: "right" });
+    .text(`Name: ${user.firstName}`, { align: "left" });
+  doc.text(`Rank: ${user.rank}`, { align: "left" });
+  doc.moveDown();
 
   // Title
   doc
@@ -50,8 +52,6 @@ export async function pdf(stream, reportId) {
     if (currentYear !== year || currentCategory !== category) {
       currentYear = year;
       currentCategory = category;
-      doc.moveDown();
-      doc.moveDown();
       doc.fontSize(14);
       doc.fillColor("grey");
       doc.text(`${year}\n`);
