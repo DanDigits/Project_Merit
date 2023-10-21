@@ -12,7 +12,7 @@ import {
   deleteReport,
   modifyReport,
 } from "server/mongodb/actions/Report";
-import { pdf } from "server/pdf/generatePDF";
+import { pdf } from "server/pdf/actions/generatePDF";
 
 export async function POST(Request) {
   const requestHeaders = headers();

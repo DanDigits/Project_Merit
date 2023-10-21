@@ -3,7 +3,7 @@
 import { pullReports } from "server/mongodb/actions/Report";
 import { getUser } from "server/mongodb/actions/User";
 //import PDFDocument from "pdfkit";
-import PDFDocument from "./pdfkit.standalone";
+import PDFDocument from "../pdfkit.standalone";
 import moment from "moment";
 
 // Create PDF
