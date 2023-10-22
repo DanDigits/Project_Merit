@@ -130,7 +130,7 @@ export const deleteReport = async ({ reportArray }) => {
 
 export const exportReports = async ({ reportArray }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.reports.create, {
-    method: "DELETE",
+    method: "POST",
     mode: "same-origin",
     headers: {
       request: "2",
