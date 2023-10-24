@@ -3,6 +3,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 import { headers } from "next/headers";
+import fs from "fs";
+import { PassThrough, Stream } from "stream";
 import {
   createReport,
   getReport,
@@ -10,20 +12,60 @@ import {
   deleteReport,
   modifyReport,
 } from "server/mongodb/actions/Report";
+import { pdf } from "server/pdf/actions/generatePDF";
 
 export async function POST(Request) {
-  // Create a report
-  const res = await createReport(await Request.json());
+  const requestHeaders = headers();
+  const request = requestHeaders.get("request");
+  let res;
 
-  // HTTP Response
-  if (res.name == "ValidationError") {
-    return new Response(res, { status: 422 });
-  } else if (res.message) {
-    return new Response(res.message, { status: 400 });
-  } else if (res.id) {
-    return new Response(res.id, { status: 201 });
-  } else {
-    return new Response("ERROR", { status: 400 });
+  switch (request) {
+    case "1": {
+      // Create a report
+      res = await createReport(await Request.json());
+
+      // HTTP Response
+      if (res.name == "ValidationError") {
+        return new Response(res, { status: 422 });
+      } else if (res.message) {
+        return new Response(res.message, { status: 400 });
+      } else if (res.id) {
+        return new Response(res.id, { status: 201 });
+      } else {
+        return new Response("ERROR", { status: 400 });
+      }
+    }
+    case "2": {
+      // if (process.env.NODE_ENV == "development") {
+      //   // Patchwork for a PDFkit/NextJS bug
+      //   const root = __dirname.split(".next")[0];
+      //   const dataFolder = `${root}node_modules/pdfkit/js/data`;
+      //   const destinationFolder = `${root}.next/server/vendor-chunks/data`;
+      //   await fs.cp(dataFolder, `${root}.next/server/vendor-chunks/data`, {recursive: true}, (err) => {
+      //     return new Response("FILESYSTEM ERROR", { status: 400 });
+      //   });
+      // }
+
+      // Download a PDF of given report(s)
+      const req = await Request.json();
+      const stream = new PassThrough();
+      const date = new Date();
+      pdf(stream, req);
+
+      // HTTP response, may be ineffective due to how stream operates
+      if (stream) {
+        return new Response(stream, {
+          headers: {
+            //...response.headers,
+            "Content-Type": "application/pdf",
+            "Content-Disposition": `attachment; filename="Export${date.getMonth()}-${date.getDate()}-${date.getFullYear()}.pdf"`,
+          },
+          status: 200,
+        });
+      } else {
+        return new Response("ERROR", { status: 400 });
+      }
+    }
   }
 }
 
@@ -83,9 +125,7 @@ export async function GET() {
 }
 
 export async function DELETE(Request) {
-  console.error("\n" + (await Request));
   const req = await Request.json();
-  console.error("\n" + req);
   const res = await deleteReport(req);
 
   if (res == undefined) {

@@ -30,22 +30,7 @@ import {
 } from "@chakra-ui/react";
 import { FiFilter } from "react-icons/fi";
 import Filters from "./Filters";
-import { deleteReport } from "./../../actions/Report.js";
-
-const IndeterminateCheckbox = React.forwardRef(
-  ({ indeterminate, ...rest }, ref) => {
-    const defaultRef = React.useRef();
-    const resolvedRef = ref || defaultRef;
-    React.useEffect(() => {
-      resolvedRef.current.indeterminate = indeterminate;
-    }, [resolvedRef, indeterminate]);
-    return (
-      <>
-        <input type="checkbox" ref={resolvedRef} {...rest} />
-      </>
-    );
-  }
-);
+import { deleteReport, exportReports } from "./../../actions/Report.js";
 
 export default function ReportTable({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -56,7 +41,8 @@ export default function ReportTable({ columns, data }) {
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [openFilter, setOpenFilter] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [deleteLoading, setDeleteLoading] = React.useState(false);
+  const [exportLoading, setExportLoading] = React.useState(false);
 
   const table = useReactTable({
     data,
@@ -76,19 +62,35 @@ export default function ReportTable({ columns, data }) {
   });
 
   const handleDelete = (reportArray) => {
-    setIsLoading(true);
     if (reportArray && reportArray.length != 0) {
+      setDeleteLoading(true);
       deleteReport({ reportArray }).then((response) => {
         if (response.ok) {
           {
-            setIsLoading(false);
+            setDeleteLoading(false);
             window.location.reload();
           }
         } else {
-          setIsLoading(false);
+          setDeleteLoading(false);
           alert("Delete failed");
         }
       });
+    }
+  };
+
+  const handleExport = (reportArray) => {
+    if (reportArray && reportArray.length != 0) {
+      setExportLoading(true);
+      exportReports({ reportArray }).then((response) => {
+        if (response.ok) {
+          {
+            setDeleteLoading(false);
+          }
+        } else {
+          alert("Delete failed");
+        }
+      });
+      setExportLoading(false);
     }
   };
 
@@ -128,8 +130,8 @@ export default function ReportTable({ columns, data }) {
             size={{ base: "sm", md: "md" }}
             bgColor={"#DF2935"}
             color={"white"}
-            isLoading={isLoading}
             _hover={{ bgColor: "#031926", color: "white" }}
+            isLoading={deleteLoading}
             onClick={() =>
               handleDelete(
                 table
@@ -145,6 +147,14 @@ export default function ReportTable({ columns, data }) {
             bgColor={"#7eb67d"}
             color={"black"}
             _hover={{ bgColor: "#031926", color: "white" }}
+            isLoading={exportLoading}
+            onClick={() =>
+              handleExport(
+                table
+                  .getSelectedRowModel()
+                  .flatRows.map(({ original }) => original._id)
+              )
+            }
           >
             Export
           </Button>
