@@ -139,5 +139,7 @@ export const exportReports = async ({ reportArray }) => {
   });
   console.log(response.statusText);
 
+  response.pdf = await response.text();
+
   return response;
 };

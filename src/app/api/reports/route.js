@@ -4,7 +4,7 @@
 /* eslint-disable prettier/prettier */
 import { headers } from "next/headers";
 import fs from "fs";
-import { PassThrough } from "stream";
+import { PassThrough, Stream } from "stream";
 import {
   createReport,
   getReport,
@@ -49,7 +49,7 @@ export async function POST(Request) {
       // Download a PDF of given report(s)
       const req = await Request.json();
       const stream = new PassThrough();
-      let filename = "MyPDF";
+      const date = new Date();
       pdf(stream, req);
 
       // HTTP response, may be ineffective due to how stream operates
@@ -58,7 +58,7 @@ export async function POST(Request) {
           headers: {
             //...response.headers,
             "Content-Type": "application/pdf",
-            "Content-disposition": `attachment;filename="${filename}.pdf"`,
+            "Content-Disposition": `attachment; filename="Export${date.getMonth()}-${date.getDate()}-${date.getFullYear()}.pdf"`,
           },
           status: 200,
         });
