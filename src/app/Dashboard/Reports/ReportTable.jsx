@@ -62,8 +62,8 @@ export default function ReportTable({ columns, data }) {
   });
 
   const handleDelete = (reportArray) => {
-    setDeleteLoading(true);
     if (reportArray && reportArray.length != 0) {
+      setDeleteLoading(true);
       deleteReport({ reportArray }).then((response) => {
         if (response.ok) {
           {
@@ -79,19 +79,18 @@ export default function ReportTable({ columns, data }) {
   };
 
   const handleExport = (reportArray) => {
-    setExportLoading(true);
     if (reportArray && reportArray.length != 0) {
+      setExportLoading(true);
       exportReports({ reportArray }).then((response) => {
         if (response.ok) {
           {
-            setExportLoading(false);
-            //window.location.reload();
+            setDeleteLoading(false);
           }
         } else {
-          setExportLoading(false);
-          alert("Export failed");
+          alert("Delete failed");
         }
       });
+      setExportLoading(false);
     }
   };
 

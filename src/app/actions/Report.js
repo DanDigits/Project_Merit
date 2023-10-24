@@ -1,4 +1,5 @@
 import getPath from "../../../utils/getPath";
+import saveAs from "file-saver";
 
 /** Create new report */
 export const createReport = async ({
@@ -137,9 +138,22 @@ export const exportReports = async ({ reportArray }) => {
     },
     body: JSON.stringify({ id: reportArray }),
   });
-  console.log(response.statusText);
 
-  response.pdf = await response.text();
+  // Extract filename from header
+  const filename = response.headers
+    .get("content-disposition")
+    .split(";")
+    .find((n) => n.includes("filename="))
+    .replace("filename=", "")
+    .replace('"', "")
+    .replace('"', "")
+    .trim();
+  const blob = await response.blob();
+
+  // Download the file
+  saveAs(blob, filename);
+
+  console.log(response.statusText);
 
   return response;
 };
