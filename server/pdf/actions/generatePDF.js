@@ -22,23 +22,25 @@ export async function pdf(stream, reportId) {
   doc = new PDFDocument({ bufferPages: true });
   doc.pipe(stream);
 
-  // Name and rank header
-  doc
-    .fillColor("black")
-    .font("Times-Roman")
-    .fontSize(14)
-    .text(`Name: ${user.firstName}`, { align: "left" });
-  doc.text(`Rank: ${user.rank}`, { align: "left" });
-  doc.moveDown();
-
   // Title
   doc
     .fillColor("black")
     .font("Times-Roman")
     .fontSize(20)
-    .text("Enlisted Performance Review Narratives", {
+    .text("Performance Review Narratives", {
       align: "center",
     });
+  doc.moveDown();
+
+  // Name and rank header
+  doc
+    .fillColor("black")
+    .font("Times-Roman")
+    .fontSize(14)
+    .text(
+      `Name: ${user.rank} ${user.firstName} ${user.lastName} ${user.suffix}`,
+      { align: "left" }
+    );
   doc.moveDown();
 
   // Loop through performance reports
