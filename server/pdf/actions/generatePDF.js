@@ -4,11 +4,9 @@ import { pullReports } from "server/mongodb/actions/Report";
 import { getUser } from "server/mongodb/actions/User";
 //import PDFDocument from "pdfkit";
 import PDFDocument from "../pdfkit.standalone";
-import moment from "moment";
 
 // Create PDF
 export async function pdf(stream, reportId) {
-  let currentYear = "";
   let currentCategory = "";
   let doc;
 
@@ -22,16 +20,6 @@ export async function pdf(stream, reportId) {
   doc = new PDFDocument({ bufferPages: true });
   doc.pipe(stream);
 
-  // Title
-  doc
-    .fillColor("black")
-    .font("Times-Roman")
-    .fontSize(20)
-    .text("Performance Review Narratives", {
-      align: "center",
-    });
-  doc.moveDown();
-
   // Name and rank header
   doc
     .fillColor("black")
@@ -39,45 +27,70 @@ export async function pdf(stream, reportId) {
     .fontSize(14)
     .text(
       `Name: ${user.rank} ${user.firstName} ${user.lastName} ${user.suffix}`,
-      { align: "left" }
+      { align: "right" }
     );
-  doc.moveDown();
+  doc.moveDown(2);
+
+  // Title
+  doc
+    .fillColor("black")
+    .font("Times-Roman")
+    .fontSize(30)
+    .text("Performance Review Narratives", {
+      align: "center",
+    });
+  doc.moveDown(2);
 
   // Loop through performance reports
   doc.fillColor("black");
   reports.forEach((report) => {
-    const reportDate = moment(report.date);
-    const year = reportDate.format("YYYY");
     const category = report.category;
+    var longCategory;
 
     // Group by year and quarter
-    if (currentYear !== year || currentCategory !== category) {
-      currentYear = year;
+    if (currentCategory !== category) {
       currentCategory = category;
-      doc.fontSize(14);
+
+      switch (category) {
+        case "Conduct":
+          longCategory = "Standards, Conduct, Character & Military Bearings";
+          break;
+        case "Duties":
+          longCategory = "Primary / Additional Duties";
+          break;
+        case "Teamwork":
+          longCategory = "Teamwork / Fellowership";
+          break;
+        case "Training":
+          longCategory = "Training Requirements";
+          break;
+        default:
+          longCategory = category;
+          break;
+      }
+
+      doc.fontSize(16);
       doc.fillColor("grey");
-      doc.text(`${year}\n`);
       doc.fillColor("black");
       doc.font("Times-Bold");
-      doc.text(`Category ${category}\n`);
+      doc.text(`Category: ${longCategory}\n`);
       doc.text("\n");
       doc.font("Times-Roman");
     }
 
     // Display date, title, and data for each report
     doc
-      .fontSize(12)
+      .fontSize(14)
       .font("Times-Italic")
-      .text(`Date: ${report.date}`, { continued: true })
-      .text("\n")
+      .text(`Date: ${report.date}`, { continued: "true", align: "left" })
       .font("Times-Roman");
 
     doc
-      .text(`${report.title}`, { align: "center" })
+      .text(`${report.title}`, { align: "center", underline: "true" })
       .moveDown()
-      .fontSize(10)
+      .fontSize(12)
       .text(report.report)
-      .text("\n")
+      .text("\n\n")
       .moveDown();
   });
 
