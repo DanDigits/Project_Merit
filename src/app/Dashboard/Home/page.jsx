@@ -67,7 +67,7 @@ export default function Page() {
     needed: 3,
   });
   const [teamwork] = useState({
-    catagory: "Teamwork / Fellowership",
+    catagory: "Teamwork / Followership",
     shorten: "teamwork",
     total: 0,
     needed: 3,

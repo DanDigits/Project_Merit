@@ -59,7 +59,7 @@ export async function pdf(stream, reportId) {
           longCategory = "Primary / Additional Duties";
           break;
         case "Teamwork":
-          longCategory = "Teamwork / Fellowership";
+          longCategory = "Teamwork / Followership";
           break;
         case "Training":
           longCategory = "Training Requirements";
