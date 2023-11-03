@@ -1,7 +1,6 @@
 "use client";
 /* eslint-disable no-unused-vars */
 import { React, useState } from "react";
-import { redirect } from "next/navigation";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -10,9 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Card,
-  HStack,
   Heading,
-  Input,
   Button,
   ButtonGroup,
   Link,
@@ -20,13 +17,25 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import Group from "./group";
+//import {deleteGroup} from "";
 import secureLocalStorage from "react-secure-storage";
 
 export default function Page() {
   const [mode, setMode] = useState("View");
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const groupId = String(secureLocalStorage.getItem("groupID"));
 
-  const handleDelete = () => {};
+  const handleDelete = () => {
+    deleteGroup({ groupId }).then((response) => {
+      if (response.ok) {
+        {
+          window.location.replace("/Admin/Group");
+        }
+      } else {
+        alert("Delete failed");
+      }
+    });
+  };
 
   return (
     <>

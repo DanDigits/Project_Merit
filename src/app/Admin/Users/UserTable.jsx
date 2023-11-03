@@ -31,16 +31,16 @@ import {
 import { FiFilter } from "react-icons/fi";
 import Filters from "../Users/Filters";
 import { useRouter } from "next/navigation";
+//import { deleteUser } from "";
 
 export default function UserTable({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
-
-  const emptyArray = [];
 
   const [rowSelection, setRowSelection] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [openFilter, setOpenFilter] = React.useState(false);
+  const [deleteLoading, setDeleteLoading] = React.useState(false);
 
   const table = useReactTable({
     data,
@@ -58,6 +58,23 @@ export default function UserTable({ columns, data }) {
     getPaginationRowModel: getPaginationRowModel(),
     debugTable: true,
   });
+
+  const handleDelete = (userArray) => {
+    if (userArray && userArray.length != 0) {
+      setDeleteLoading(true);
+      deleteGroup({ userArray }).then((response) => {
+        if (response.ok) {
+          {
+            setDeleteLoading(false);
+            window.location.reload();
+          }
+        } else {
+          setDeleteLoading(false);
+          alert("Delete failed");
+        }
+      });
+    }
+  };
 
   const router = useRouter();
 
@@ -98,6 +115,14 @@ export default function UserTable({ columns, data }) {
             bgColor={"#DF2935"}
             color={"white"}
             _hover={{ bgColor: "#031926", color: "white" }}
+            isLoading={deleteLoading}
+            onClick={() =>
+              handleDelete(
+                table
+                  .getSelectedRowModel()
+                  .flatRows.map(({ original }) => original.name)
+              )
+            }
           >
             Delete
           </Button>

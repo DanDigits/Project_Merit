@@ -23,28 +23,50 @@ import {
   Box,
   Button,
   Input,
-  Select,
   HStack,
-  Stack,
-  Icon,
   ButtonGroup,
 } from "@chakra-ui/react";
-import { FiFilter } from "react-icons/fi";
+//import { searchUser, removeUser } from "";
 
 export default function GroupUsers({ mode, columns, data }) {
   // Use the state and functions returned from useTable to build your UI
-
-  const emptyArray = [];
 
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilter, setGlobalFilter] = useState("");
   const [openSearch, setOpenSearch] = useState(false);
   const [status, setStatus] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [removeLoading, setRemoveLoading] = useState(false);
 
-  const handleSubmitInfo = (e) => {
-    e.preventDefault();
-    if (mode === "New") {
-      if (status === "success") console.log("member added");
+  const handleSearch = (name) => {
+    if (mode === "New" && name != "") {
+      setSearchLoading(true);
+      searchUser({ name }).then((response) => {
+        if (response.ok) {
+          {
+            setStatus("success");
+          }
+        } else {
+          setStatus("error");
+          //setStatus(response.error)
+        }
+      });
+      setSearchLoading(false);
+    }
+  };
+
+  const handleRemove = (userArray) => {
+    if (userArray && userArray.length != 0) {
+      setRemoveLoading(true);
+      removeUser({ userArray }).then((response) => {
+        if (response.ok) {
+          {
+          }
+        } else {
+          alert("Remove failed");
+        }
+      });
+      setRemoveLoading(false);
     }
   };
 
@@ -85,6 +107,14 @@ export default function GroupUsers({ mode, columns, data }) {
             bgColor={"#DF2935"}
             color={"white"}
             _hover={{ bgColor: "#031926", color: "white" }}
+            isLoading={removeLoading}
+            onClick={() =>
+              handleRemove(
+                table
+                  .getSelectedRowModel()
+                  .flatRows.map(({ original }) => original.email)
+              )
+            }
           >
             Remove
           </Button>
@@ -115,15 +145,26 @@ export default function GroupUsers({ mode, columns, data }) {
             bgColor={"#6abbc4"}
             color={"black"}
             _hover={{ bgColor: "#031926", color: "white" }}
-            onClick={() => setStatus("assigned")}
+            isLoading={searchLoading}
+            onClick={() =>
+              handleSearch(
+                table
+                  .getSelectedRowModel()
+                  .flatRows.map(({ original }) => original.email)
+              )
+            }
           >
             Search
           </Button>
         </HStack>
+        {status === "error" && (
+          <p>There was an error when searching for member.</p>
+        )}
         {status === "invalid" && <p>The member you entered does not exist.</p>}
         {status === "assigned" && (
           <p>The member you entered is already in a group.</p>
         )}
+        {status === "success" && <p>Member successfully added.</p>}
       </Box>
 
       <Box overflowX={"auto"}>

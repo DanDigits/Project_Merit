@@ -8,12 +8,11 @@ import React, {
   useMemo,
 } from "react";
 import { Center, Spinner, Text, Button, Icon, Heading } from "@chakra-ui/react";
+import { PiEyeBold } from "react-icons/pi";
 import GroupTable from "./GroupTable";
-import { getSession } from "next-auth/react";
-import { getUserReports } from "../../actions/Report.js";
+//import { getAllGroups } from "";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
-import { PiEyeBold } from "react-icons/pi";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   const ref = useRef(null);
@@ -36,49 +35,39 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 
 export default function Page() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [reports, setReports] = useState("");
+  const [groups, setGroups] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const [hasEmail, setHasEmail] = useState(false);
-  const [hasReport, setHasReport] = useState(false);
+  const [hasGroups, setHasGroups] = useState(false);
   const [index, setIndex] = useState("0");
 
   const handleSubmitInfo = useCallback(
-    (name) => {
-      secureLocalStorage.setItem("groupName", name);
+    (groupName) => {
+      secureLocalStorage.setItem("groupName", groupName);
       router.push("/Admin/Groups/ViewGroup");
     },
     [router]
   );
 
   useEffect(() => {
-    if (!hasEmail) {
-      //console.log("!hasemail");
+    if (!hasGroups) {
+      console.log("!hasgroups", hasGroups);
       setIsLoading(true);
       setHasError(false);
-      getSession()
-        .then((session) => setEmail(session.user.email))
-        .then(() => setHasEmail(true));
-    }
-    if (hasEmail && !hasReport) {
-      console.log("hasEmail && !hasreport", email, hasReport);
-      setIsLoading(true);
-      setHasError(false);
-      getUserReports({ email, index }).then((response) => {
+      getAllGroups({ index }).then((response) => {
         response.ok
           ? response
               .json()
-              .then((response) => setReports(response))
-              .then(setHasReport(true))
+              .then((response) => setGroups(response))
+              .then(setHasGroups(true))
           : setHasError(true);
       });
     }
-    if (hasEmail && hasReport) {
-      console.log("hasEmail && hasreport", email, hasReport);
+    if (hasGroups) {
+      console.log("hasgroups", hasGroups);
       setIsLoading(false);
     }
-  }, [hasEmail, hasReport, email, index]);
+  }, [hasGroups, index]);
 
   const columns = React.useMemo(
     () => [
@@ -107,7 +96,7 @@ export default function Page() {
         ),
       },
       {
-        accessorKey: "name",
+        accessorKey: "groupName",
         header: "Group Name",
       },
       {
@@ -135,7 +124,7 @@ export default function Page() {
               borderColor={"#354751"}
               borderWidth={"thin"}
               _hover={{ color: "black", bg: "white", opacity: 1 }}
-              onClick={() => handleSubmitInfo(cell.row.original.name)}
+              onClick={() => handleSubmitInfo(cell.row.original.groupName)}
             >
               <Icon as={PiEyeBold} />
             </Button>
@@ -150,19 +139,19 @@ export default function Page() {
   const data = useMemo(
     () => [
       {
-        name: "group1",
+        groupName: "group1",
         supervisor: "sup1",
         email: "sup1@gmail.com",
         total: 9,
       },
       {
-        name: "group2",
+        groupName: "group2",
         supervisor: "sup2",
         email: "sup2@gmail.com",
         total: 24,
       },
       {
-        name: "group3",
+        groupName: "group3",
         supervisor: "sup3",
         email: "sup3@gmail.com",
         total: 12,
@@ -188,7 +177,7 @@ export default function Page() {
         </>
       ) : (
         <>
-          {console.log(reports)}
+          {console.log(groups)}
           <Heading mb={10}>Manage Groups</Heading>
           <GroupTable columns={columns} data={data} />
         </>

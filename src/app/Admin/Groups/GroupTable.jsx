@@ -26,18 +26,16 @@ import {
   Select,
   HStack,
   Stack,
-  Icon,
 } from "@chakra-ui/react";
-import { FiFilter } from "react-icons/fi";
+//import { deleteGroup } from "";
 import { useRouter } from "next/navigation";
 
 export default function GroupTable({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
 
-  const emptyArray = [];
-
   const [rowSelection, setRowSelection] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const [deleteLoading, setDeleteLoading] = React.useState(false);
 
   const table = useReactTable({
     data,
@@ -54,6 +52,23 @@ export default function GroupTable({ columns, data }) {
     getPaginationRowModel: getPaginationRowModel(),
     debugTable: true,
   });
+
+  const handleDelete = (groupArray) => {
+    if (groupArray && groupArray.length != 0) {
+      setDeleteLoading(true);
+      deleteGroup({ groupArray }).then((response) => {
+        if (response.ok) {
+          {
+            setDeleteLoading(false);
+            window.location.reload();
+          }
+        } else {
+          setDeleteLoading(false);
+          alert("Delete failed");
+        }
+      });
+    }
+  };
 
   const router = useRouter();
 
@@ -78,6 +93,14 @@ export default function GroupTable({ columns, data }) {
             bgColor={"#DF2935"}
             color={"white"}
             _hover={{ bgColor: "#031926", color: "white" }}
+            isLoading={deleteLoading}
+            onClick={() =>
+              handleDelete(
+                table
+                  .getSelectedRowModel()
+                  .flatRows.map(({ original }) => original._id)
+              )
+            }
           >
             Delete
           </Button>

@@ -10,7 +10,7 @@ import React, {
 import { Center, Spinner, Text, Button, Icon, Heading } from "@chakra-ui/react";
 import UserTable from "./UserTable.jsx";
 import { getSession } from "next-auth/react";
-import { getUserReports } from "../../actions/Report.js";
+//import { getAllUsers } from "";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
 import { PiEyeBold } from "react-icons/pi";
@@ -36,12 +36,10 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 
 export default function Page() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [reports, setReports] = useState("");
+  const [users, setUsers] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const [hasEmail, setHasEmail] = useState(false);
-  const [hasReport, setHasReport] = useState(false);
+  const [hasUsers, setHasUsers] = useState(false);
   const [index, setIndex] = useState("0");
 
   const handleSubmitInfo = useCallback(
@@ -52,33 +50,25 @@ export default function Page() {
     [router]
   );
 
-  useEffect(() => {
-    if (!hasEmail) {
-      //console.log("!hasemail");
+  /*useEffect(() => {
+    if (!hasUsers) {
+      console.log("!hasuser", hasUsers);
       setIsLoading(true);
       setHasError(false);
-      getSession()
-        .then((session) => setEmail(session.user.email))
-        .then(() => setHasEmail(true));
-    }
-    if (hasEmail && !hasReport) {
-      console.log("hasEmail && !hasreport", email, hasReport);
-      setIsLoading(true);
-      setHasError(false);
-      getUserReports({ email, index }).then((response) => {
+      getAllUsers({ index }).then((response) => {
         response.ok
           ? response
               .json()
-              .then((response) => setReports(response))
-              .then(setHasReport(true))
+              .then((response) => setUsers(response))
+              .then(setHasUsers(true))
           : setHasError(true);
       });
     }
-    if (hasEmail && hasReport) {
-      console.log("hasEmail && hasreport", email, hasReport);
+    if (hasUsers) {
+      console.log("hasusers", hasUsers);
       setIsLoading(false);
     }
-  }, [hasEmail, hasReport, email, index]);
+  }, [hasUsers, index]);*/
 
   const columns = React.useMemo(
     () => [
@@ -120,22 +110,39 @@ export default function Page() {
         header: "Role",
       },
       {
-        accessorKey: "assigned",
-        header: "Assigned Group",
+        accessorKey: "membership",
+        header: "Group Membership",
         cell: ({ cell }) =>
-          !cell.row.original.assigned
-            ? "unassigned"
-            : cell.row.original.assigned,
+          !cell.row.original.membership ||
+          cell.row.original.membership === "unassigned"
+            ? ""
+            : cell.row.original.membership,
       },
       {
         accessorKey: "managed",
-        header: "Managed Group",
+        header: "Group Managed",
         cell: ({ cell }) =>
-          !cell.row.original.managed
-            ? cell.row.original.role === "Supervisor"
-              ? "unassigned"
-              : "n/a"
+          (!cell.row.original.managed ||
+            cell.row.original.managed === "unassigned") &&
+          cell.row.original.role === "Supervisor"
+            ? ""
             : cell.row.original.managed,
+      },
+      {
+        accessorKey: "totalReports",
+        header: "Fiscal Total Reports",
+      },
+      {
+        accessorKey: "lastReport",
+        header: "Last Report",
+      },
+      {
+        accessorKey: "lastSignIn",
+        header: "Last Sign-In",
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
       },
       {
         id: "update",
@@ -143,7 +150,7 @@ export default function Page() {
         cell: ({ cell }) => (
           <>
             <Button
-              size={{ base: "sm", lg: "md" }}
+              size="sm"
               textColor={"white"}
               bg={"#1c303c"}
               opacity={0.85}
@@ -165,28 +172,28 @@ export default function Page() {
   const data = useMemo(
     () => [
       {
-        assigned: "group1",
+        membership: "group1",
         managed: "",
         name: "user1",
         email: "user1@gmail.com",
         role: "User",
       },
       {
-        assigned: "group2",
+        membership: "group2",
         managed: "group1",
         name: "sup1",
         email: "sup1@gmail.com",
         role: "Supervisor",
       },
       {
-        assigned: "",
+        membership: "unassigned",
         managed: "",
         name: "user2",
         email: "user2@gmail.com",
         role: "User",
       },
       {
-        assigned: "group3",
+        membership: "group3",
         managed: "",
         name: "sup2",
         email: "sup2@gmail.com",

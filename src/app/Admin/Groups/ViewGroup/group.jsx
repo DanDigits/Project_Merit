@@ -1,23 +1,22 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useRef, useState, useMemo } from "react";
-import { getSession } from "next-auth/react";
+import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import {
   AbsoluteCenter,
   Box,
   FormControl,
   FormLabel,
-  HStack,
   Input,
   Icon,
   Spinner,
   Button,
-  VStack,
   Text,
 } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
-import GroupUsers from "./groupusers";
 import { PiEyeDuotone } from "react-icons/pi";
+import { useRouter } from "next/navigation";
+
+import GroupUsers from "./groupusers";
 import Dialog from "../NewGroup/dialog";
+//import { createGroup, getGroup, updateGroup } from "";
 import secureLocalStorage from "react-secure-storage";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
@@ -46,6 +45,7 @@ export default function Group(group_mode) {
   const [supervisor, setSupervisor] = useState("");
   const [supEmail, setSupEmail] = useState("");
   const [total, setTotal] = useState(0);
+  const [entry, setEntry] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -53,7 +53,7 @@ export default function Group(group_mode) {
 
   const [hasGroupName, setHasGroupName] = useState(false);
   const [groupName, setGroupName] = useState(
-    String(secureLocalStorage.getItem("groupName"))
+    String(secureLocalStorage.getItem("groupID"))
   );
 
   var state;
@@ -63,20 +63,90 @@ export default function Group(group_mode) {
     console.log(groupName);
   } else state = false;
 
-  const handleView = (email) => {
-    console.log(email);
-  };
+  const handleView = useCallback(
+    (name) => {
+      secureLocalStorage.setItem("userName", name);
+      router.push("/Admin/ViewUser");
+    },
+    [router]
+  );
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
     if (group_mode === "New") {
+      /*createGroup({ groupName, supEmail, supervisor }).then(
+        (response) => {
+          if (response.ok) {
+            {
+              setDialogStatus("New");
+            }
+          } else {
+            alert("Group could not be created. Please try again.");
+          }
+        }
+      );*/
       console.log("new group created");
       setDialogStatus("New");
     } else if (group_mode === "Edit") {
+      /*updateGroup({ groupName, supEmail }).then(
+        (response) => {
+          if (response.ok) {
+            {
+              setDialogStatus("Edit");
+            }
+          } else {
+            alert("Group could not be updated. Please try again.");
+          }
+        }
+      );*/
       console.log("group updated");
       setDialogStatus("Edit");
     }
   };
+
+  useEffect(() => {
+    if (group_mode === "View") {
+      if (groupName !== "" && groupName !== null) {
+        setHasGroupName(true);
+        console.log("hasGroupName:", groupName);
+      } else {
+        console.log("groupname missing");
+      }
+      if (entry !== null) {
+        setHasEntry(true);
+        console.log("hasEntry:", entry);
+      }
+      if (hasGroupName && !hasEntry) {
+        secureLocalStorage.removeItem("groupID");
+        console.log("hasgroupname && !hasEntry", groupName, hasEntry);
+        setIsLoading(true);
+        setHasError(false);
+        if (groupName == "null") {
+          router.push("/Admin/Groups");
+        } else {
+          getGroup({ groupName }).then((response) => {
+            response.ok
+              ? response
+                  .json()
+                  .then((response) => setEntry(response))
+                  .then(setHasEntry(true))
+              : setHasError(true);
+          });
+        }
+      }
+      if (hasGroupName && hasEntry) {
+        console.log("hasReportId && hasEntry", groupName, hasEntry);
+        var arr = JSON.parse(JSON.stringify(entry));
+        if (arr) {
+          setName(arr.groupName);
+          setSupEmail(arr.supEmail);
+          setSupervisor(arr.supervisor);
+          setTotal(arr.total);
+          setIsLoading(false);
+        }
+      }
+    }
+  }, [hasEntry, hasGroupName, groupName, entry, group_mode, router]);
 
   const columns = useMemo(
     () => [
@@ -234,7 +304,7 @@ export default function Group(group_mode) {
           <>
             {group_mode === "View" && (
               <>
-                <FormControl id="total" isRequired>
+                <FormControl id="total">
                   <FormLabel mb={1} fontSize={15} color={"#331E38"}>
                     Total Members:
                   </FormLabel>
@@ -249,7 +319,6 @@ export default function Group(group_mode) {
                     bg="#F7FAFC"
                     mb={3}
                     size={"md"}
-                    onChange={(e) => setTotal(e.target.value)}
                   />
                 </FormControl>
               </>

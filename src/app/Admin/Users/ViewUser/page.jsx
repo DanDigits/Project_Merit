@@ -20,13 +20,25 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import User from "./user";
+//import {deleteUser} from "";
 import secureLocalStorage from "react-secure-storage";
 
 export default function Page() {
   const [mode, setMode] = useState("View");
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const userEmail = String(secureLocalStorage.getItem("userEmail"));
 
-  const handleDelete = () => {};
+  const handleDelete = () => {
+    deleteUser({ userEmail }).then((response) => {
+      if (response.ok) {
+        {
+          window.location.replace("/Admin/User");
+        }
+      } else {
+        alert("Delete failed");
+      }
+    });
+  };
 
   return (
     <>
