@@ -10,6 +10,9 @@ import {
   deleteUser,
   getUser,
   passwordLock,
+  suspendUser,
+  makeAdmin,
+  getGroup,
 } from "server/mongodb/actions/User";
 import urls from "../../../../utils/getPath";
 import nodemailer from "nodemailer";
@@ -120,12 +123,18 @@ export async function GET(Request) {
         }
         break;
       }
+      case "4": {
+        const group = requestHeaders?.get("group");
+        res = await getGroup(group);
+        res = JSON.stringify(res);
+        return new Response(res, { status: 200 });
+      }
       default: {
         return new Response("ERROR", { status: 400 });
       }
     }
   } else if (verificationCode != undefined) {
-    // Email 2FA code exists in URL, verify user either for new signup or for forgot password reset
+    // If email 2FA code exists in URL, verify user either for new signup or for forgot password reset
     let extension = "";
     res = await verifyUser(verificationCode);
 

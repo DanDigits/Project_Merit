@@ -29,6 +29,10 @@ const UserSchema = new Schema({
     type: Boolean,
     required: true,
   },
+  isAdmin: {
+    type: Boolean,
+    required: true,
+  },
   isPasswordLocked: {
     type: Boolean,
     required: true,
@@ -36,6 +40,14 @@ const UserSchema = new Schema({
   emailVerification: {
     type: String,
     required: true,
+  },
+  group: {
+    type: [String],
+    required: false,
+  },
+  supervisedGroup: {
+    type: [String],
+    required: false,
   },
 });
 
