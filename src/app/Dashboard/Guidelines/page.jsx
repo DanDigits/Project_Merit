@@ -14,7 +14,8 @@ import InfoBox from "./InfoBox";
 
 const FoundationalChanges = {
   title: "Foundational Changes",
-  paragraphContent: "",
+  paragraphContent:
+    "In 2023 the USAF implemented the following foundational changes to the performance review process: ",
   listContent: [
     "COMPETENCY-BASED ASSESSMENTS: Evaluating behaviors and outcomes provides a more accurate, holistic performance assessment",
     "AIRMAN LEADERSHIP QUALITIES (ALQ): Represent performance characteristics we want to define, develop, incentivize, and measure in our Airmen",
@@ -24,8 +25,9 @@ const FoundationalChanges = {
 };
 
 const ALQExecutingMission = {
-  title: "I. Executing the Mission",
-  paragraphContent: "Effectively uses knowledge initiative, and adaptability to produce timely, high quality, quantity results to positively impact the mission.",
+  title: "ALQ I. Executing the Mission",
+  paragraphContent:
+    "Effectively uses knowledge initiative, and adaptability to produce timely, high quality, quantity results to positively impact the mission.",
   listContent: [
     "JOB PROFICIENCY: Demonstrates knowledge and professional skill in assigned duties, achieving positive results and impact in support of the mission.",
     "INITIATIVE: Assesses and takes independent or directed action to complete a task or mission that influences the mission or organization.",
@@ -34,18 +36,20 @@ const ALQExecutingMission = {
 };
 
 const ALQLeadingPeople = {
-  title: "II. Leading People",
-  paragraphContent: "Fosters cohesive teams, effectively communicates, and uses emotional intelligence to take care of people and accomplish the mission.",
+  title: "ALQ II. Leading People",
+  paragraphContent:
+    "Fosters cohesive teams, effectively communicates, and uses emotional intelligence to take care of people and accomplish the mission.",
   listContent: [
     "INCLUSION & TEAMWORK: Collaborates effectively with others to achieve an inclusive climate in pursuit of a common goal or to complete a task or mission.",
-    "EMOTIONAL INTELLIGENCE: Exercises selfawareness, manages their own emotions effectively; demonstrates an understanding of others’ emotions, and appropriately manages relationships.",
+    "EMOTIONAL INTELLIGENCE: Exercises self-awareness, manages their own emotions effectively; demonstrates an understanding of others’ emotions, and appropriately manages relationships.",
     "COMMUNICATION: Articulates information in a clear and timely manner, both verbally and non-verbally, through active listening and messaging tailored to the appropriate audience.",
   ],
 };
 
 const ALQManagingResources = {
-  title: "III. Managing Resources",
-  paragraphContent: "Manages assigned resources effectively and takes responsibility for actions, behaviors to maximize organizational performance.",
+  title: "ALQ III. Managing Resources",
+  paragraphContent:
+    "Manages assigned resources effectively and takes responsibility for actions, behaviors to maximize organizational performance.",
   listContent: [
     "STEWARDSHIP: Demonstrates responsible management of assigned resources, which may include time, equipment, people, funds and/or facilities.",
     "ACCOUNTABILITY: Takes responsibility for the actions and behaviors of self and/or team; demonstrates reliability and transparency.",
@@ -53,8 +57,9 @@ const ALQManagingResources = {
 };
 
 const ALQImprovingUnit = {
-  title: "IV. Improving the Unit",
-  paragraphContent: "Demonstrates critical thinking and fosters innovation to find creative solutions and improve mission execution.",
+  title: "ALQ IV. Improving the Unit",
+  paragraphContent:
+    "Demonstrates critical thinking and fosters innovation to find creative solutions and improve mission execution.",
   listContent: [
     "DECISION MAKING: Makes well-informed, effective and timely decisions under one’s control that weigh constraints, risks, and benefits.",
     "INNOVATION: Thinks creatively about different ways to solve problems, implements improvements and demonstrates calculated risk-taking.",
@@ -63,7 +68,6 @@ const ALQImprovingUnit = {
 
 const CommunicatingCompetencies = {
   title: "I. Using Narrative-Style Performance Statements",
-  paragraphContent: " ",
   listContent: [
     "The SHIFT to Performance Statements: To best communicate Airmen’s performance, the Air Force has replaced bullets with Performance Statements. Performance Statements use narrative-style writing and plain language to describe Airmen’s performance in each of the four Major Performance Areas without the need of extensive technical or contextual knowledge. Performance Statements should function as standalone sentences and include two elements: 1) the behavior or action taken by an Airman; and 2) the impact, results, or outcome of that behavior/action. If using acronyms and abbreviations, only utilize the approved Air Force Acronym and Abbreviation List, unless noted by an approved category.",
     "Adopting a QUALITY over QUANTITY Mentality: Raters are encouraged to refer to the 10 ALQs when writing Performance Statements, but should not attempt to include them all. Instead, raters should select noteworthy anecdotes that are representative of the Airman’s behaviors and achievements in the context of their position and rank. This new writing style helps shift our performance evaluation culture from the impractical attempt to synthesize an Airman’s entire performance on one page to using representative examples that best capture the essence of an Airman’s behaviors and results, whether successful or not. A coherent performance statement should identify a specific competency and describe how well it was performed in line with a given MPA (Major Performance Areas) or ALQ.",
@@ -72,7 +76,8 @@ const CommunicatingCompetencies = {
 
 const WritingPerformanceStatements = {
   title: "Writing Performance Statements",
-  paragraphContent: "Performance Statements are the AF narrative-style of writing to communicate performance. They are efficient, increase clarity, and improve the ability to understand performance correctly and equitably. Guidance for writing Performance Statements is deliberately not overly prescriptive to enable flexibility and freedom when capturing performance.",
+  paragraphContent:
+    "Performance Statements are the AF narrative-style of writing to communicate performance. They are efficient, increase clarity, and improve the ability to understand performance correctly and equitably. Guidance for writing Performance Statements is deliberately not overly prescriptive to enable flexibility and freedom when capturing performance.",
   listContent: [
     "Each Performance Statement will be a standalone sentence and include 1. action and 2. at least one of the following: impact or results/outcome.",
     "Performance Statements are plain language and avoid using uncommon acronyms and abbreviations.",
@@ -81,7 +86,6 @@ const WritingPerformanceStatements = {
 
 const WritingPerformanceStatementsDos = {
   title: "I. Do:",
-  paragraphContent: " ",
   listContent: [
     "Consider writing two Performance Staments in a single MPA, aiming for each Performance Statement to be around 150-175 characters in length (max 350 characters).",
     "Include a scene (context), a person, an action, and/or a tool/instrument (the means) used to achieve that action. Any combination of these elements can craft a noteworthy narrative.",
@@ -94,7 +98,6 @@ const WritingPerformanceStatementsDos = {
 
 const WritingPerformanceStatementsDonts = {
   title: "II. Don't:",
-  paragraphContent: " ",
   listContent: [
     "Use overly clichéd superlatives, over-the-top praise, or overly common descriptors, which reduces credibility and distracts from the specific story being conveyed.",
     "Include overly general or vague statements. Instead, link your feedback to the 10 ALQs and identify opportunities for future development.",
@@ -102,40 +105,48 @@ const WritingPerformanceStatementsDonts = {
 };
 
 const NeedsImprovementEx = {
-  title: "I. Needs Improvement Example for MPA: Executing the Mission; ALQ: Adaptability",
-  paragraphContent: "MSgt Bailey learned a Primary Care Team member tested COVID positive, and, after being prompted, notified her Flight Commander at morning huddle, while waiting for direction on future actions to take.",
+  title:
+    "I. Needs Improvement Example for MPA: Executing the Mission; ALQ: Adaptability",
+  paragraphContent:
+    "MSgt Bailey learned a Primary Care Team member tested COVID positive, and, after being prompted, notified her Flight Commander at morning huddle, while waiting for direction on future actions to take.",
   listContent: [
     "Needs further growth to enhance understanding and/or performance.",
   ],
 };
 
 const DevelopingEx = {
-  title: "II. Developing Example for MPA: Executing the Mission; ALQ: Adaptability",
-  paragraphContent: "When MSgt Bailey learned a Primary Care Team member tested COVID positive, she notified her Flight Commander, and, with direction from her leadership, her team was able to determine a plan to resolve the issue.",
-  listContent: [
-    "Generally accepts new information and changing conditions",
-  ],
+  title:
+    "II. Developing Example for MPA: Executing the Mission; ALQ: Adaptability",
+  paragraphContent:
+    "When MSgt Bailey learned a Primary Care Team member tested COVID positive, she notified her Flight Commander, and, with direction from her leadership, her team was able to determine a plan to resolve the issue.",
+  listContent: ["Generally accepts new information and changing conditions"],
 };
 
 const ProficientEx = {
-  title: "III. Proficient Example for MPA: Executing the Mission; ALQ: Adaptability",
-  paragraphContent: "Learning a Primary Care Team member tested COVID positive, MSgt Bailey responded professionally with appropriate action adjusting the daily schedule and created a new plan ensuring team coverage.",
+  title:
+    "III. Proficient Example for MPA: Executing the Mission; ALQ: Adaptability",
+  paragraphContent:
+    "Learning a Primary Care Team member tested COVID positive, MSgt Bailey responded professionally with appropriate action adjusting the daily schedule and created a new plan ensuring team coverage.",
   listContent: [
     "Adjusts to change or ambiguity with composure to meet mission objectives",
   ],
 };
 
 const HighlyProficientEx = {
-  title: "IV. Highly Proficient Example for MPA: Executing the Mission; ALQ: Adaptability",
-  paragraphContent: "MSgt Bailey learned a Primary Care Team member tested COVID positive and, without prompting, empowered a SSgt as Team leader deciding on adjustments, ensuring team coverage and mission accomplishment.",
+  title:
+    "IV. Highly Proficient Example for MPA: Executing the Mission; ALQ: Adaptability",
+  paragraphContent:
+    "MSgt Bailey learned a Primary Care Team member tested COVID positive and, without prompting, empowered a SSgt as Team leader deciding on adjustments, ensuring team coverage and mission accomplishment.",
   listContent: [
     "Independently adjusts to change or ambiguity with composure; empowers others to implement changes to meet mission objectives",
   ],
 };
 
 const ExceptionallySkilledEx = {
-  title: "V. Exceptionally Skilled Example for MPA: Executing the Mission; ALQ: Adaptability",
-  paragraphContent: "When a Primary Care Team member tested COVID positive, MSgt Bailey independently acted to empower a SSgt as Team lead ensuring coverage, mentoring them to create/brief new plans to Medical Group for process improvement.",
+  title:
+    "V. Exceptionally Skilled Example for MPA: Executing the Mission; ALQ: Adaptability",
+  paragraphContent:
+    "When a Primary Care Team member tested COVID positive, MSgt Bailey independently acted to empower a SSgt as Team lead ensuring coverage, mentoring them to create/brief new plans to Medical Group for process improvement.",
   listContent: [
     "Leverages changes as an opportunity to better meet mission objectives; inspires others to be more adaptable and equips them to handle changes independently",
   ],
@@ -218,7 +229,7 @@ export default function Page() {
                 mx={{ base: "0.5", md: "1em" }}
                 _selected={{ color: "white", bg: "#031926" }}
               >
-                OPR
+                Formating
               </Tab>
               <Tab
                 fontSize={{ base: "sm", md: "md" }}
@@ -227,7 +238,7 @@ export default function Page() {
                 mx={{ base: "0.5", md: "1em" }}
                 _selected={{ color: "white", bg: "#031926" }}
               >
-                EPR
+                Word Choices
               </Tab>
               <Tab
                 fontSize={{ base: "sm", md: "md" }}
@@ -243,31 +254,34 @@ export default function Page() {
           <TabPanels>
             <TabPanel>
               <VStack>
-                <InfoBox content={infoBasics}></InfoBox>
-                <InfoBox content={infoDos}></InfoBox>
-                <InfoBox content={infoDonts}></InfoBox>
+                <InfoBox content={FoundationalChanges}></InfoBox>
+                <InfoBox content={ALQExecutingMission}></InfoBox>
+                <InfoBox content={ALQLeadingPeople}></InfoBox>
+                <InfoBox content={ALQManagingResources}></InfoBox>
+                <InfoBox content={ALQImprovingUnit}></InfoBox>
+              </VStack>
+            </TabPanel>
+            <TabPanel>
+              <VStack>
+                <InfoBox content={CommunicatingCompetencies}></InfoBox>
+                <InfoBox content={WritingPerformanceStatements}></InfoBox>
+                <InfoBox content={WritingPerformanceStatementsDos}></InfoBox>
+                <InfoBox content={WritingPerformanceStatementsDonts}></InfoBox>
+              </VStack>
+            </TabPanel>
+            <TabPanel>
+              <VStack>
                 <InfoBox content={infoWordChoice1}></InfoBox>
                 <InfoBox content={infoWordChoice2}></InfoBox>
               </VStack>
             </TabPanel>
             <TabPanel>
               <VStack>
-                <InfoBox content={oprFundamentals}></InfoBox>
-                <InfoBox content={oprWritingTips}></InfoBox>
-                <InfoBox content={oprVeiledPromotion}></InfoBox>
-              </VStack>
-            </TabPanel>
-            <TabPanel>
-              <VStack>
-                <InfoBox content={eprFundamentals}></InfoBox>
-                <InfoBox content={eprWritingTips}></InfoBox>
-                <InfoBox content={eprPromotions}></InfoBox>
-              </VStack>
-            </TabPanel>
-            <TabPanel>
-              <VStack>
-                <InfoBox content={eprEx}></InfoBox>
-                <InfoBox content={oprEx}></InfoBox>
+                <InfoBox content={NeedsImprovementEx}></InfoBox>
+                <InfoBox content={DevelopingEx}></InfoBox>
+                <InfoBox content={ProficientEx}></InfoBox>
+                <InfoBox content={HighlyProficientEx}></InfoBox>
+                <InfoBox content={ExceptionallySkilledEx}></InfoBox>
               </VStack>
             </TabPanel>
           </TabPanels>

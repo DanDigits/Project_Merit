@@ -27,6 +27,7 @@ const InfoBox = ({ content }) => {
       </CardHeader>
       <CardBody>
         <Text>{paragraphContent}</Text>
+        {paragraphContent && <br />}
         <UnorderedList fontSize={{ base: "sm", md: "md" }}>
           {listContent.map((text, index) => (
             <ListItem key={index}>
