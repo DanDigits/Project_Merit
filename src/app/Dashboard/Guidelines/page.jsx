@@ -15,17 +15,29 @@ import InfoBox from "./InfoBox";
 const FoundationalChanges = {
   title: "Foundational Changes",
   paragraphContent:
-    "In 2023 the USAF implemented the following foundational changes to the performance review process: ",
+    "In 2023 the USAF adopted the following changes for performance reviews:",
   listContent: [
     "COMPETENCY-BASED ASSESSMENTS: Evaluating behaviors and outcomes provides a more accurate, holistic performance assessment",
-    "AIRMAN LEADERSHIP QUALITIES (ALQ): Represent performance characteristics we want to define, develop, incentivize, and measure in our Airmen",
     "PERFORMANCE STATEMENTS: Narrative-style writing and plain language to describe performance; they are efficient and clear, improving the ability to understand performance",
-    "SYNERGY ACROSS ALL AIRMEN: Develops mission-focused Airmen while reinforcing behaviors our Air Force values across all Enlisted/Officer ranks and duty specialties.",
+    "MAJOR PERFORMANCE AREAS (MPA): align the duties and responsibilities of Airmen's everyday performance and/or behaviors to develop the mission-focused Airmen we need; MPA’s include Executing the Mission, Leading People, Managing Resources, and Improving the Unit",
+    "AIRMAN LEADERSHIP QUALITIES (ALQ): Represent performance characteristics we want to define, develop, incentivize, and measure in our Airmen",
   ],
 };
 
-const ALQExecutingMission = {
-  title: "ALQ I. Executing the Mission",
+const MPAList = {
+  title: "Major Performance Areas (MPAs)",
+  paragraphContent:
+    "There are ten Airman Leadership Qualities broken into four Major Performance Areas:",
+  listContent: [
+    "EXECUTING THE MISSION: Job Proficiency, Initiative, Adaptability",
+    "LEADING PEOPLE: Inclusion & Teamwork, Emotional Intelligence, Communication",
+    "MANAGING RESOURCES: Stewardship, Accountability",
+    "IMPROVING THE UNIT: Decision Making, Innovation",
+  ],
+};
+
+const MPAExecutingMission = {
+  title: "MPA I. Executing the Mission",
   paragraphContent:
     "Effectively uses knowledge initiative, and adaptability to produce timely, high quality, quantity results to positively impact the mission.",
   listContent: [
@@ -35,8 +47,8 @@ const ALQExecutingMission = {
   ],
 };
 
-const ALQLeadingPeople = {
-  title: "ALQ II. Leading People",
+const MPALeadingPeople = {
+  title: "MPA II. Leading People",
   paragraphContent:
     "Fosters cohesive teams, effectively communicates, and uses emotional intelligence to take care of people and accomplish the mission.",
   listContent: [
@@ -46,8 +58,8 @@ const ALQLeadingPeople = {
   ],
 };
 
-const ALQManagingResources = {
-  title: "ALQ III. Managing Resources",
+const MPAManagingResources = {
+  title: "MPA III. Managing Resources",
   paragraphContent:
     "Manages assigned resources effectively and takes responsibility for actions, behaviors to maximize organizational performance.",
   listContent: [
@@ -56,8 +68,8 @@ const ALQManagingResources = {
   ],
 };
 
-const ALQImprovingUnit = {
-  title: "ALQ IV. Improving the Unit",
+const MPAImprovingUnit = {
+  title: "MPA IV. Improving the Unit",
   paragraphContent:
     "Demonstrates critical thinking and fosters innovation to find creative solutions and improve mission execution.",
   listContent: [
@@ -67,10 +79,10 @@ const ALQImprovingUnit = {
 };
 
 const CommunicatingCompetencies = {
-  title: "I. Using Narrative-Style Performance Statements",
+  title: "Using Narrative-Style Performance Statements",
   listContent: [
     "The SHIFT to Performance Statements: To best communicate Airmen’s performance, the Air Force has replaced bullets with Performance Statements. Performance Statements use narrative-style writing and plain language to describe Airmen’s performance in each of the four Major Performance Areas without the need of extensive technical or contextual knowledge. Performance Statements should function as standalone sentences and include two elements: 1) the behavior or action taken by an Airman; and 2) the impact, results, or outcome of that behavior/action. If using acronyms and abbreviations, only utilize the approved Air Force Acronym and Abbreviation List, unless noted by an approved category.",
-    "Adopting a QUALITY over QUANTITY Mentality: Raters are encouraged to refer to the 10 ALQs when writing Performance Statements, but should not attempt to include them all. Instead, raters should select noteworthy anecdotes that are representative of the Airman’s behaviors and achievements in the context of their position and rank. This new writing style helps shift our performance evaluation culture from the impractical attempt to synthesize an Airman’s entire performance on one page to using representative examples that best capture the essence of an Airman’s behaviors and results, whether successful or not. A coherent performance statement should identify a specific competency and describe how well it was performed in line with a given MPA (Major Performance Areas) or ALQ.",
+    "Adopting a QUALITY over QUANTITY Mentality: Raters are encouraged to refer to the 10 MPAs when writing Performance Statements, but should not attempt to include them all. Instead, raters should select noteworthy anecdotes that are representative of the Airman’s behaviors and achievements in the context of their position and rank. This new writing style helps shift our performance evaluation culture from the impractical attempt to synthesize an Airman’s entire performance on one page to using representative examples that best capture the essence of an Airman’s behaviors and results, whether successful or not. A coherent performance statement should identify a specific competency and describe how well it was performed in line with a given MPA (Major Performance Areas) or ALQ.",
   ],
 };
 
@@ -85,7 +97,7 @@ const WritingPerformanceStatements = {
 };
 
 const WritingPerformanceStatementsDos = {
-  title: "I. Do:",
+  title: "Do:",
   listContent: [
     "Consider writing two Performance Staments in a single MPA, aiming for each Performance Statement to be around 150-175 characters in length (max 350 characters).",
     "Include a scene (context), a person, an action, and/or a tool/instrument (the means) used to achieve that action. Any combination of these elements can craft a noteworthy narrative.",
@@ -97,7 +109,7 @@ const WritingPerformanceStatementsDos = {
 };
 
 const WritingPerformanceStatementsDonts = {
-  title: "II. Don't:",
+  title: "Don't:",
   listContent: [
     "Use overly clichéd superlatives, over-the-top praise, or overly common descriptors, which reduces credibility and distracts from the specific story being conveyed.",
     "Include overly general or vague statements. Instead, link your feedback to the 10 ALQs and identify opportunities for future development.",
@@ -199,6 +211,17 @@ const infoWordChoice2 = {
   ],
 };
 
+const infoWordChoice3 = {
+  title: "Acceptable Abbreviations:",
+  listContent: [
+    <u>
+      <a href="https://www.afpc.af.mil/Career-Management/Acronyms/">
+        Air Force Acronym & Abbreviation List
+      </a>
+    </u>,
+  ],
+};
+
 export default function Page() {
   return (
     <div>
@@ -229,7 +252,7 @@ export default function Page() {
                 mx={{ base: "0.5", md: "1em" }}
                 _selected={{ color: "white", bg: "#031926" }}
               >
-                Formating
+                Formatting
               </Tab>
               <Tab
                 fontSize={{ base: "sm", md: "md" }}
@@ -255,10 +278,11 @@ export default function Page() {
             <TabPanel>
               <VStack>
                 <InfoBox content={FoundationalChanges}></InfoBox>
-                <InfoBox content={ALQExecutingMission}></InfoBox>
-                <InfoBox content={ALQLeadingPeople}></InfoBox>
-                <InfoBox content={ALQManagingResources}></InfoBox>
-                <InfoBox content={ALQImprovingUnit}></InfoBox>
+                <InfoBox content={MPAList}></InfoBox>
+                <InfoBox content={MPAExecutingMission}></InfoBox>
+                <InfoBox content={MPALeadingPeople}></InfoBox>
+                <InfoBox content={MPAManagingResources}></InfoBox>
+                <InfoBox content={MPAImprovingUnit}></InfoBox>
               </VStack>
             </TabPanel>
             <TabPanel>
@@ -271,6 +295,7 @@ export default function Page() {
             </TabPanel>
             <TabPanel>
               <VStack>
+                <InfoBox content={infoWordChoice3}></InfoBox>
                 <InfoBox content={infoWordChoice1}></InfoBox>
                 <InfoBox content={infoWordChoice2}></InfoBox>
               </VStack>
