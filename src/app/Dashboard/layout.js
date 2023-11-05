@@ -23,7 +23,7 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaUsers } from "react-icons/fa";
 import {
   AiOutlineFileProtect,
   AiFillHome,
@@ -74,7 +74,16 @@ export default function SidebarWithHeader({ children }) {
 }
 
 const SidebarContent = ({ onClose, ...rest }) => {
-  //const router = useRouter();
+  const [role, setRole] = useState("user");
+  const { update } = useSession();
+
+  useEffect(() => {
+    getSession().then((session) => {
+      setRole("supervisor");
+      //setRole(session.user.role);
+    });
+  }, [update]);
+
   return (
     <Box
       boxShadow={"md"}
@@ -138,6 +147,21 @@ const SidebarContent = ({ onClose, ...rest }) => {
             Guidelines
           </Button>
         </NextLink>
+
+        {role === "supervisor" && (
+          <NextLink href={"/Dashboard/Group"} passHref>
+            <Button
+              variant="ghost"
+              onClick={onClose}
+              fontSize={{ base: "2xl", md: "xl" }}
+              textColor={"#031926"}
+              _hover={{ bg: "#1c303c", color: "white" }}
+              leftIcon={<FaUsers />}
+            >
+              Group
+            </Button>
+          </NextLink>
+        )}
       </VStack>
     </Box>
   );
