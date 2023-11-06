@@ -28,6 +28,7 @@ export default function Page() {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [hasSession, setHasSession] = useState(false);
   const [hasReport, setHasReport] = useState(false);
   const [report, setReport] = useState({
     title: "",
@@ -82,14 +83,18 @@ export default function Page() {
         .then(() => setHasEmail(true));
     }
 
-    if (hasEmail) {
-      getSession().then((session) => setRank(session.user.rank));
-      getSession().then((session) => setLastName(session.user.lastName));
-      getSession().then((session) => setSuffix(session.user.suffix));
+    if (hasEmail && !hasSession) {
+      getSession()
+        .then((session) => {
+          setRank(session.user.rank);
+          setLastName(session.user.lastName);
+          setSuffix(session.user.suffix);
+        })
+        .then(() => setHasSession(true));
     }
 
     if (hasEmail && !hasTotals) {
-      console.log("hasEmail && !hasTotals", email, hasTotals);
+      //console.log("hasEmail && !hasTotals", email, hasTotals);
       setIsLoading(true);
       setHasError(false);
 
@@ -100,12 +105,12 @@ export default function Page() {
               .then((response) => setTotals(response))
               .then(setHasTotals(true))
           : setTotals({ date: "N/A" });
-        console.log("hasError:", hasError);
+        //console.log("hasError:", hasError);
       });
     }
 
     if (hasEmail && !hasReport) {
-      console.log("hasEmail && !hasReport", email, hasReport);
+      //console.log("hasEmail && !hasReport", email, hasReport);
       setIsLoading(true);
       setHasError(false);
 
@@ -116,7 +121,7 @@ export default function Page() {
               .then((response) => setReport(response))
               .then(setHasReport(true))
           : setHasError(true);
-        console.log("hasError:", hasError);
+        //console.log("hasError:", hasError);
       });
     }
 
@@ -155,14 +160,14 @@ export default function Page() {
             unit.needed)) *
           100
       );
-      console.log("Progress: ", progress);
+      //console.log("Progress: ", progress);
     }
 
     if (hasEmail && hasReport) {
       if (!report.date) {
         setReport({ date: "N/A" });
       }
-      console.log("Date is now" + report.date);
+      //console.log("Date is now" + report.date);
     }
 
     if (hasEmail && hasTotals && hasReport) {
