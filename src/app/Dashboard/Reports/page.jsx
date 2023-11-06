@@ -141,6 +141,17 @@ export default function Page() {
       {
         accessorKey: "category",
         header: () => "Performance Area",
+        cell: ({ cell }) =>
+          cell.row.original.category === "Mission"
+            ? "Executing the Mission"
+            : cell.row.original.category === "Leadership"
+            ? "Leading People"
+            : cell.row.original.category === "Resources"
+            ? "Managing Resources"
+            : cell.row.original.category === "Unit"
+            ? "Improving the Unit"
+            : cell.row.original.category,
+
         enableColumnFilter: true,
         filterFn: (row, columnId, filterCategories) => {
           if (filterCategories.length === 0) return true;
