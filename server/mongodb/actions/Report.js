@@ -182,7 +182,7 @@ export async function deleteReport(reportId) {
   await mongoDB();
   let i = 0;
   let length = reportId?.id?.length;
-  let reports = [];
+  let reports;
 
   if (length == undefined) {
     return "ERROR";
@@ -191,7 +191,7 @@ export async function deleteReport(reportId) {
       const report = await ReportSchema?.findByIdAndDelete({
         _id: reportId?.id[i],
       }).catch(function (err) {
-        reports.push(report);
+        reports[i].push(report);
       });
       i++;
     }
