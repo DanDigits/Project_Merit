@@ -140,7 +140,7 @@ export default function Page() {
       },
       {
         accessorKey: "category",
-        header: () => "Category",
+        header: () => "Performance Area",
         enableColumnFilter: true,
         filterFn: (row, columnId, filterCategories) => {
           if (filterCategories.length === 0) return true;

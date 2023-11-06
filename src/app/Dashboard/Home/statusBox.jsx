@@ -9,15 +9,15 @@ import {
 
 import {
   PiClipboardTextDuotone,
-  PiBarbellDuotone,
+  PiHandCoinsDuotone,
   PiUsersThreeDuotone,
-  PiSealCheckDuotone,
+  PiChartLineUpDuotone,
   PiCheckCircleDuotone,
   PiXCircleDuotone,
 } from "react-icons/pi";
 
 const StatusBox = ({ content }) => {
-  const { catagory, shorten, total, needed } = content;
+  const { category, shorten, total, needed } = content;
   var complete;
 
   if (needed <= total) {
@@ -41,13 +41,13 @@ const StatusBox = ({ content }) => {
                 display={{ base: "none", md: "initial" }}
                 boxSize={"9"}
                 as={
-                  shorten === "duties"
+                  shorten === "mission"
                     ? PiClipboardTextDuotone
-                    : shorten === "teamwork"
+                    : shorten === "leadership"
                     ? PiUsersThreeDuotone
-                    : shorten === "training"
-                    ? PiBarbellDuotone
-                    : PiSealCheckDuotone
+                    : shorten === "resources"
+                    ? PiHandCoinsDuotone
+                    : PiChartLineUpDuotone
                 }
               />
               <Text
@@ -55,7 +55,7 @@ const StatusBox = ({ content }) => {
                 fontWeight={"bold"}
                 color={"black"}
               >
-                {catagory}
+                {category}
               </Text>
             </HStack>
             <Icon

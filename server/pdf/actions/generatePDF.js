@@ -52,17 +52,17 @@ export async function pdf(stream, reportId) {
       currentCategory = category;
 
       switch (category) {
-        case "Conduct":
-          longCategory = "Standards, Conduct, Character & Military Bearings";
+        case "Mission":
+          longCategory = "Executing the Mission";
           break;
-        case "Duties":
-          longCategory = "Primary / Additional Duties";
+        case "Leadership":
+          longCategory = "Leading People";
           break;
-        case "Teamwork":
-          longCategory = "Teamwork / Followership";
+        case "Resources":
+          longCategory = "Managing Resources";
           break;
-        case "Training":
-          longCategory = "Training Requirements";
+        case "Unit":
+          longCategory = "Improving the Unit";
           break;
         default:
           longCategory = category;
@@ -73,7 +73,7 @@ export async function pdf(stream, reportId) {
       doc.fillColor("grey");
       doc.fillColor("black");
       doc.font("Times-Bold");
-      doc.text(`Category: ${longCategory}\n`);
+      doc.text(`MPA: ${longCategory}\n`);
       doc.text("\n");
       doc.font("Times-Roman");
     }
