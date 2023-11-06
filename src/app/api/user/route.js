@@ -15,6 +15,8 @@ import {
   getGroup,
   getGroupOrphans,
   getAllUsers,
+  deleteGroup,
+  renameGroup,
 } from "server/mongodb/actions/User";
 import urls from "../../../../utils/getPath";
 import nodemailer from "nodemailer";
@@ -209,9 +211,18 @@ export async function POST(Request) {
 
 export async function PATCH(Request) {
   // Modify/Edit/Update user data
+  let res;
   const requestHeaders = headers();
-  const user = requestHeaders.get("user");
-  const res = await modifyUser(user, await Request.json());
+  const user = requestHeaders?.get("user");
+  const group = requestHeaders?.get("group");
+
+  if (user == undefined) {
+    res = await renameGroup(group, await Request.json());
+  } else if (group == undefined) {
+    res = await modifyUser(user, await Request.json());
+  } else {
+    res.message = "ERROR";
+  }
 
   // HTTP Response
   if (res.name == "ValidationError" /*|| res.message == "INCORRECT"*/) {
@@ -229,10 +240,19 @@ export async function PATCH(Request) {
 }
 
 export async function DELETE() {
-  // Delete a user
+  // Delete a user, or a group
+  let res;
   const requestHeaders = headers();
-  const user = requestHeaders.get("user");
-  const res = await deleteUser(user);
+  const user = requestHeaders?.get("user");
+  const group = requestHeaders?.get("group");
+
+  if (user == undefined) {
+    res = await deleteGroup(group);
+  } else if (group == undefined) {
+    res = await deleteUser(user);
+  } else {
+    res = "ERROR";
+  }
 
   // HTTP Response
   if (res.id) {
