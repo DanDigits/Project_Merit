@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import mongoDB from "../dbConnection";
 import UserSchema from "../models/User";
+import { getUserReports } from "server/mongodb/actions/Report";
 
 // Login user to site
 export async function login({ email, password }) {
@@ -374,3 +375,24 @@ export async function getAllUsers() {
   );
   return users;
 }
+
+export async function getSupervisorTable(group) {
+  await mongoDB();
+  const date = new Date();
+  let i = 0,
+    table = [],
+    groupMembers = await getGroup(group);
+  while (groupMembers[1][i] != undefined) {
+    console.log("LOOP");
+    table[i] = Object.assign(
+      {},
+      groupMembers[1][i]._doc,
+      await getUserReports(groupMembers[1][i].email, date)
+    );
+    i++;
+  }
+  console.log(table);
+  return table;
+}
+
+// How are supervisors to add users?

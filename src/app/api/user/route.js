@@ -17,6 +17,7 @@ import {
   getAllUsers,
   deleteGroup,
   renameGroup,
+  getSupervisorTable,
 } from "server/mongodb/actions/User";
 import urls from "../../../../utils/getPath";
 import nodemailer from "nodemailer";
@@ -149,6 +150,16 @@ export async function GET(Request) {
       case "6": {
         // Get all users
         res = await getAllUsers();
+        if (res == "ERROR") {
+          return new Response(JSON.stringify(res), { status: 400 });
+        } else {
+          return new Response(JSON.stringify(res), { status: 200 });
+        }
+      }
+      case "7": {
+        // Get members under a supervisor
+        const group = requestHeaders?.get("group");
+        res = await getSupervisorTable(group);
         if (res == "ERROR") {
           return new Response(JSON.stringify(res), { status: 400 });
         } else {
