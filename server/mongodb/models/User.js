@@ -41,6 +41,10 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  lastLogin: {
+    type: String,
+    required: false,
+  },
   group: {
     type: [String],
     required: false,

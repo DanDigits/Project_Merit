@@ -4,6 +4,8 @@ import UserSchema from "../models/User";
 
 // Login user to site
 export async function login({ email, password }) {
+  const date = new Date();
+
   if (email == null || password == null) {
     throw new Error("All parameters must be provided!");
   }
@@ -20,6 +22,9 @@ export async function login({ email, password }) {
   if (user.verified == false) {
     throw new Error("Unverified account");
   }
+
+  //Update last signed in date
+  modifyUser(email, { lastLogin: date.toISOString().substring(0, 10) });
   return user;
 }
 
@@ -48,6 +53,7 @@ export async function signUp(userData) {
         emailVerification: randomHash,
         group: userData?.group,
         supervisedGroup: userData?.supervisedGroup,
+        lastLogin: userData?.lastLogin,
       }).catch(function (err) {
         return err;
       })
@@ -247,6 +253,10 @@ export async function makeAdmin(userId) {
   return user;
 }
 
+// export async function getAllUsers() {
+//   let all =
+// }
+
 // Get group information
 export async function getGroup(group) {
   let members = [];
@@ -271,6 +281,5 @@ export async function getGroup(group) {
   members.push(supervisors);
   members.push(personnel);
 
-  console.log(members[0][0]?.supervisedGroup[2]);
   return members;
 }

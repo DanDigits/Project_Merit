@@ -41,7 +41,7 @@ export async function getUserReports(email, parameter) {
 
   if (typeof parseInt(parameter) === "number" && !isNaN(parseInt(parameter))) {
     index = parseInt(parameter);
-    // Find 20 of the users most recent reports, after the given index
+    //Find # of the users most recent reports, after the given index
     reports = await ReportSchema.find({ email })
       .sort({ date: -1 })
       //.skip(index * 20)
@@ -52,7 +52,7 @@ export async function getUserReports(email, parameter) {
   } else if (parameter?.getMonth() != undefined) {
     date = parameter;
     reports = "{";
-    // Find total reports for the fiscal year Oct-Sept
+    //Find total reports for the fiscal year Oct-Sept
     if (date.getMonth() >= 9) {
       temp = await ReportSchema.find({
         email,
@@ -133,7 +133,7 @@ export async function getUserReports(email, parameter) {
       reports += ` "quarterReports": ${count},`;
     }
 
-    // Find total reports for each category, for the quarter
+    //Find total reports for each category, for the quarter
     for (let i = 0; i < categories.length; i++) {
       const category = categories[i];
       if (quarter == 1) {
