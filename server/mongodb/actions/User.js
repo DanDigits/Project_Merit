@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import mongoDB from "../dbConnection";
 import UserSchema from "../models/User";
+import User from "../models/User";
 
 // Login user to site
 export async function login({ email, password }) {
@@ -282,4 +283,10 @@ export async function getGroup(group) {
   members.push(personnel);
 
   return members;
+}
+
+export async function getGroupOrphans() {
+  const orphans = await UserSchema?.find({ group: [] });
+  console.log(orphans);
+  return orphans;
 }

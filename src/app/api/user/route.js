@@ -13,6 +13,7 @@ import {
   suspendUser,
   makeAdmin,
   getGroup,
+  getGroupOrphans,
 } from "server/mongodb/actions/User";
 import urls from "../../../../utils/getPath";
 import nodemailer from "nodemailer";
@@ -124,8 +125,15 @@ export async function GET(Request) {
         break;
       }
       case "4": {
+        // Get given group members/users
         const group = requestHeaders?.get("group");
         res = await getGroup(group);
+        res = JSON.stringify(res);
+        return new Response(res, { status: 200 });
+      }
+      case "5": {
+        // Get users without groups
+        res = await getGroupOrphans();
         res = JSON.stringify(res);
         return new Response(res, { status: 200 });
       }
