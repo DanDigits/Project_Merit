@@ -42,33 +42,33 @@ export default function Page() {
     totalReports: "",
     currentQuarter: "",
     quarterReports: "",
-    Duties: "",
-    Conduct: "",
-    Training: "",
-    Teamwork: "",
+    Mission: "",
+    Leadership: "",
+    Resources: "",
+    Unit: "",
   });
 
-  const [duties] = useState({
-    catagory: "Primary / Additional Duties",
-    shorten: "duties",
-    total: 0,
-    needed: 5,
-  });
-  const [conduct] = useState({
-    catagory: "Standards, Conduct, Character & Military Bearings",
-    shorten: "conduct",
+  const [mission] = useState({
+    category: "Executing the Mission",
+    shorten: "mission",
     total: 0,
     needed: 3,
   });
-  const [training] = useState({
-    catagory: "Training Requirements",
-    shorten: "training",
+  const [leadership] = useState({
+    category: "Leading People",
+    shorten: "leadership",
     total: 0,
     needed: 3,
   });
-  const [teamwork] = useState({
-    catagory: "Teamwork / Followership",
-    shorten: "teamwork",
+  const [resources] = useState({
+    category: "Managing Resources",
+    shorten: "resources",
+    total: 0,
+    needed: 3,
+  });
+  const [unit] = useState({
+    category: "Improving the Unit",
+    shorten: "unit",
     total: 0,
     needed: 3,
   });
@@ -132,27 +132,27 @@ export default function Page() {
       console.log("Training: ", totals.Training);
       console.log("Teamwork: ", totals.Teamwork); */
 
-      if (totals.Duties !== "") {
-        duties.total = totals.Duties;
+      if (totals.Mission !== "") {
+        mission.total = totals.Mission;
       }
 
-      if (totals.Conduct !== "") {
-        conduct.total = totals.Conduct;
+      if (totals.Leadership !== "") {
+        leadership.total = totals.Leadership;
       }
 
-      if (totals.Training !== "") {
-        training.total = totals.Training;
+      if (totals.Resources !== "") {
+        resources.total = totals.Resources;
       }
 
-      if (totals.Teamwork !== "") {
-        teamwork.total = totals.Teamwork;
+      if (totals.Unit !== "") {
+        unit.total = totals.Unit;
       }
       setProgress(
         (totals.totalReports /
-          (duties.needed +
-            conduct.needed +
-            training.needed +
-            teamwork.needed)) *
+          (mission.needed +
+            leadership.needed +
+            resources.needed +
+            unit.needed)) *
           100
       );
       console.log("Progress: ", progress);
@@ -287,10 +287,10 @@ export default function Page() {
               columns={{ base: 1, lg: 2 }}
               spacing={{ base: 4, md: 6 }}
             >
-              <StatusBox content={duties}></StatusBox>
-              <StatusBox content={teamwork}></StatusBox>
-              <StatusBox content={training}></StatusBox>
-              <StatusBox content={conduct}></StatusBox>
+              <StatusBox content={mission}></StatusBox>
+              <StatusBox content={leadership}></StatusBox>
+              <StatusBox content={resources}></StatusBox>
+              <StatusBox content={unit}></StatusBox>
             </SimpleGrid>
           </Stack>
         </Card>
