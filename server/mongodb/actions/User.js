@@ -163,9 +163,11 @@ export async function renameGroup(group, groupData) {
   const user = await UserSchema?.find({ group }).catch(function (err) {
     return err;
   });
+  console.log(group);
   while (user[i] != undefined) {
     index = user[i].group?.indexOf(`${group}`);
     user[i].group[index] = groupData.newGroup;
+    console.log(user[i].group[index]);
     await UserSchema?.findOneAndUpdate(
       { email: user[i].email },
       { group: user[i].group }
@@ -305,17 +307,21 @@ export async function getGroup(group) {
   let personnel = await UserSchema?.find(
     { group },
     "-password -__v -_id -isPasswordLocked -emailVerification -verified"
-  ).catch(function (err) {
-    console.log(err);
-    return "ERROR";
-  });
+  )
+    .sort({ lastName: 1, firstName: 1 })
+    .catch(function (err) {
+      console.log(err);
+      return "ERROR";
+    });
   let supervisors = await UserSchema?.find(
     { supervisedGroup: group },
     "-password -__v -_id -isPasswordLocked -emailVerification -verified"
-  ).catch(function (err) {
-    console.log(err);
-    return "ERROR";
-  });
+  )
+    .sort({ lastName: 1, firstName: 1 })
+    .catch(function (err) {
+      console.log(err);
+      return "ERROR";
+    });
 
   if (personnel == undefined) {
     personnel = "";
