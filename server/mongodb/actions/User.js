@@ -155,7 +155,28 @@ export async function modifyUser(userId, userData) {
   return user;
 }
 
-// Delete a user from the database
+// Rename a group by looping through the members, and updating
+export async function renameGroup(group, groupData) {
+  await mongoDB();
+  let index,
+    i = 0;
+  const user = await UserSchema?.find({ group }).catch(function (err) {
+    return err;
+  });
+  while (user[i] != undefined) {
+    index = user[i].group?.indexOf(`${group}`);
+    user[i].group[index] = groupData.newGroup;
+    await UserSchema?.findOneAndUpdate(
+      { email: user[i].email },
+      { group: user[i].group }
+    );
+    i++;
+  }
+  user.id = "OK";
+  return user;
+}
+
+// Delete a user
 export async function deleteUser(userId) {
   await mongoDB();
   const user = await UserSchema.findOneAndDelete({ email: userId }).catch(
@@ -163,6 +184,27 @@ export async function deleteUser(userId) {
       return err;
     }
   );
+  return user;
+}
+
+// Delete a group by looping through the members, and removing
+export async function deleteGroup(group) {
+  await mongoDB();
+  let index,
+    i = 0;
+  const user = await UserSchema?.find({ group }).catch(function (err) {
+    return err;
+  });
+  while (user[i] != undefined) {
+    index = user[i].group?.indexOf(`${group}`);
+    user[i].group.splice(index, 1);
+    await UserSchema?.findOneAndUpdate(
+      { email: user[i].email },
+      { group: user[i].group }
+    );
+    i++;
+  }
+  user.id = "OK";
   return user;
 }
 
@@ -201,6 +243,7 @@ export async function verifyUser(code) {
 
 // Set the users isPasswordLocked field to prevent unauthorized password resets (and recompute email 2FA hash)
 export async function passwordLock(userId) {
+  await mongoDB();
   let random = await bcrypt.hash("gouewyrnpvsuoyashodpifjnbosuihsofb~", 3);
   let user = await UserSchema.findOneAndUpdate(
     { email: userId },
@@ -218,6 +261,7 @@ export async function passwordLock(userId) {
 
 // Prevent user from logging in
 export async function suspendUser(userId) {
+  await mongoDB();
   let user = await UserSchema.findOneAndUpdate(
     { email: userId },
     { verified: false }
@@ -230,6 +274,7 @@ export async function suspendUser(userId) {
 
 // Promote or demote user in relation to current Admin role status
 export async function makeAdmin(userId) {
+  await mongoDB();
   let user = await UserSchema?.findOne({ email: userId });
   if (user?.isAdmin == true) {
     user = await UserSchema.findOneAndUpdate(
@@ -253,12 +298,9 @@ export async function makeAdmin(userId) {
   return user;
 }
 
-// export async function getAllUsers() {
-//   let all =
-// }
-
 // Get group information
 export async function getGroup(group) {
+  await mongoDB();
   let members = [];
   let personnel = await UserSchema?.find(
     { group },
@@ -291,6 +333,7 @@ export async function getGroup(group) {
 }
 
 export async function getGroupOrphans() {
+  await mongoDB();
   const orphans = await UserSchema?.find({ group: [] }).catch(function (err) {
     console.log(err);
     return "ERROR";
@@ -299,6 +342,7 @@ export async function getGroupOrphans() {
 }
 
 export async function getAllUsers() {
+  await mongoDB();
   const users = await UserSchema?.find({ email: { $exists: true } }).catch(
     function (err) {
       console.log(err);
