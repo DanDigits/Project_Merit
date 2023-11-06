@@ -17,6 +17,7 @@ import {
   getAllUsers,
   deleteGroup,
   renameGroup,
+  getSupervisorTable,
 } from "server/mongodb/actions/User";
 import urls from "../../../../utils/getPath";
 import nodemailer from "nodemailer";
@@ -155,6 +156,16 @@ export async function GET(Request) {
           return new Response(JSON.stringify(res), { status: 200 });
         }
       }
+      case "7": {
+        // Get members under a supervisor
+        const group = requestHeaders?.get("group");
+        res = await getSupervisorTable(group);
+        if (res == "ERROR") {
+          return new Response(JSON.stringify(res), { status: 400 });
+        } else {
+          return new Response(JSON.stringify(res), { status: 200 });
+        }
+      }
       default: {
         return new Response("ERROR", { status: 400 });
       }
@@ -215,11 +226,14 @@ export async function PATCH(Request) {
   const requestHeaders = headers();
   const user = requestHeaders?.get("user");
   const group = requestHeaders?.get("group");
+  const admin = requestHeaders?.get("admin");
 
-  if (user == undefined) {
+  if (user == undefined && admin == undefined) {
     res = await renameGroup(group, await Request.json());
-  } else if (group == undefined) {
+  } else if (group == undefined && admin == undefined) {
     res = await modifyUser(user, await Request.json());
+  } else if (user == undefined && group == undefined) {
+    res = await makeAdmin(admin, await Request.json());
   } else {
     res.message = "ERROR";
   }
