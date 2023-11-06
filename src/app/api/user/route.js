@@ -215,11 +215,14 @@ export async function PATCH(Request) {
   const requestHeaders = headers();
   const user = requestHeaders?.get("user");
   const group = requestHeaders?.get("group");
+  const admin = requestHeaders?.get("admin");
 
-  if (user == undefined) {
+  if (user == undefined && admin == undefined) {
     res = await renameGroup(group, await Request.json());
-  } else if (group == undefined) {
+  } else if (group == undefined && admin == undefined) {
     res = await modifyUser(user, await Request.json());
+  } else if (user == undefined && group == undefined) {
+    res = await makeAdmin(admin, await Request.json());
   } else {
     res.message = "ERROR";
   }

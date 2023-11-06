@@ -141,6 +141,17 @@ export async function modifyUser(userId, userData) {
     user.isPasswordLocked == true
   ) {
     // General user information update
+    //Force server values for entered information
+    if (user.isAdmin === false) {
+      userData.isAdmin = false;
+    } else if (user.isAdmin === true) {
+      userData.isAdmin = true;
+    }
+    if (user.verified === false) {
+      userData.verified = false;
+    } else if (user.verified === true) {
+      userData.verified = true;
+    }
     user = await UserSchema.findOneAndUpdate({ email: userId }, userData).catch(
       function (err) {
         return err;
@@ -275,25 +286,31 @@ export async function suspendUser(userId) {
 }
 
 // Promote or demote user in relation to current Admin role status
-export async function makeAdmin(userId) {
+export async function makeAdmin(userId, adminId) {
   await mongoDB();
-  let user = await UserSchema?.findOne({ email: userId });
-  if (user?.isAdmin == true) {
-    user = await UserSchema.findOneAndUpdate(
-      { email: userId },
-      { isAdmin: false }
-    ).catch(function (err) {
-      console.log(err);
+  let user;
+  let verification = await UserSchema?.findById({ _id: adminId });
+  if (verification?.id == adminId) {
+    user = await UserSchema?.findOne({ email: userId });
+    if (user?.isAdmin == true) {
+      user = await UserSchema.findOneAndUpdate(
+        { email: userId },
+        { isAdmin: false }
+      ).catch(function (err) {
+        console.log(err);
+        return "ERROR";
+      });
+    } else if (user?.isAdmin == false) {
+      user = await UserSchema.findOneAndUpdate(
+        { email: userId },
+        { isAdmin: true }
+      ).catch(function (err) {
+        console.log(err);
+        return "ERROR";
+      });
+    } else {
       return "ERROR";
-    });
-  } else if (user?.isAdmin == false) {
-    user = await UserSchema.findOneAndUpdate(
-      { email: userId },
-      { isAdmin: true }
-    ).catch(function (err) {
-      console.log(err);
-      return "ERROR";
-    });
+    }
   } else {
     return "ERROR";
   }
