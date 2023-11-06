@@ -8,9 +8,11 @@ import {
   VStack,
   Center,
   Card,
+  Link,
 } from "@chakra-ui/react";
 
 import InfoBox from "./InfoBox";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 
 const FoundationalChanges = {
   title: "Foundational Changes",
@@ -213,13 +215,16 @@ const infoWordChoice2 = {
 
 const infoWordChoice3 = {
   title: "Acceptable Abbreviations:",
-  listContent: [
-    <u>
-      <a href="https://www.afpc.af.mil/Career-Management/Acronyms/">
-        Air Force Acronym & Abbreviation List
-      </a>
-    </u>,
-  ],
+  paragraphContent: (
+    <Link
+      fontSize={{ base: "sm", md: "md" }}
+      isExternal
+      href="https://www.afpc.af.mil/Career-Management/Acronyms/"
+    >
+      Air Force Acronym & Abbreviation List <ExternalLinkIcon mx="2px" />
+    </Link>
+  ),
+  listContent: [],
 };
 
 export default function Page() {
