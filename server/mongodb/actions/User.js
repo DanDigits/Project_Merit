@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import mongoDB from "../dbConnection";
 import UserSchema from "../models/User";
-import User from "../models/User";
 
 // Login user to site
 export async function login({ email, password }) {
@@ -264,11 +263,17 @@ export async function getGroup(group) {
   let personnel = await UserSchema?.find(
     { group },
     "-password -__v -_id -isPasswordLocked -emailVerification -verified"
-  );
+  ).catch(function (err) {
+    console.log(err);
+    return "ERROR";
+  });
   let supervisors = await UserSchema?.find(
     { supervisedGroup: group },
     "-password -__v -_id -isPasswordLocked -emailVerification -verified"
-  );
+  ).catch(function (err) {
+    console.log(err);
+    return "ERROR";
+  });
 
   if (personnel == undefined) {
     personnel = "";
@@ -286,7 +291,19 @@ export async function getGroup(group) {
 }
 
 export async function getGroupOrphans() {
-  const orphans = await UserSchema?.find({ group: [] });
-  console.log(orphans);
+  const orphans = await UserSchema?.find({ group: [] }).catch(function (err) {
+    console.log(err);
+    return "ERROR";
+  });
   return orphans;
+}
+
+export async function getAllUsers() {
+  const users = await UserSchema?.find({ email: { $exists: true } }).catch(
+    function (err) {
+      console.log(err);
+      return "ERROR";
+    }
+  );
+  return users;
 }

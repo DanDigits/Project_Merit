@@ -14,6 +14,7 @@ import {
   makeAdmin,
   getGroup,
   getGroupOrphans,
+  getAllUsers,
 } from "server/mongodb/actions/User";
 import urls from "../../../../utils/getPath";
 import nodemailer from "nodemailer";
@@ -128,14 +129,29 @@ export async function GET(Request) {
         // Get given group members/users
         const group = requestHeaders?.get("group");
         res = await getGroup(group);
-        res = JSON.stringify(res);
-        return new Response(res, { status: 200 });
+        if (res == "ERROR") {
+          return new Response(JSON.stringify(res), { status: 400 });
+        } else {
+          return new Response(JSON.stringify(res), { status: 200 });
+        }
       }
       case "5": {
         // Get users without groups
         res = await getGroupOrphans();
-        res = JSON.stringify(res);
-        return new Response(res, { status: 200 });
+        if (res == "ERROR") {
+          return new Response(JSON.stringify(res), { status: 400 });
+        } else {
+          return new Response(JSON.stringify(res), { status: 200 });
+        }
+      }
+      case "6": {
+        // Get all users
+        res = await getAllUsers();
+        if (res == "ERROR") {
+          return new Response(JSON.stringify(res), { status: 400 });
+        } else {
+          return new Response(JSON.stringify(res), { status: 200 });
+        }
       }
       default: {
         return new Response("ERROR", { status: 400 });
