@@ -36,7 +36,7 @@ export async function getReport(reportData) {
 // The second eponymous parameter, is either respectively the index for loading additional reports, or the current date
 export async function getUserReports(email, parameter) {
   await mongoDB();
-  const categories = ["Duties", "Conduct", "Training", "Teamwork"];
+  const categories = ["Mission", "Leadership", "Resources", "Unit"];
   let reports, quarter, temp, date, index;
 
   if (typeof parseInt(parameter) === "number" && !isNaN(parseInt(parameter))) {
