@@ -1,12 +1,13 @@
 "use client";
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Center, Spinner, Text, Button } from "@chakra-ui/react";
+import { Center, Spinner, Text, Button, Icon } from "@chakra-ui/react";
 import ReportTable from "./ReportTable";
 import { getSession } from "next-auth/react";
 import { getUserReports } from "./../../actions/Report.js";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
+import { PiEyeBold } from "react-icons/pi";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   const ref = useRef(null);
@@ -100,36 +101,68 @@ export default function Page() {
         ),
       },
       {
-        accessorKey: "category",
-        header: () => "Category",
+        id: "view",
+        header: "View",
+        cell: ({ cell }) => (
+          <>
+            <Button
+              size={{ base: "sm", lg: "md" }}
+              textColor={"white"}
+              bg={"#1c303c"}
+              opacity={0.85}
+              borderColor={"#354751"}
+              borderWidth={"thin"}
+              _hover={{ color: "black", bg: "white", opacity: 1 }}
+              onClick={() => handleSubmitInfo(cell.row.original._id)}
+            >
+              <Icon as={PiEyeBold} />
+            </Button>
+          </>
+        ),
       },
       {
         accessorKey: "date",
         header: "Date",
+        enableColumnFilter: true,
+        filterFn: (row, columnId, value) => {
+          const date = row.getValue(columnId);
+          const [start, end] = value; // value => two date input values
+          //If one filter defined and date is null filter it
+          if ((start || end) && !date) return false;
+          if (start && !end) {
+            return date >= start;
+          } else if (!start && end) {
+            return date <= end;
+          } else if (start && end) {
+            return date >= start && date <= end;
+          } else return true;
+        },
       },
       {
-        accessorKey: "title",
-        header: "Title",
-      },
-      {
-        accessorKey: "report",
-        header: "Content",
+        accessorKey: "category",
+        header: () => "Performance Area",
+        cell: ({ cell }) =>
+          cell.row.original.category === "Mission"
+            ? "Executing the Mission"
+            : cell.row.original.category === "Leadership"
+            ? "Leading People"
+            : cell.row.original.category === "Resources"
+            ? "Managing Resources"
+            : cell.row.original.category === "Unit"
+            ? "Improving the Unit"
+            : cell.row.original.category,
+
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterCategories) => {
+          if (filterCategories.length === 0) return true;
+          const category = row.getValue(columnId);
+          return filterCategories.includes(category);
+        },
       },
 
       {
-        id: "view",
-        header: "View/Edit",
-        cell: ({ cell }) => (
-          <>
-            <Button
-              textColor={"white"}
-              bg={"#706993"}
-              onClick={() => handleSubmitInfo(cell.row.original._id)}
-            >
-              View
-            </Button>
-          </>
-        ),
+        accessorKey: "title",
+        header: "Title",
       },
     ],
 

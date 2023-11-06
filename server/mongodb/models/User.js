@@ -27,10 +27,30 @@ const UserSchema = new Schema({
   },
   verified: {
     type: Boolean,
-    required: false,
+    required: true,
+  },
+  isAdmin: {
+    type: Boolean,
+    required: true,
   },
   isPasswordLocked: {
     type: Boolean,
+    required: true,
+  },
+  emailVerification: {
+    type: String,
+    required: true,
+  },
+  lastLogin: {
+    type: String,
+    required: false,
+  },
+  group: {
+    type: [String],
+    required: false,
+  },
+  supervisedGroup: {
+    type: [String],
     required: false,
   },
 });

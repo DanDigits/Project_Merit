@@ -56,10 +56,10 @@ export default function UpdatePassword() {
   return (
     <>
       <Card
-        p={2}
+        p={{ base: 0, md: 2 }}
         alignSelf={"center"}
-        size={{ base: "sm", md: "md" }}
-        w={{ md: "lg" }}
+        size={{ base: "sm", md: "lg" }}
+        w={{ base: "100%", lg: "lg" }}
         bgColor={"white"}
       >
         <CardHeader mb={-5} fontSize={30} color={"black"}>
@@ -141,9 +141,9 @@ export default function UpdatePassword() {
         <CardFooter>
           <ButtonGroup>
             <Button
-              bgColor={"#70A0AF"}
+              bgColor={"#6abbc4"}
               color={"white"}
-              _hover={{ bgColor: "#706993", color: "white" }}
+              _hover={{ bgColor: "#031926", color: "white" }}
               form="report-form"
               type="submit"
               onClick={(e) => handleSubmitInfo(e)}

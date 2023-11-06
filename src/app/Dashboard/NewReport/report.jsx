@@ -91,14 +91,14 @@ export default function Report(report_mode) {
           setReport(arr.report);
           setIsLoading(false);
 
-          if (arr.category === "Duties") {
-            setLongCategory("Primary / Additional Duties");
-          } else if (arr.category === "Conduct") {
-            setLongCategory("Standards, Conduct, Character & Military Bearing");
-          } else if (arr.category === "Training") {
-            setLongCategory("Training Requirements");
-          } else if (arr.category === "Teamwork") {
-            setLongCategory("Teamwork / Followership");
+          if (arr.category === "Mission") {
+            setLongCategory("Executing the Mission");
+          } else if (arr.category === "Leadership") {
+            setLongCategory("Leading People");
+          } else if (arr.category === "Resources") {
+            setLongCategory("Managing Resources");
+          } else if (arr.category === "Unit") {
+            setLongCategory("Improving the Unit");
           } else {
             setLongCategory(arr.category);
           }
@@ -194,7 +194,7 @@ export default function Report(report_mode) {
                 <Select
                   isReadOnly={state}
                   alpha={"1.0"}
-                  variant="login"
+                  variant="trim"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
                   bg="#F7FAFC"
@@ -202,17 +202,17 @@ export default function Report(report_mode) {
                   size={"md"}
                   value={category}
                 >
-                  <option value={"Duties"} disabled>
-                    Primary / Additional Duties
+                  <option value={"Mission"} disabled>
+                    Executing the Mission
                   </option>
-                  <option value={"Conduct"} disabled>
-                    Standards, Conduct, Character & Military Bearing
+                  <option value={"Leadership"} disabled>
+                    Leading People
                   </option>
-                  <option value={"Training"} disabled>
-                    Training Requirements
+                  <option value={"Resources"} disabled>
+                    Managing Resources
                   </option>
-                  <option value={"Teamwork"} disabled>
-                    Teamwork / Followership
+                  <option value={"Unit"} disabled>
+                    Improving the Unit
                   </option>
                 </Select>
               </FormControl>
@@ -226,7 +226,7 @@ export default function Report(report_mode) {
                 <Select
                   isReadOnly={state}
                   placeholder="Select Category"
-                  variant="login"
+                  variant="trim"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
                   bg="#F7FAFC"
@@ -235,12 +235,10 @@ export default function Report(report_mode) {
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
-                  <option value={"Duties"}>Primary / Additional Duties</option>
-                  <option value={"Conduct"}>
-                    Standards, Conduct, Character & Military Bearing
-                  </option>
-                  <option value={"Training"}>Training Requirements</option>
-                  <option value={"Teamwork"}>Teamwork / Followership</option>
+                  <option value={"Mission"}>Executing the Mission</option>
+                  <option value={"Leadership"}>Leading People</option>
+                  <option value={"Resources"}>Managing Resources</option>
+                  <option value={"Unit"}>Improving the Unit</option>
                 </Select>
               </FormControl>
             </>
@@ -269,7 +267,7 @@ export default function Report(report_mode) {
             name={"thesaurus"}
             id={"thesaurusSwitch"}
             isReadOnly={state}
-            colorScheme={"teal"}
+            colorScheme={"cyan"}
             onChange={(e) => setToggle(!toggle)}
           />
         </FormControl>
@@ -289,7 +287,7 @@ export default function Report(report_mode) {
               placeholder="What would you like to report?"
               type="text"
               varient="outline"
-              variant="login"
+              variant="trim"
               borderWidth={"2px"}
               borderColor={"#70A0AF"}
               bg="#F7FAFC"

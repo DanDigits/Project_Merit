@@ -30,10 +30,11 @@ export default function Page() {
   return (
     <>
       <Card
-        p={2}
+        p={{ base: 0, md: 2 }}
+        mx={{ base: -4, md: 0 }}
         alignSelf={"center"}
         size={{ base: "sm", md: "lg" }}
-        w={'{ md: "lg" }'}
+        w={{ md: "100%" }}
         bgColor={"white"}
       >
         <VStack m="5vh">
@@ -44,17 +45,17 @@ export default function Page() {
           <ButtonGroup>
             <Link href="/Dashboard/Home">
               <Button
-                bgColor={"#A0C1B9"}
-                color={"#331E38"}
-                _hover={{ bgColor: "#706993", color: "white" }}
+                bgColor={"#7eb67d"}
+                color={"#black"}
+                _hover={{ bgColor: "#031926", color: "white" }}
               >
                 Cancel
               </Button>
             </Link>
             <Button
-              bgColor={"#70A0AF"}
-              color={"white"}
-              _hover={{ bgColor: "#706993", color: "white" }}
+              bgColor={"#6abbc4"}
+              color={"black"}
+              _hover={{ bgColor: "#031926", color: "white" }}
               form="report-form"
               type="submit"
             >

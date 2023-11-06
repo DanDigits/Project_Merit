@@ -36,9 +36,57 @@ export const getUser = async ({ email }) => {
     mode: "same-origin",
     headers: {
       user: email,
+      request: "2",
     },
   });
   console.log(response.statusText);
+
+  return response;
+};
+
+// send password reset email
+export const requestReset = async ({ email }) => {
+  const response = await fetch(getPath.baseUrl + getPath.api.user.get, {
+    method: "GET",
+    mode: "same-origin",
+    headers: {
+      forgot: email,
+      request: "1",
+    },
+  });
+  console.log(response.statusText);
+
+  return response;
+};
+
+// resend password request email
+export const resendRequest = async ({ email }) => {
+  const response = await fetch(getPath.baseUrl + getPath.api.user.get, {
+    method: "GET",
+    mode: "same-origin",
+    headers: {
+      forgot: email,
+      request: "3",
+    },
+  });
+  console.log(response.statusText);
+
+  return response;
+};
+
+// Specifically for password resets when users are not already signed in
+export const resetPassword = async ({ num, newPassword }) => {
+  const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
+    method: "PATCH",
+    mode: "same-origin",
+    headers: {
+      user: num,
+    },
+    body: JSON.stringify({
+      newPassword,
+    }),
+  });
+  console.log("Update Response:", response.statusText);
 
   return response;
 };
@@ -49,7 +97,6 @@ export const updateUser = async ({
   firstName,
   lastName,
   suffix,
-  password,
 }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
     method: "PATCH",
@@ -63,7 +110,6 @@ export const updateUser = async ({
       firstName,
       lastName,
       suffix,
-      password,
     }),
   });
   console.log("Update Response:", response.statusText);
@@ -71,6 +117,7 @@ export const updateUser = async ({
   return response;
 };
 
+// Specifically used to change password when the user is already signed in
 export const updatePassword = async ({ email, password, newPassword }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
     method: "PATCH",
