@@ -62,12 +62,14 @@ export const authOptions = {
 
       if (trigger === "update") {
         console.log("update callback", { token, user, session });
+        console.log("Session rank:", session.user.rank);
+        token.rank = "test";
+        token.firstName = "test";
+        token.lastName = "test";
+        token.suffix = "test";
+
         return {
-          ...token,
-          rank: session.user.rank,
-          firstName: session.user.firstName,
-          lastName: session.user.lastName,
-          suffix: session.user.suffix,
+          token,
         };
       }
       return { ...token, ...user };
