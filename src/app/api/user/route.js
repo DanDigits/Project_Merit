@@ -208,7 +208,7 @@ export async function POST(Request) {
   let adminRegistered = await getUser(admin);
 
   //Check if user was created by an administrator, and send requisite email
-  if (adminRegistered?.id != undefined) {
+  if (adminRegistered?.role == "Admin") {
     req.verified = true;
     admin = true;
   } else {
