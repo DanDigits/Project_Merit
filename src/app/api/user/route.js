@@ -205,10 +205,10 @@ export async function POST(Request) {
   let req = await Request.json();
   const requestHeaders = headers();
   let admin = requestHeaders?.get("admin");
-  let adminRegistered = await getUser(admin);
+  let registrar = await getUser(admin);
 
   //Check if user was created by an administrator, and send requisite email
-  if (adminRegistered?.role == "Admin") {
+  if (registrar?.role == "Admin") {
     req.verified = true;
     admin = true;
   } else {

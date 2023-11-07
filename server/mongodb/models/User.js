@@ -50,8 +50,7 @@ const UserSchema = new Schema({
     type: [String],
     required: false,
   },
-  //Cant make it say Password
-  passworLocked: {
+  passwordLocked: {
     type: Boolean,
     required: false,
     default: false,
