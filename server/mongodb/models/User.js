@@ -29,13 +29,14 @@ const UserSchema = new Schema({
     type: Boolean,
     required: true,
   },
-  isAdmin: {
-    type: Boolean,
+  role: {
+    type: String,
     required: true,
   },
-  isPasswordLocked: {
+  passwordLocked: {
     type: Boolean,
-    required: true,
+    required: false,
+    default: false,
   },
   emailVerification: {
     type: String,
@@ -43,7 +44,8 @@ const UserSchema = new Schema({
   },
   lastLogin: {
     type: String,
-    required: false,
+    required: true,
+    default: "Never logged in",
   },
   group: {
     type: [String],
@@ -52,6 +54,51 @@ const UserSchema = new Schema({
   supervisedGroup: {
     type: [String],
     required: false,
+  },
+  suspended: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  totalReports: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
+  currentQuarter: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
+  quarterReports: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
+  Mission: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
+  Leadership: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
+  Resources: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
+  Unit: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
+  mostRecentReportDate: {
+    type: Number,
+    required: false,
+    default: 0,
   },
 });
 
