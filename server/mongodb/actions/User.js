@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import mongoDB from "../dbConnection";
 import UserSchema from "../models/User";
-import { getUserReports } from "server/mongodb/actions/Report";
 
 // Login user to site
 export async function login({ email, password }) {
@@ -95,7 +94,7 @@ export async function modifyUser(userId, userData) {
   if (userId.includes("@")) {
     user = await UserSchema.findOne({ email: userId });
   } else {
-    user = await UserSchema.findOne({ emailVerification: userId });
+    user = await UserSchema.findOne({ _id: userId });
     userId = user.email;
   }
 
@@ -120,14 +119,14 @@ export async function modifyUser(userId, userData) {
           return user;
         });
     } else {
-      user.message = "UNABLE"; //Error response if unable to reset password when user logged in
+      user.message = "UNABLE"; //Error response if unable to reset password when user is logged in
     }
   } else if (
     password == undefined &&
     newPassword != undefined &&
     user.passwordLocked == false
   ) {
-    // Forgot password so isnt logged in, verifyUser() verified email code for password reset
+    // Forgot password; user is not logged in. verifyUser() verified email code for password reset
     await verifyUser(userData?.emailVerification); //If user is email verified, undo password lock
     let random = await bcrypt.hash("gouewyrnpvsuoyashodpifjnbosuihsofb~", 3);
     return bcrypt
@@ -150,13 +149,13 @@ export async function modifyUser(userId, userData) {
     user.passwordLocked == true
   ) {
     // General user update
-    //Force server values for entered information
-    userData.role = user.role;
-    userData.verified = user.verified;
+    // Force server values for entered information
+    userData.role = user?.role;
+    userData.verified = user?.verified;
     userData.passwordLocked = true;
-    userData.suspended = user.suspended;
+    userData.suspended = user?.suspended;
 
-    //Update user
+    // Update user
     user = await UserSchema.findOneAndUpdate({ email: userId }, userData).catch(
       function (err) {
         return err;
@@ -380,23 +379,24 @@ export async function getAllUsers() {
   return users;
 }
 
-export async function getSupervisorTable(group) {
-  await mongoDB();
-  const date = new Date();
-  let i = 0,
-    table = [],
-    groupMembers = await getGroup(group);
-  while (groupMembers[1][i] != undefined) {
-    console.log("LOOP");
-    table[i] = Object.assign(
-      {},
-      groupMembers[1][i]._doc,
-      await getUserReports(groupMembers[1][i].email, date)
-    );
-    i++;
-  }
-  console.log(table);
-  return table;
-}
+// export async function getSupervisorTable(group) {
+//   await mongoDB();
+//   const date = new Date();
+//   let i = 0,
+//     table = [],
+//     groupMembers = await getGroup(group);
+//   while (groupMembers[1][i] != undefined) {
+//     console.log("LOOP");
+//     table[i] = Object.assign(
+//       {},
+//       groupMembers[1][i]._doc,
+//       await getUserReports(groupMembers[1][i].email, date)
+//     );
+//     i++;
+//   }
+//   console.log(table);
+//   return table;
+// }
 
+// Fix above
 // How are supervisors to add users?

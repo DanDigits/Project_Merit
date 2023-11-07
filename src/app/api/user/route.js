@@ -39,11 +39,11 @@ export async function resendMail(userId, subject) {
   // New verification code for every email
   let userData = await passwordLock(userId);
 
-  // Email user search/shuffle failed
+  // Email user search failed
   if (userData?.email == undefined) {
     return "ERROR";
   } else if (subject == "signup") {
-    // Send verification email if user is new
+    // Send 2FA email if user is new
     const mailData = {
       from: process.env.EMAIL_FROM,
       to: userData.email,
@@ -60,7 +60,7 @@ export async function resendMail(userId, subject) {
     });
     setTimeout(deleteUser, 60000 * 1440 * 3, userData.email); // REPLACE THIS WITH DAILY CHECK ON DB
   } else {
-    // Send 2FA email for forgotten password
+    // Send 2FA email to change password
     const mailData = {
       from: process.env.EMAIL_FROM,
       to: userData.email,
@@ -114,7 +114,7 @@ export async function GET(Request) {
         }
       }
       case "3": {
-        // Resend email
+        // Resend respective email
         const forgot = requestHeaders?.get("forgot");
         const user = requestHeaders?.get("user");
         if (forgot == undefined && user == undefined) {
@@ -207,7 +207,7 @@ export async function POST(Request) {
   let admin = requestHeaders?.get("admin");
   let registrar = await getUser(admin);
 
-  //Check if user was created by an administrator, and send requisite email
+  // Check if user was created by an administrator, and set verified accordingly
   if (registrar?.role == "Admin") {
     req.verified = true;
     admin = true;
@@ -217,10 +217,10 @@ export async function POST(Request) {
     admin = false;
   }
 
-  //Create user
+  // Create user
   let res = await signUp(req);
 
-  //HTTP Responses
+  // HTTP Responses
   if (res.name) {
     if (res.name == "ValidationError") {
       return new Response(res, { status: 422 });
@@ -233,7 +233,7 @@ export async function POST(Request) {
     resendMail(res.email, "signup");
     return new Response("OK", { status: 200 });
   } else if (res?.id != undefined && admin == true) {
-    resendMail(res.email, "forgotPassword");
+    resendMail(res.email, "forgotPassword"); // Change temp password
     return new Response("OK", { status: 200 });
   } else {
     return new Response("SERVER ERROR", { status: 400 });
@@ -273,8 +273,8 @@ export async function PATCH(Request) {
   }
 }
 
+// Delete a user, or a group
 export async function DELETE() {
-  // Delete a user, or a group
   let res;
   const requestHeaders = headers();
   const user = requestHeaders?.get("user");
