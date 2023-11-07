@@ -74,6 +74,8 @@ export default function Page() {
   });
 
   useEffect(() => {
+    getSession().then((session) => console.log("Session: ", session));
+
     if (!hasEmail) {
       setIsLoading(true);
       setHasError(false);

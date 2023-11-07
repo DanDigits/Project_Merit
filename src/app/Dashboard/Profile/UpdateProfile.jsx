@@ -88,7 +88,10 @@ export default function UpdateProfile() {
             {
               setMode("View");
               setMsg("");
-              updateSession({ rank, lastName, suffix });
+              console.log("client rank: ", rank);
+              updateSession();
+              console.log("session rank: ", session.user.rank);
+              console.log("Session: ", { session });
             }
           } else {
             alert("User could not be updated. Please try again.");
@@ -98,15 +101,19 @@ export default function UpdateProfile() {
     }
   };
 
-  const updateSession = async ({ rank, lastName, suffix }) => {
+  const updateSession = async () => {
+    if (session) {
+      session.user.rank = rank;
+      session.user.lastName = lastName;
+      session.user.suffix = suffix;
+    }
+
+    console.log("Updating...");
     await update({
-      ...session,
-      user: {
-        ...session?.user,
-        rank: rank,
-        lastName: lastName,
-        suffix: suffix,
-      },
+      rank: session.user.rank,
+      firstName: session.user.firstName,
+      lastname: session.user.lastName,
+      suffix: session.user.suffix,
     });
   };
 
@@ -308,7 +315,7 @@ export default function UpdateProfile() {
                 </Flex>
               )}
               {mode === "Edit" && (
-                <flex>
+                <Flex>
                   <HStack justify={"flex-end"}>
                     <Button
                       bgColor={"#A0C1B9"}
@@ -330,7 +337,7 @@ export default function UpdateProfile() {
                       Update
                     </Button>
                   </HStack>
-                </flex>
+                </Flex>
               )}
             </CardFooter>
           </Card>

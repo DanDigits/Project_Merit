@@ -52,7 +52,7 @@ export const authOptions = {
       if (user) {
         return {
           ...token,
-          id: user.id,
+          email: user.email,
           rank: user.rank,
           firstName: user.firstName,
           lastName: user.lastName,
@@ -61,10 +61,16 @@ export const authOptions = {
       }
 
       if (trigger === "update") {
-        return { ...token, ...session.user };
+        console.log("update callback", { token, user, session });
+        return {
+          ...token,
+          rank: session.user.rank,
+          firstName: session.user.firstName,
+          lastName: session.user.lastName,
+          suffix: session.user.suffix,
+        };
       }
-
-      return token;
+      return { ...token, ...user };
     },
     async session({ session, token, user }) {
       console.log("session callback", { token, user, session });
