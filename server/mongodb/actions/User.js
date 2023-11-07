@@ -67,7 +67,7 @@ export async function signUp(userData) {
 export async function getUser(userId) {
   await mongoDB();
   let user,
-    filter = "-password -__v -_id -passwordLocked"; //Return without user password, id, password lock status, __v mongo info.
+    filter = "-password -__v -_id -passworLocked"; //Return without user password, id, password lock status, __v mongo info.
   //If statement to retrieve user from database
   if (userId?.includes("@")) {
     user = await UserSchema.findOne({ email: userId }, filter).catch(function (
@@ -105,7 +105,7 @@ export async function modifyUser(userId, userData) {
     const didMatch = await bcrypt.compare(userData.password, user.password);
     if (!didMatch) {
       user.message = "INCORRECT"; //If current password does not match, return error
-    } else if (didMatch && user.passwordLocked == false) {
+    } else if (didMatch && user.passworLocked == false) {
       return bcrypt
         .hash(userData.newPassword, 10)
         .then((hashedPassword) =>
@@ -125,7 +125,7 @@ export async function modifyUser(userId, userData) {
   } else if (
     password == undefined &&
     newPassword != undefined &&
-    user.passwordLocked == false
+    user.passworLocked == false
   ) {
     // Forgot password so isnt logged in, verifyUser() verified email code for password reset
     await verifyUser(userData?.emailVerification); //If user is email verified, undo password lock
@@ -147,7 +147,7 @@ export async function modifyUser(userId, userData) {
   } else if (
     password == undefined &&
     newPassword == undefined &&
-    user.passwordLocked == true
+    user.passworLocked == true
   ) {
     // General user information update
     //Force server values for entered information
@@ -251,7 +251,7 @@ export async function verifyUser(code) {
   } else if (user?.verified == true) {
     //Unlock the users password to allow for reset, then lock the password after the set amount of time.
     user = await UserSchema.findByIdAndUpdate(user.id, {
-      passwordLocked: false,
+      passworLocked: false,
     }).catch(function (err) {
       console.log(err);
       return "ERROR";
@@ -263,14 +263,14 @@ export async function verifyUser(code) {
   }
 }
 
-// Set the users passwordLocked field to prevent unauthorized password resets (and recompute email 2FA hash)
+// Set the users passworLocked field to prevent unauthorized password resets (and recompute email 2FA hash)
 export async function passwordLock(userId) {
   await mongoDB();
   let random = await bcrypt.hash("gouewyrnpvsuoyashodpifjnbosuihsofb~", 3);
   let user = await UserSchema.findOneAndUpdate(
     { email: userId },
     {
-      passwordLocked: true,
+      passworLocked: true,
       emailVerification: random,
     }
   ).catch(function (err) {
@@ -332,7 +332,7 @@ export async function getGroup(group) {
   let members = [];
   let personnel = await UserSchema?.find(
     { group },
-    "-password -__v -_id -passwordLocked -emailVerification -verified"
+    "-password -__v -_id -passworLocked -emailVerification -verified"
   )
     .sort({ lastName: 1, firstName: 1 })
     .catch(function (err) {
@@ -341,7 +341,7 @@ export async function getGroup(group) {
     });
   let supervisors = await UserSchema?.find(
     { supervisedGroup: group },
-    "-password -__v -_id -passwordLocked -emailVerification -verified"
+    "-password -__v -_id -passworLocked -emailVerification -verified"
   )
     .sort({ lastName: 1, firstName: 1 })
     .catch(function (err) {
