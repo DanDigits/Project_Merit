@@ -34,7 +34,7 @@ const transporter = nodemailer.createTransport({
   secure: false,
   requireTLS: true,
 });
-
+// Send email, wasnt named sendEmail
 export async function resendMail(userId, subject) {
   // New verification code for every email
   let userData = await passwordLock(userId);
@@ -200,28 +200,48 @@ export async function GET(Request) {
   }
 }
 
+// Register new user with signup data
 export async function POST(Request) {
-  // Register new user with signup data
-  Request.verified = false;
-  let res = await signUp(await Request.json());
-  if (res?.id != undefined && res != "ConflictError") {
-    resendMail(res.email, "signup");
+  let req = await Request.json();
+  const requestHeaders = headers();
+  let admin = requestHeaders?.get("admin");
+  let adminRegistered = await getUser(admin);
 
-    // HTTP Response
-    return new Response("OK", { status: 200 });
-  } else if (res.name == "ValidationError") {
-    return new Response(res, { status: 422 });
+  //Check if user was created by an administrator, and send requisite email
+  if (adminRegistered?.id != undefined) {
+    req.verified = true;
+    admin = true;
+  } else {
+    req.verified = false;
+    req.role = "User";
+    admin = false;
+  }
+
+  //Create user
+  let res = await signUp(req);
+
+  //HTTP Responses
+  if (res.name) {
+    if (res.name == "ValidationError") {
+      return new Response(res, { status: 422 });
+    } else {
+      return new Response(res.message, { status: 400 });
+    }
   } else if (res == "ConflictError") {
     return new Response(JSON.stringify("EXISTS"), { status: 409 });
-  } else if (res.name) {
-    return new Response(res.message, { status: 400 });
+  } else if (res?.id != undefined && admin == false) {
+    resendMail(res.email, "signup");
+    return new Response("OK", { status: 200 });
+  } else if (res?.id != undefined && admin == true) {
+    resendMail(res.email, "forgotPassword");
+    return new Response("OK", { status: 200 });
   } else {
     return new Response("SERVER ERROR", { status: 400 });
   }
 }
 
+// Modify/Edit/Update user data
 export async function PATCH(Request) {
-  // Modify/Edit/Update user data
   let res;
   const requestHeaders = headers();
   const user = requestHeaders?.get("user");

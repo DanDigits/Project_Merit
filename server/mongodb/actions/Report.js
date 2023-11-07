@@ -41,7 +41,7 @@ export async function getUserReports(email, parameter) {
 
   if (typeof parseInt(parameter) === "number" && !isNaN(parseInt(parameter))) {
     index = parseInt(parameter);
-    //Find # of the users most recent reports, after the given index
+    //Find # of the users most recent reports, after the given index; pagination, currently not implemented
     reports = await ReportSchema.find({ email })
       .sort({ date: -1 })
       //.skip(index * 20)
