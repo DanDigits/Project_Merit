@@ -17,8 +17,10 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import Dialog from "../NewUser/dialog";
-//import { createUser, getUser, updateUser } from "";
+import { createUser } from "./../../../actions/Admin.js";
+
 import secureLocalStorage from "react-secure-storage";
+import { getUser, updateUser } from "./../../../actions/User.js";
 
 export default function User(user_mode) {
   const router = useRouter();
@@ -27,11 +29,11 @@ export default function User(user_mode) {
   const [lastName, setLastName] = useState("");
   const [suffix, setSuffix] = useState("");
   const [rank, setRank] = useState("");
-  const [email, setEmail] = useState("");
+  //const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
-  const [membership, setMembership] = useState("");
-  const [managed, setManaged] = useState("");
+  const [group, setGroup] = useState("");
+  const [groupSupervised, setGroupSupervised] = useState("");
   const [role, setRole] = useState("user");
   const [entry, setEntry] = useState("");
   const totalReports = 0;
@@ -43,9 +45,9 @@ export default function User(user_mode) {
   const [hasError, setHasError] = useState(false);
   const [hasEntry, setHasEntry] = useState(false);
 
-  const [hasUserName, setHasUserName] = useState(false);
-  const [userName, setUserName] = useState(
-    String(secureLocalStorage.getItem("UserName"))
+  const [hasEmail, setHasEmail] = useState(false);
+  const [email, setEmail] = useState(
+    String(secureLocalStorage.getItem("email"))
   );
 
   const [membershipNotFound, setMembershipNotFound] = useState(null);
@@ -55,7 +57,7 @@ export default function User(user_mode) {
 
   if (user_mode === "View") {
     state = true;
-    console.log(userName);
+    console.log(email);
   } else state = false;
 
   const handleSubmitInfo = (e) => {
@@ -77,25 +79,25 @@ export default function User(user_mode) {
 
   useEffect(() => {
     if (user_mode === "View") {
-      if (userName !== "" && userName !== null) {
-        setHasUserName(true);
-        console.log("hasUserName:", userName);
+      if (email !== "" && email !== null) {
+        setHasEmail(true);
+        console.log("hasEmail:", email);
       } else {
-        console.log("username missing");
+        console.log("email missing");
       }
       if (entry !== null) {
         setHasEntry(true);
         console.log("hasEntry:", entry);
       }
-      if (hasUserName && !hasEntry) {
-        secureLocalStorage.removeItem("UserName");
-        console.log("hasusername && !hasEntry", userName, hasEntry);
+      if (hasEmail && !hasEntry) {
+        secureLocalStorage.removeItem("email");
+        console.log("hasEmail && !hasEntry", email, hasEntry);
         setIsLoading(true);
         setHasError(false);
-        if (userName == "null") {
+        if (email == "null") {
           router.push("/Admin/Users");
         } else {
-          getUser({ userName }).then((response) => {
+          getUser({ email }).then((response) => {
             response.ok
               ? response
                   .json()
@@ -105,8 +107,8 @@ export default function User(user_mode) {
           });
         }
       }
-      if (hasUserName && hasEntry) {
-        console.log("hasusename && hasEntry", userName, hasEntry);
+      if (hasEmail && hasEntry) {
+        console.log("hasEmail && hasEntry", email, hasEntry);
         var arr = JSON.parse(JSON.stringify(entry));
         if (arr) {
           setName(arr.name);
@@ -115,7 +117,7 @@ export default function User(user_mode) {
         }
       }
     }
-  }, [hasEntry, hasUserName, userName, entry, user_mode, router]);
+  }, [hasEntry, hasEmail, email, entry, user_mode, router]);
 
   return (
     <>
@@ -383,7 +385,7 @@ export default function User(user_mode) {
             </>
           )}
           <Box display={!role || role === null ? "none" : "initial"}>
-            <FormControl id="membership">
+            <FormControl id="group">
               <FormLabel mb={1} fontSize={15} color={"#331E38"}>
                 {user_mode === "New"
                   ? "Assign Membership Group"
@@ -392,7 +394,7 @@ export default function User(user_mode) {
               <Input
                 isReadOnly={state}
                 type=""
-                value={membership}
+                value={group}
                 maxLength={64}
                 variant="login"
                 borderWidth={"2px"}
@@ -400,7 +402,7 @@ export default function User(user_mode) {
                 bg="#F7FAFC"
                 mb={3}
                 size={"md"}
-                onChange={(e) => setMembership(e.target.value)}
+                onChange={(e) => setGroup(e.target.value)}
               />
             </FormControl>
             <Button mb={6} display={user_mode === "View" ? "initial" : "none"}>
@@ -413,14 +415,14 @@ export default function User(user_mode) {
             )}
           </Box>
           <Box display={role === "supervisor" ? "initial" : "none"}>
-            <FormControl id="managed">
+            <FormControl id="groupSupervised">
               <FormLabel mb={1} fontSize={15} color={"#331E38"}>
                 {user_mode === "New" ? "Assign Managed Group" : "Managed Group"}
               </FormLabel>
               <Input
                 isReadOnly={state}
                 type=""
-                value={managed}
+                value={groupSupervised}
                 maxLength={64}
                 variant="login"
                 borderWidth={"2px"}
@@ -428,7 +430,7 @@ export default function User(user_mode) {
                 bg="#F7FAFC"
                 mb={3}
                 size={"md"}
-                onChange={(e) => setManaged(e.target.value)}
+                onChange={(e) => setGroupSupervised(e.target.value)}
               />
             </FormControl>
             <Button display={user_mode === "View" ? "initial" : "none"}>

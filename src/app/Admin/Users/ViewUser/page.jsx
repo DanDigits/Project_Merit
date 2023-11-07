@@ -26,7 +26,7 @@ import secureLocalStorage from "react-secure-storage";
 export default function Page() {
   const [mode, setMode] = useState("View");
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const userEmail = String(secureLocalStorage.getItem("userEmail"));
+  const userEmail = String(secureLocalStorage.getItem("email"));
 
   const handleDelete = () => {
     deleteUser({ userEmail }).then((response) => {

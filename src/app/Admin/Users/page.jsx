@@ -10,10 +10,10 @@ import React, {
 import { Center, Spinner, Text, Button, Icon, Heading } from "@chakra-ui/react";
 import UserTable from "./UserTable.jsx";
 import { getSession } from "next-auth/react";
-//import { getAllUsers } from "";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
 import { PiEyeBold } from "react-icons/pi";
+import { getAllUsers } from "./../../actions/User.js";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   const ref = useRef(null);
@@ -43,19 +43,19 @@ export default function Page() {
   const [index, setIndex] = useState("0");
 
   const handleSubmitInfo = useCallback(
-    (name) => {
-      secureLocalStorage.setItem("userName", name);
+    (email) => {
+      secureLocalStorage.setItem("email", email);
       router.push("/Admin/Users/ViewUser");
     },
     [router]
   );
 
-  /*useEffect(() => {
+  useEffect(() => {
     if (!hasUsers) {
-      console.log("!hasuser", hasUsers);
+      console.log("!hasusers", hasUsers);
       setIsLoading(true);
       setHasError(false);
-      getAllUsers({ index }).then((response) => {
+      getAllUsers().then((response) => {
         response.ok
           ? response
               .json()
@@ -68,7 +68,7 @@ export default function Page() {
       console.log("hasusers", hasUsers);
       setIsLoading(false);
     }
-  }, [hasUsers, index]);*/
+  }, [hasUsers]);
 
   const columns = React.useMemo(
     () => [
@@ -110,23 +110,22 @@ export default function Page() {
         header: "Role",
       },
       {
-        accessorKey: "membership",
+        accessorKey: "group",
         header: "Group Membership",
         cell: ({ cell }) =>
-          !cell.row.original.membership ||
-          cell.row.original.membership === "unassigned"
+          !cell.row.original.group || cell.row.original.group === "unassigned"
             ? ""
-            : cell.row.original.membership,
+            : cell.row.original.group,
       },
       {
-        accessorKey: "managed",
+        accessorKey: "supervisedGroup",
         header: "Group Managed",
         cell: ({ cell }) =>
-          (!cell.row.original.managed ||
-            cell.row.original.managed === "unassigned") &&
+          (!cell.row.original.supervisedGroup ||
+            cell.row.original.supervisedGroup === "unassigned") &&
           cell.row.original.role === "Supervisor"
             ? ""
-            : cell.row.original.managed,
+            : cell.row.original.supervisedGroup,
       },
       {
         accessorKey: "totalReports",
@@ -157,7 +156,7 @@ export default function Page() {
               borderColor={"#354751"}
               borderWidth={"thin"}
               _hover={{ color: "black", bg: "white", opacity: 1 }}
-              onClick={() => handleSubmitInfo(cell.row.original.name)}
+              onClick={() => handleSubmitInfo(cell.row.original.email)}
             >
               <Icon as={PiEyeBold} />
             </Button>
@@ -221,7 +220,7 @@ export default function Page() {
       ) : (
         <>
           <Heading mb={10}>Manage Users</Heading>
-          <UserTable columns={columns} data={data} />
+          <UserTable columns={columns} data={users} />
         </>
       )}
     </>

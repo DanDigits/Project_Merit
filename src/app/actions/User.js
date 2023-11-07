@@ -44,6 +44,19 @@ export const getUser = async ({ email }) => {
   return response;
 };
 
+export const getAllUsers = async () => {
+  const response = await fetch(getPath.baseUrl + getPath.api.user.get, {
+    method: "GET",
+    mode: "same-origin",
+    headers: {
+      request: "6",
+    },
+  });
+  console.log(response.statusText);
+
+  return response;
+};
+
 // send password reset email
 export const requestReset = async ({ email }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.get, {
