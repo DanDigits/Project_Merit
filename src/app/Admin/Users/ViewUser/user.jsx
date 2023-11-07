@@ -35,11 +35,11 @@ export default function User(user_mode) {
   const [group, setGroup] = useState("");
   const [groupSupervised, setGroupSupervised] = useState("");
   const [role, setRole] = useState("user");
-  const [entry, setEntry] = useState("");
-  const totalReports = 0;
-  const lastReport = "2023-10-10";
-  const lastSignIn = "2023-10-10";
-  const status = "active";
+  const [entry, setEntry] = useState(null);
+  const [totalReports, setTotalReports] = useState("");
+  const [lastReport, setLastReport] = useState("");
+  const [lastLogin, setLastLogin] = useState("");
+  const [status, setStatus] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -88,8 +88,10 @@ export default function User(user_mode) {
       if (entry !== null) {
         setHasEntry(true);
         console.log("hasEntry:", entry);
+        console.log("hasEntry was set to true");
       }
       if (hasEmail && !hasEntry) {
+        console.log("going to call getUser");
         secureLocalStorage.removeItem("email");
         console.log("hasEmail && !hasEntry", email, hasEntry);
         setIsLoading(true);
@@ -111,9 +113,22 @@ export default function User(user_mode) {
         console.log("hasEmail && hasEntry", email, hasEntry);
         var arr = JSON.parse(JSON.stringify(entry));
         if (arr) {
-          setName(arr.name);
+          setFirstName(arr.firstName);
+          setLastName(arr.lastName);
+          setSuffix(arr.suffix);
+          setRank(arr.rank);
+          setRole(arr.role);
+          setGroup(arr.group);
+          setTotalReports(arr.totalReports);
+          setLastReport(arr.mostRecentReportDate);
+          setLastLogin(arr.lastLogin);
           setEmail(arr.email);
           setIsLoading(false);
+          if (arr.status === true) {
+            setStatus("Suspended");
+          } else {
+            setStatus("Active");
+          }
         }
       }
     }
@@ -482,14 +497,14 @@ export default function User(user_mode) {
                 </FormControl>
               </HStack>
               <HStack>
-                <FormControl id="lastSignIn">
+                <FormControl id="lastLogin">
                   <FormLabel mb={1} fontSize={15} color={"black"}>
                     Last Sign-In
                   </FormLabel>
                   <Input
                     isReadOnly={state}
                     type=""
-                    value={lastSignIn}
+                    value={lastLogin}
                     maxLength={64}
                     variant="login"
                     borderWidth={"2px"}
