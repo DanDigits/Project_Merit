@@ -19,9 +19,9 @@ jobs:
       aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       domain_cert: ${{ secrets.DOMAIN_CERT }}
       db_uri: ${{ secrets.DB_URI }}
-      ecr_repo_name: $ecr_repo_name
-      cluster_name: $cluster_name
-      service_name: $service_name
+      ecr_repo_name: meritrepo
+      cluster_name: merit-cluster
+      service_name: merit-service
   aws:
     needs:
       - terraform
@@ -41,12 +41,12 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
       - name: Export Branch
         shell: bash
-        run: echo "branch=$ecr_repo_name$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
+        run: echo "branch=meritrepo$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
         id: export_branch
       - name: Build Image to ECR and Force Deployment on ECS
         uses: jaroldwong/ecr-push-and-ecs-deploy@v1.1
         with:
           ecr-registry: ${{ steps.ecr.outputs.registry }}
           ecr-repository: ${{ steps.export_branch.outputs.branch }}
-          ecs-cluster: $cluster_name
-          ecs-service: $service_name
+          ecs-cluster: merit-cluster
+          ecs-service: merit-service
