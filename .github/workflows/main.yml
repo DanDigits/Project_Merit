@@ -4,7 +4,7 @@ on:
 
 name: CI/CD
 env:
-  ecr_repo_name: merit-repo
+  ecr_repo_name: meritrepo
   cluster_name: merit-cluster
   service_name: merit-service
 jobs:
