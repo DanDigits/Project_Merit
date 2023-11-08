@@ -15,11 +15,14 @@ import {
 import { Stack, Heading } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
+import { getUser } from "./../../actions/User.js";
 import { getLastReport, getTotals } from "./../../actions/Report.js";
 import StatusBox from "./statusBox";
 
 export default function Page() {
   const [hasEmail, setHasEmail] = useState(false);
+  const [hasProfile, setHasProfile] = useState(false);
+  const [profile, setProfile] = useState("");
   const [email, setEmail] = useState("");
   const [rank, setRank] = useState("");
   const [lastName, setLastName] = useState("");
@@ -84,10 +87,26 @@ export default function Page() {
         .then(() => setHasEmail(true));
     }
 
-    if (hasEmail) {
-      getSession().then((session) => setRank(session.user.rank));
-      getSession().then((session) => setLastName(session.user.lastName));
-      getSession().then((session) => setSuffix(session.user.suffix));
+    if (hasEmail && !hasProfile) {
+      setIsLoading(true);
+      setHasError(false);
+      getUser({ email }).then((response) => {
+        response.ok
+          ? response
+              .json()
+              .then((response) => setProfile(response))
+              .then(setHasProfile(true))
+          : setHasError(true);
+        console.log("hasError:", hasError);
+      });
+    }
+    if (hasEmail && hasProfile) {
+      var arr = JSON.parse(JSON.stringify(profile));
+      if (arr) {
+        setRank(arr.rank);
+        setLastName(arr.lastName);
+        setSuffix(arr.suffix);
+      }
     }
 
     if (hasEmail && !hasTotals) {

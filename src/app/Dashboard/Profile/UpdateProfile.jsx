@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import {
   Center,
   Card,
@@ -35,7 +35,6 @@ export default function UpdateProfile() {
   const [hasError, setHasError] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState(false);
   const [msg, setMsg] = useState("");
-  const { data: session, update } = useSession();
 
   var state;
 
@@ -45,13 +44,13 @@ export default function UpdateProfile() {
 
   useEffect(() => {
     if (!hasEmail) {
+      console.log("Fetching email");
       setIsLoading(true);
       setHasError(false);
       getSession()
         .then((session) => setEmail(session.user.email))
         .then(() => setHasEmail(true));
-    }
-    if (hasEmail && !hasProfile) {
+    } else if (hasEmail && !hasProfile) {
       setIsLoading(true);
       setHasError(false);
       getUser({ email }).then((response) => {
@@ -63,8 +62,7 @@ export default function UpdateProfile() {
           : setHasError(true);
         console.log("hasError:", hasError);
       });
-    }
-    if (hasEmail && hasProfile) {
+    } else if (hasEmail && hasProfile) {
       var arr = JSON.parse(JSON.stringify(profile));
       if (arr) {
         setRank(arr.rank);
@@ -88,10 +86,6 @@ export default function UpdateProfile() {
             {
               setMode("View");
               setMsg("");
-              console.log("client rank: ", rank);
-              updateSession();
-              console.log("session rank: ", session.user.rank);
-              console.log("Session: ", { session });
             }
           } else {
             alert("User could not be updated. Please try again.");
@@ -99,22 +93,6 @@ export default function UpdateProfile() {
         }
       );
     }
-  };
-
-  const updateSession = async () => {
-    if (session) {
-      session.user.rank = rank;
-      session.user.lastName = lastName;
-      session.user.suffix = suffix;
-    }
-
-    console.log("Updating...");
-    await update({
-      rank: session.user.rank,
-      firstName: session.user.firstName,
-      lastname: session.user.lastName,
-      suffix: session.user.suffix,
-    });
   };
 
   return (
