@@ -16,9 +16,9 @@ env:
   DB_URI: ${{ secrets.DB_URI }}
 jobs:
   lint:
-    uses: DanDigits/Project_Merit/.github/workflows/lint.yml
+    uses: ./.github/workflows/lint.yml
   instantiate:
-    uses: DanDigits/Project_Merit/.github/workflows/terraform.yml
+    uses: ./.github/workflows/terraform.yml
     with:
       branch: $BRANCH
     secrets:
