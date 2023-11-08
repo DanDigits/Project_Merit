@@ -33,11 +33,6 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  passwordLocked: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
   emailVerification: {
     type: String,
     required: true,
@@ -54,6 +49,11 @@ const UserSchema = new Schema({
   supervisedGroup: {
     type: [String],
     required: false,
+  },
+  passwordLocked: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
   suspended: {
     type: Boolean,

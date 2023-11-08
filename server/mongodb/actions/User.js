@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import mongoDB from "../dbConnection";
 import UserSchema from "../models/User";
-import { getUserReports } from "server/mongodb/actions/Report";
 
 // Login user to site
 export async function login({ email, password }) {
@@ -95,7 +94,7 @@ export async function modifyUser(userId, userData) {
   if (userId.includes("@")) {
     user = await UserSchema.findOne({ email: userId });
   } else {
-    user = await UserSchema.findOne({ emailVerification: userId });
+    user = await UserSchema.findOne({ _id: userId });
     userId = user.email;
   }
 
@@ -120,14 +119,14 @@ export async function modifyUser(userId, userData) {
           return user;
         });
     } else {
-      user.message = "UNABLE"; //Error response if unable to reset password when user logged in
+      user.message = "UNABLE"; //Error response if unable to reset password when user is logged in
     }
   } else if (
     password == undefined &&
     newPassword != undefined &&
     user.passwordLocked == false
   ) {
-    // Forgot password so isnt logged in, verifyUser() verified email code for password reset
+    // Forgot password; user is not logged in. verifyUser() verified email code for password reset
     await verifyUser(userData?.emailVerification); //If user is email verified, undo password lock
     let random = await bcrypt.hash("gouewyrnpvsuoyashodpifjnbosuihsofb~", 3);
     return bcrypt
@@ -149,18 +148,34 @@ export async function modifyUser(userId, userData) {
     newPassword == undefined &&
     user.passwordLocked == true
   ) {
-    // General user information update
-    //Force server values for entered information
-    if (user.isAdmin === false) {
-      userData.isAdmin = false;
-    } else if (user.isAdmin === true) {
-      userData.isAdmin = true;
+    // General user update
+    // Verify user credentials if admin header exists in request, and force security if verification fails
+    if (userData?.adminCredentials != undefined) {
+      const verifyAdminCredentials = await getUser(userData?.adminCredentials);
+      if (verifyAdminCredentials?.role !== "Admin") {
+        userData.role = user?.role;
+        userData.verified = user?.verified;
+        userData.passwordLocked = true;
+        userData.suspended = user?.suspended;
+
+        // Check if user is already present in a group; prevent changing group with error return
+        // (user group not empty) && (group in request different from user group) && (group request not empty)
+        if (
+          (user?.group != undefined ||
+            user?.group != [] ||
+            user?.group != "") &&
+          userData?.group != user?.group &&
+          (userData?.group != undefined ||
+            userData?.group != [] ||
+            userData?.group != "")
+        ) {
+          user.message = "CONFLICT";
+          return user;
+        }
+      }
     }
-    if (user.verified === false) {
-      userData.verified = false;
-    } else if (user.verified === true) {
-      userData.verified = true;
-    }
+
+    // Update user
     user = await UserSchema.findOneAndUpdate({ email: userId }, userData).catch(
       function (err) {
         return err;
@@ -184,7 +199,7 @@ export async function renameGroup(group, groupData) {
     return err;
   });
   console.log(group);
-  while (user[i] != undefined) {
+  while (user?.[i] != undefined) {
     index = user[i].group?.indexOf(`${group}`);
     user[i].group[index] = groupData.newGroup;
     console.log(user[i].group[index]);
@@ -217,7 +232,7 @@ export async function deleteGroup(group) {
   const user = await UserSchema?.find({ group }).catch(function (err) {
     return err;
   });
-  while (user[i] != undefined) {
+  while (user?.[i] != undefined) {
     index = user[i].group?.indexOf(`${group}`);
     user[i].group.splice(index, 1);
     await UserSchema?.findOneAndUpdate(
@@ -294,55 +309,28 @@ export async function suspendUser(userId) {
   return user;
 }
 
-// Promote or demote user in relation to current Admin role status
-export async function makeAdmin(userId, adminId) {
-  await mongoDB();
-  let user;
-  let verification = await UserSchema?.findById({ _id: adminId });
-  if (verification?.id == adminId) {
-    user = await UserSchema?.findOne({ email: userId });
-    if (user?.isAdmin == true) {
-      user = await UserSchema.findOneAndUpdate(
-        { email: userId },
-        { isAdmin: false }
-      ).catch(function (err) {
-        console.log(err);
-        return "ERROR";
-      });
-    } else if (user?.isAdmin == false) {
-      user = await UserSchema.findOneAndUpdate(
-        { email: userId },
-        { isAdmin: true }
-      ).catch(function (err) {
-        console.log(err);
-        return "ERROR";
-      });
-    } else {
-      return "ERROR";
-    }
-  } else {
-    return "ERROR";
-  }
-  return user;
-}
-
 // Get group information
 export async function getGroup(group) {
   await mongoDB();
   let members = [];
-  let personnel = await UserSchema?.find(
-    { group },
-    "-password -__v -_id -passwordLocked -emailVerification -verified"
+  let categories = "Mission Leadership Resources Unit";
+  let supervisorFilter = "firstName lastName rank suffix";
+  let filter =
+    "email firstName lastName rank suffix mostRecentReportDate totalReports currentQuarter quarterReports" +
+    " " +
+    categories;
+
+  let supervisors = await UserSchema?.find(
+    { supervisedGroup: group },
+    supervisorFilter
   )
     .sort({ lastName: 1, firstName: 1 })
     .catch(function (err) {
       console.log(err);
       return "ERROR";
     });
-  let supervisors = await UserSchema?.find(
-    { supervisedGroup: group },
-    "-password -__v -_id -passwordLocked -emailVerification -verified"
-  )
+
+  let personnel = await UserSchema?.find({ group }, filter)
     .sort({ lastName: 1, firstName: 1 })
     .catch(function (err) {
       console.log(err);
@@ -375,32 +363,26 @@ export async function getGroupOrphans() {
 
 export async function getAllUsers() {
   await mongoDB();
-  const users = await UserSchema?.find({ email: { $exists: true } }).catch(
-    function (err) {
+  let filter =
+    "email firstName lastName suffix id role group supervisedGroup totalReports mostRecentReportDate lastLogin suspended";
+  const users = await UserSchema?.find({ email: { $exists: true } }, filter)
+    .sort({ lastName: 1, firstName: 1 })
+    .catch(function (err) {
       console.log(err);
       return "ERROR";
-    }
-  );
+    });
   return users;
 }
 
-export async function getSupervisorTable(group) {
-  await mongoDB();
-  const date = new Date();
-  let i = 0,
-    table = [],
-    groupMembers = await getGroup(group);
-  while (groupMembers[1][i] != undefined) {
-    console.log("LOOP");
-    table[i] = Object.assign(
-      {},
-      groupMembers[1][i]._doc,
-      await getUserReports(groupMembers[1][i].email, date)
-    );
-    i++;
-  }
-  console.log(table);
-  return table;
-}
+export async function getSupervisor(group) {
+  let supervisors,
+    i,
+    currentGroup = await getGroup(group);
 
-// How are supervisors to add users?
+  // If current group isnt empty, push supervisor profile to supervisors array
+  while (currentGroup?.[0]?.[i] != undefined) {
+    supervisors.push(group[0][i]);
+  }
+
+  return supervisors;
+}
