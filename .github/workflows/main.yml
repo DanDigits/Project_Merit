@@ -23,7 +23,9 @@ jobs:
       cluster_name: $cluster_name
       service_name: $service_name
   aws:
-    needs: terraform
+    needs:
+      - terraform
+      - prettier
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
