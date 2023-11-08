@@ -58,7 +58,9 @@ export async function POST(Request) {
           headers: {
             //...response.headers,
             "Content-Type": "application/pdf",
-            "Content-Disposition": `attachment; filename="Export${date.getMonth()}-${date.getDate()}-${date.getFullYear()}.pdf"`,
+            "Content-Disposition": `attachment; filename="Export${
+              date.getMonth() + 1
+            }-${date.getDate()}-${date.getFullYear()}.pdf"`,
           },
           status: 200,
         });

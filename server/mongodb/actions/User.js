@@ -155,6 +155,15 @@ export async function modifyUser(userId, userData) {
     userData.passwordLocked = true;
     userData.suspended = user?.suspended;
 
+    // Check if user is already present in a group; prevent changing group with error return
+    if (
+      (user?.group == undefined || user?.group == [] || user?.group == "") &&
+      userData?.group != user?.group
+    ) {
+      user.message = "CONFLICT";
+      return user;
+    }
+
     // Update user
     user = await UserSchema.findOneAndUpdate({ email: userId }, userData).catch(
       function (err) {
@@ -370,12 +379,14 @@ export async function getGroupOrphans() {
 
 export async function getAllUsers() {
   await mongoDB();
-  const users = await UserSchema?.find({ email: { $exists: true } }).catch(
-    function (err) {
+  let filter =
+    "email firstName lastName suffix id role group supervisedGroup totalReports mostRecentReportDate lastLogin suspended";
+  const users = await UserSchema?.find({ email: { $exists: true } }, filter)
+    .sort({ lastName: 1, firstName: 1 })
+    .catch(function (err) {
       console.log(err);
       return "ERROR";
-    }
-  );
+    });
   return users;
 }
 
