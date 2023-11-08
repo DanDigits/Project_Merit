@@ -15,9 +15,9 @@ env:
   ECS_SERVICE: MeritService
   DB_URI: ${{ secrets.DB_URI }}
 jobs:
-  lint:
+  prettier:
     uses: ./.github/workflows/lint.yml
-  instantiate:
+  terraform:
     uses: ./.github/workflows/terraform.yml
     with:
       branch: $BRANCH
@@ -29,16 +29,17 @@ jobs:
       ecr_repo_name: $BRANCH$ECR_REPO
       cluster_name: $BRANCH$ECS_CLUSTER
       service_name: $BRANCH$ECS_SERVICE
-  push:
+  aws:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws_access_key_id: $AWS_ACCESS_KEY_ID
-          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
+          aws-region: us-east-1
+          aws-access-key-id: $AWS_ACCESS_KEY_ID
+          aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
       - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1

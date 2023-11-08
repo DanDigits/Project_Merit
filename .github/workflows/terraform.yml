@@ -22,7 +22,7 @@ on:
 
 name: "Deploy Terraform"
 jobs:
-  terraform:
+  instantiate:
     runs-on: ubuntu-latest
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}

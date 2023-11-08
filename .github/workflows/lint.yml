@@ -1,7 +1,6 @@
 on:
   workflow_call:
 
-name: Linting
 jobs:
   lint:
     runs-on: ubuntu-latest
