@@ -2,8 +2,6 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { customTheme } from "../styles/customTheme";
 import React from "react";
-import { useEffect, useState } from "react";
-import { getSession, useSession } from "next-auth/react";
 import {
   IconButton,
   Box,
@@ -15,7 +13,6 @@ import {
   useColorModeValue,
   Drawer,
   DrawerContent,
-  Text,
   useDisclosure,
   Menu,
   MenuButton,
@@ -143,33 +140,6 @@ const SidebarContent = ({ onClose, ...rest }) => {
   );
 };
 
-/*const NavItem = ({ icon, children, ...rest }) => {
-  return (
-    <Link
-      href="#"
-      style={{ textDecoration: "none" }}
-      _focus={{ boxShadow: "none" }}
-    >
-      <Flex
-        align="center"
-        p="4"
-        mx="4"
-        borderRadius="lg"
-        role="group"
-        cursor="pointer"
-        _hover={{
-          bg: "cyan.400",
-          color: "white"
-        }}
-        {...rest}
-      >
-        
-        {children}
-      </Flex>
-    </Link>
-  )
-}*/
-
 const MobileNav = ({ onOpen, ...rest }) => {
   //const { data: session, status, update } = useSession();
   const router = useRouter();
@@ -178,19 +148,6 @@ const MobileNav = ({ onOpen, ...rest }) => {
     e.preventDefault();
     signOut({ callbackUrl: "/Auth/Logout" });
   };
-
-  const [rank, setRank] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [suffix, setSuffix] = useState("");
-  const { update } = useSession();
-
-  useEffect(() => {
-    getSession().then((session) => {
-      setRank(session.user.rank);
-      setLastName(session.user.lastName);
-      setSuffix(session.user.suffix);
-    });
-  }, [update]);
 
   return (
     <Flex
@@ -232,11 +189,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
             textColor={"white"}
             _hover={{ bg: "white", color: "#031926" }}
             leftIcon={<FaUser />}
-          >
-            <Text display={{ base: "none", md: "flex" }}>
-              {rank} {lastName} {suffix}
-            </Text>
-          </MenuButton>
+          ></MenuButton>
           <MenuList>
             <MenuItem
               textColor={"#331E38"}

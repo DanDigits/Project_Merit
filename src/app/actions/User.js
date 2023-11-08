@@ -39,7 +39,7 @@ export const getUser = async ({ email }) => {
       request: "2",
     },
   });
-  console.log(response.statusText);
+  console.log("getUser response: ", response.statusText);
 
   return response;
 };
