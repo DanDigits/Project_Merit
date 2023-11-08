@@ -149,27 +149,30 @@ export async function modifyUser(userId, userData) {
     user.passwordLocked == true
   ) {
     // General user update
-    const verifyAdminCredentials = await getUser(userData?.adminCredentials);
-    if (verifyAdminCredentials?.role !== "Admin") {
-      /* Administrator header from request did not yield a user in database with Admin role; force
-         important server values onto the PATCH request for security */
-      userData.role = user?.role;
-      userData.verified = user?.verified;
-      userData.passwordLocked = true;
-      userData.suspended = user?.suspended;
-    }
+    // Verify user credentials if admin header exists in request, and force security if verification fails
+    if (userData?.adminCredentials != undefined) {
+      const verifyAdminCredentials = await getUser(userData?.adminCredentials);
+      if (verifyAdminCredentials?.role !== "Admin") {
+        userData.role = user?.role;
+        userData.verified = user?.verified;
+        userData.passwordLocked = true;
+        userData.suspended = user?.suspended;
 
-    // Check if user is already present in a group; prevent changing group with error return
-    // (user group not empty) && (group request different from user group) && (group request not empty)
-    if (
-      (user?.group != undefined || user?.group != [] || user?.group != "") &&
-      userData?.group != user?.group &&
-      (userData?.group != undefined ||
-        userData?.group != [] ||
-        userData?.group != "")
-    ) {
-      user.message = "CONFLICT";
-      return user;
+        // Check if user is already present in a group; prevent changing group with error return
+        // (user group not empty) && (group in request different from user group) && (group request not empty)
+        if (
+          (user?.group != undefined ||
+            user?.group != [] ||
+            user?.group != "") &&
+          userData?.group != user?.group &&
+          (userData?.group != undefined ||
+            userData?.group != [] ||
+            userData?.group != "")
+        ) {
+          user.message = "CONFLICT";
+          return user;
+        }
+      }
     }
 
     // Update user
@@ -306,38 +309,6 @@ export async function suspendUser(userId) {
   return user;
 }
 
-// Promote or demote user in relation to current Admin role status
-export async function makeAdmin(userId, adminId) {
-  await mongoDB();
-  let user;
-  let verification = await UserSchema?.findById({ _id: adminId });
-  if (verification?.id == adminId) {
-    user = await UserSchema?.findOne({ email: userId });
-    if (user?.isAdmin == true) {
-      user = await UserSchema.findOneAndUpdate(
-        { email: userId },
-        { isAdmin: false }
-      ).catch(function (err) {
-        console.log(err);
-        return "ERROR";
-      });
-    } else if (user?.isAdmin == false) {
-      user = await UserSchema.findOneAndUpdate(
-        { email: userId },
-        { isAdmin: true }
-      ).catch(function (err) {
-        console.log(err);
-        return "ERROR";
-      });
-    } else {
-      return "ERROR";
-    }
-  } else {
-    return "ERROR";
-  }
-  return user;
-}
-
 // Get group information
 export async function getGroup(group) {
   await mongoDB();
@@ -396,25 +367,3 @@ export async function getAllUsers() {
     });
   return users;
 }
-
-// export async function getSupervisorTable(group) {
-//   await mongoDB();
-//   const date = new Date();
-//   let i = 0,
-//     table = [],
-//     groupMembers = await getGroup(group);
-//   while (groupMembers[1][i] != undefined) {
-//     console.log("LOOP");
-//     table[i] = Object.assign(
-//       {},
-//       groupMembers[1][i]._doc,
-//       await getUserReports(groupMembers[1][i].email, date)
-//     );
-//     i++;
-//   }
-//   console.log(table);
-//   return table;
-// }
-
-// Fix above
-// How are supervisors to add users?
