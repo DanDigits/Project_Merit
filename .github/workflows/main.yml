@@ -4,9 +4,9 @@ on:
 
 name: CI/CD
 env:
-  ecr_repo_name: $GITHUB_REF-merit-repo
-  cluster_name: $GITHUB_REF-merit-cluster
-  service_name: $GITHUB_REF-merit-service
+  ecr_repo_name: merit-repo
+  cluster_name: merit-cluster
+  service_name: merit-service
 jobs:
   prettier:
     uses: ./.github/workflows/lint.yml
