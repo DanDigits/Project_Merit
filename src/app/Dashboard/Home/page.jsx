@@ -150,7 +150,7 @@ export default function Page() {
     if (hasProfile && hasTotals && hasReport) {
       setDashboard();
     }
-  }, [hasEmail, totals]);
+  }, [hasEmail, hasProfile, hasReport, hasTotals, totals]);
 
   function setDashboard() {
     console.log("Setting Dashboard");
@@ -186,6 +186,8 @@ export default function Page() {
       setLastName(arr.lastName);
       setSuffix(arr.suffix);
     }
+
+    console.log("Dashboard set");
   }
 
   return (
