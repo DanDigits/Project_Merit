@@ -52,6 +52,6 @@ jobs:
         run: terraform init -reconfigure -backend-config="env/${GITHUB_REF##*/}/state.tfvars"
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color -var-file="env/${GITHUB_REF##*/}/instance.tfvars" -var ecr_repo_name="${{ env.ECR_REPO }}${GITHUB_REF##*/}" -var cluster_name="${{ env.ECS_CLUSTER }}-${GITHUB_REF##*/}" -var db_uri="${{ env.DB_URI }}" -var service_name="${{ env.ECS_SERVICE }}-${GITHUB_REF##*/}" -var domain_certificate="${{ env.DOMAIN_CERT }}"
+        run: terraform plan -no-color -var-file="env/${GITHUB_REF##*/}/instance.tfvars" -var ecr_repo_name="${{ secrets.ecr_repo_name }}-${GITHUB_REF##*/}" -var cluster_name="${{ env.ECS_CLUSTER }}-${GITHUB_REF##*/}" -var db_uri="${{ env.DB_URI }}" -var service_name="${{ env.ECS_SERVICE }}-${GITHUB_REF##*/}" -var domain_certificate="${{ env.DOMAIN_CERT }}"
       - name: Terraform Apply
-        run: terraform apply -var-file="env/${GITHUB_REF##*/}/instance.tfvars" -var ecr_repo_name="${{ env.ECR_REPO }}${GITHUB_REF##*/}" -var cluster_name="${{ env.ECS_CLUSTER }}-${GITHUB_REF##*/}" -var db_uri="${{ env.DB_URI }}" -var service_name="${{ env.ECS_SERVICE }}-${GITHUB_REF##*/}" -var domain_certificate="${{ env.DOMAIN_CERT }}" -auto-approve
+        run: terraform apply -var-file="env/${GITHUB_REF##*/}/instance.tfvars" -var ecr_repo_name="${{ secrets.ecr_repo_name }}-${GITHUB_REF##*/}" -var cluster_name="${{ env.ECS_CLUSTER }}-${GITHUB_REF##*/}" -var db_uri="${{ env.DB_URI }}" -var service_name="${{ env.ECS_SERVICE }}-${GITHUB_REF##*/}" -var domain_certificate="${{ env.DOMAIN_CERT }}" -auto-approve
