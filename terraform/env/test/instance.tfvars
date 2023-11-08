@@ -8,7 +8,7 @@ availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d", "u
 task_family              = "meritDevTask"
 container_port           = 3000
 container_name           = "meritDev"
-task_execution_role_name = "meritDevTaskExecutionRole"
+task_execution_role_name = "ecsTaskExecutionRole"
 
 # db_uri              = "mongodb+srv://admin:7BJ6vvekZP3XkXcQ@development.mh52mvl.mongodb.net/?retryWrites=true&w=majority"
 nextauth_port       = 443
