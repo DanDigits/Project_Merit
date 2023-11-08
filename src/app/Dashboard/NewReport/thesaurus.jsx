@@ -17,41 +17,26 @@ import { getSynonyms } from "./../../actions/Thesaurus.js";
 export default function Thesaurus() {
   const [word, setWord] = useState("");
   const [text, setText] = useState("");
-  const [arr, setArr] = useState([]);
   const [results, setResults] = useState("");
   const [resultsSet, setResultsSet] = useState(false);
-  const [textSet, setTextSet] = useState(false);
-  const [hasres, sethasres] = useState(false);
   var temp = "";
 
   useEffect(() => {
-    if (resultsSet && results === "") {
-      console.log(word);
-      temp = "no " + word;
-      setResultsSet(false);
-    }
-    if (resultsSet && results != "") {
-      console.log("Results: " + results, typeof results);
-      setArr(
-        Object.values(results).slice(
+    if (resultsSet) {
+      if (results === "") {
+        temp = "No results. Please try another word.";
+      } else {
+        var arr = Object.values(results).slice(
           0,
           Object.values(results).length < 15
             ? Object.values(results).length
             : 15
-        )
-      );
-      sethasres(true);
-    }
-    if (hasres) {
-      for (var i = 0; i < arr.length; i++) temp += arr[i] + "  ";
+        );
 
-      setTextSet(true);
-      setResultsSet(false);
-      sethasres(false);
-    }
-    if (textSet && temp != "") {
+        for (var i = 0; i < arr.length; i++) temp += arr[i] + "  ";
+      }
       setText(temp);
-      console.log(temp);
+      setResultsSet(false);
       temp = "";
     }
   });
@@ -85,7 +70,7 @@ export default function Thesaurus() {
         p={5}
         boxShadow={"inner"}
       >
-        <HStack>
+        <HStack w="100%">
           <FormControl id="word">
             <FormLabel mb={1} fontSize={15} color={"#331E38"}>
               Search Thesaurus
