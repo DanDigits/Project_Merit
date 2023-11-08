@@ -29,7 +29,7 @@ export default function Page() {
   const [suffix, setSuffix] = useState("");
 
   const [hasError, setHasError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [hasReport, setHasReport] = useState(false);
   const [report, setReport] = useState({
@@ -77,40 +77,38 @@ export default function Page() {
   });
 
   useEffect(() => {
-    getSession().then((session) => console.log("Session: ", session));
-
-    if (!hasEmail) {
+    if (!hasEmail && !isLoading) {
       setIsLoading(true);
       setHasError(false);
+      console.log("Fetching email...");
       getSession()
         .then((session) => setEmail(session.user.email))
         .then(() => setHasEmail(true));
+      console.log("Got email");
+      setIsLoading(false);
     }
 
-    if (hasEmail && !hasProfile) {
+    if (hasEmail && !hasProfile && !isLoading) {
       setIsLoading(true);
       setHasError(false);
+      console.log("Fetching profile");
       getUser({ email }).then((response) => {
         response.ok
           ? response
               .json()
               .then((response) => setProfile(response))
               .then(setHasProfile(true))
+              .then(console.log("Got profile"))
           : setHasError(true);
-        console.log("hasError:", hasError);
       });
-    }
-    if (hasEmail && hasProfile) {
-      var arr = JSON.parse(JSON.stringify(profile));
-      if (arr) {
-        setRank(arr.rank);
-        setLastName(arr.lastName);
-        setSuffix(arr.suffix);
+      setIsLoading(false);
+      if (hasError) {
+        console.log("Error fetching profile");
       }
     }
 
-    if (hasEmail && !hasTotals) {
-      console.log("hasEmail && !hasTotals", email, hasTotals);
+    if (hasEmail && !hasTotals && !isLoading) {
+      console.log("Fetching totals");
       setIsLoading(true);
       setHasError(false);
 
@@ -120,13 +118,17 @@ export default function Page() {
               .json()
               .then((response) => setTotals(response))
               .then(setHasTotals(true))
+              .then(console.log("Got totals"))
           : setTotals({ date: "N/A" });
-        console.log("hasError:", hasError);
       });
+      setIsLoading(false);
+      if (hasError) {
+        console.log("Error fetching totals");
+      }
     }
 
-    if (hasEmail && !hasReport) {
-      console.log("hasEmail && !hasReport", email, hasReport);
+    if (hasEmail && !hasReport && !isLoading) {
+      console.log("Fetching report");
       setIsLoading(true);
       setHasError(false);
 
@@ -136,60 +138,55 @@ export default function Page() {
               .json()
               .then((response) => setReport(response))
               .then(setHasReport(true))
+              .then(console.log("Got report"))
           : setHasError(true);
-        console.log("hasError:", hasError);
       });
-    }
-
-    if (hasEmail && hasTotals) {
-      /*
-      console.log("hasEmail && hasTotals", email, hasTotals);
-      console.log("totals", totals);
-      console.log("Fiscal Year: ", totals.totalReports);
-      console.log("Current Quarter: ", totals.currentQuarter);
-      console.log("Quarter Total: ", totals.quarterReports);
-      console.log("Duties: ", totals.Duties);
-      console.log("Conduct: ", totals.Conduct);
-      console.log("Training: ", totals.Training);
-      console.log("Teamwork: ", totals.Teamwork); */
-
-      if (totals.Mission !== "") {
-        mission.total = totals.Mission;
-      }
-
-      if (totals.Leadership !== "") {
-        leadership.total = totals.Leadership;
-      }
-
-      if (totals.Resources !== "") {
-        resources.total = totals.Resources;
-      }
-
-      if (totals.Unit !== "") {
-        unit.total = totals.Unit;
-      }
-      setProgress(
-        (totals.totalReports /
-          (mission.needed +
-            leadership.needed +
-            resources.needed +
-            unit.needed)) *
-          100
-      );
-      console.log("Progress: ", progress);
-    }
-
-    if (hasEmail && hasReport) {
-      if (!report.date) {
-        setReport({ date: "N/A" });
-      }
-      console.log("Date is now" + report.date);
-    }
-
-    if (hasEmail && hasTotals && hasReport) {
       setIsLoading(false);
+      if (hasError) {
+        console.log("Error fetching report");
+      }
     }
-  }, [hasEmail, hasTotals, hasReport, email, report, totals]);
+
+    if (hasProfile && hasTotals && hasReport) {
+      setDashboard();
+    }
+  }, [hasEmail, totals]);
+
+  function setDashboard() {
+    console.log("Setting Dashboard");
+    if (totals.Mission !== "") {
+      mission.total = totals.Mission;
+    }
+
+    if (totals.Leadership !== "") {
+      leadership.total = totals.Leadership;
+    }
+
+    if (totals.Resources !== "") {
+      resources.total = totals.Resources;
+    }
+
+    if (totals.Unit !== "") {
+      unit.total = totals.Unit;
+    }
+
+    setProgress(
+      (totals.totalReports /
+        (mission.needed + leadership.needed + resources.needed + unit.needed)) *
+        100
+    );
+
+    if (!report.date) {
+      setReport({ date: "N/A" });
+    }
+
+    var arr = JSON.parse(JSON.stringify(profile));
+    if (arr) {
+      setRank(arr.rank);
+      setLastName(arr.lastName);
+      setSuffix(arr.suffix);
+    }
+  }
 
   return (
     <>

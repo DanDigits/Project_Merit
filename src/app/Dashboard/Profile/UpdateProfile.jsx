@@ -43,14 +43,17 @@ export default function UpdateProfile() {
   } else state = false;
 
   useEffect(() => {
-    if (!hasEmail) {
+    if (!hasEmail && !isLoading) {
       console.log("Fetching email");
       setIsLoading(true);
       setHasError(false);
       getSession()
         .then((session) => setEmail(session.user.email))
-        .then(() => setHasEmail(true));
-    } else if (hasEmail && !hasProfile) {
+        .then(() => setHasEmail(true))
+        .then(setIsLoading(false));
+    }
+
+    if (hasEmail && !hasProfile && !isLoading) {
       setIsLoading(true);
       setHasError(false);
       getUser({ email }).then((response) => {
@@ -59,10 +62,13 @@ export default function UpdateProfile() {
               .json()
               .then((response) => setProfile(response))
               .then(setHasProfile(true))
+              .then(setIsLoading(false))
           : setHasError(true);
         console.log("hasError:", hasError);
       });
-    } else if (hasEmail && hasProfile) {
+    }
+
+    if (hasEmail && hasProfile) {
       var arr = JSON.parse(JSON.stringify(profile));
       if (arr) {
         setRank(arr.rank);
@@ -97,7 +103,7 @@ export default function UpdateProfile() {
 
   return (
     <>
-      {DeleteDialog(deleteStatus)}
+      {DeleteDialog(deleteStatus, email)}
       {isLoading ? (
         <>
           <Center>
