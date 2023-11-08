@@ -6,24 +6,29 @@ on:
 
 name: CI/CD
 env:
-  ecr_repo_name: ${{ github.head_ref }}MeritRepo
-  cluster_name: ${{ github.head_ref }}MeritCluster
-  service_name: ${{ github.head_ref }}MeritService
+  BRANCH: ${{ github.head_ref }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  DOMAIN_CERT: ${{ secrets.DOMAIN_CERT }}
+  ECR_REPO: MeritRepo
+  ECS_CLUSTER: MeritCluster
+  ECS_SERVICE: MeritService
+  DB_URI: ${{ secrets.DB_URI }}
 jobs:
   prettier:
     uses: ./.github/workflows/lint.yml
   terraform:
     uses: ./.github/workflows/terraform.yml
     with:
-      branch: ${{ github.head_ref }}
+      branch: $BRANCH
     secrets:
-      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      domain_cert: ${{ secrets.DOMAIN_CERT }}
-      db_uri: ${{ secrets.DB_URI }}
-      ecr_repo_name: $ecr_repo_name
-      cluster_name: $cluster_name
-      service_name: $service_name
+      aws_access_key_id: $AWS_ACCESS_KEY_ID
+      aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
+      domain_cert: $DOMAIN_CERT
+      db_uri: $DB_URI
+      ecr_repo_name: $BRANCH$ECR_REPO
+      cluster_name: $BRANCH$ECS_CLUSTER
+      service_name: $BRANCH$ECS_SERVICE
   aws:
     runs-on: ubuntu-latest
     steps:
@@ -33,15 +38,15 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-east-1
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: $AWS_ACCESS_KEY_ID
+          aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
       - name: Login to ECR
-        id: ecr
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
       - name: Build Image to ECR and Force Deployment on ECS
         uses: jaroldwong/ecr-push-and-ecs-deploy@v1.1
         with:
-          ecr-registry: ${{ steps.ecr.outputs.registry }}
-          ecr-repository: $ecr_repo_name
-          ecs-cluster: $cluster_name
-          ecs-service: $service_name
+          ecr-registry: ${{ steps.login-ecr.outputs.registry }}
+          ecr-repository: $BRANCH$ECR_REPO
+          ecs-cluster: $BRANCH$ECS_CLUSTER
+          ecs-service: $BRANCH$ECS_SERVICE
