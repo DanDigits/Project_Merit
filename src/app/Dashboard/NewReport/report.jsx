@@ -192,6 +192,7 @@ export default function Report(report_mode) {
                   Category
                 </FormLabel>
                 <Select
+                  minW={{ md: "xs", lg: "sm" }}
                   isReadOnly={state}
                   alpha={"1.0"}
                   variant="trim"
@@ -224,6 +225,7 @@ export default function Report(report_mode) {
                   Category
                 </FormLabel>
                 <Select
+                  minW={{ md: "xs", lg: "sm" }}
                   isReadOnly={state}
                   placeholder="Select Category"
                   variant="trim"
