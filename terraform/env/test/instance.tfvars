@@ -5,7 +5,7 @@ table_name  = "state_locks"
 
 availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d", "us-east-1e", "us-east-1f"]
 # cluster_name             = "meritDevCluster"
-task_family              = "meritdevtask"
+task_family              = "meritDevTask"
 container_port           = 3000
 container_name           = "meritDev"
 task_execution_role_name = "meritDevTaskExecutionRole"
@@ -18,4 +18,3 @@ nextauth_public_url = "https://test.testing.systems"
 application_load_balancer_name = "meritDevALB"
 target_group                   = "meritDevTG"
 # service_name                   = "meritDevService"
-# domain_certificate =

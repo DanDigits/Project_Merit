@@ -5,7 +5,7 @@ table_name  = "state_locks"
 
 availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d", "us-east-1e", "us-east-1f"]
 # cluster_name             = "meritProdCluster"
-task_family              = "meritprodtask"
+task_family              = "meritProdTask"
 container_port           = 3000
 container_name           = "meritProd"
 task_execution_role_name = "meritProdTaskExecutionRole"
@@ -18,4 +18,3 @@ nextauth_public_url = "https://merit.testing.systems"
 application_load_balancer_name = "meritProdALB"
 target_group                   = "meritProdTG"
 # service_name                   = "meritProdService"
-# domain_certificate =

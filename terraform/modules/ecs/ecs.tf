@@ -19,7 +19,7 @@ resource "aws_ecs_task_definition" "task_definition" {
       "essential": true,
       "portMappings": [
         {
-          "name": "${var.container_name}-3000-tcp",
+          "name": "3000-tcp",
           "containerPort": ${var.container_port},
           "hostPort": ${var.container_port},
           "protocol": "tcp",

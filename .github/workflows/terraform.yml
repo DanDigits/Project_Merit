@@ -54,9 +54,4 @@ jobs:
         id: plan
         run: terraform plan -no-color -var-file="env/${GITHUB_REF##*/}/instance.tfvars" -var ecr_repo_name="${{ env.ECR_REPO }}${GITHUB_REF##*/}" -var cluster_name="${{ env.ECS_CLUSTER }}-${GITHUB_REF##*/}" -var db_uri="${{ env.DB_URI }}" -var service_name="${{ env.ECS_SERVICE }}-${GITHUB_REF##*/}" -var domain_certificate="${{ env.DOMAIN_CERT }}"
       - name: Terraform Apply
-        env:
-          TF_VAR_db_uri: ${{ env.DB_URI }}
-          TF_VAR_ecr_repo_name: ${{ env.ECR_REPO }}
-          TF_VAR_cluster_name: ${{ env.ECS_CLUSTER }}
-          TF_VAR_service_name: ${{ env.ECS_SERVICE }}
         run: terraform apply -var-file="env/${GITHUB_REF##*/}/instance.tfvars" -var ecr_repo_name="${{ env.ECR_REPO }}${GITHUB_REF##*/}" -var cluster_name="${{ env.ECS_CLUSTER }}-${GITHUB_REF##*/}" -var db_uri="${{ env.DB_URI }}" -var service_name="${{ env.ECS_SERVICE }}-${GITHUB_REF##*/}" -var domain_certificate="${{ env.DOMAIN_CERT }}" -auto-approve
