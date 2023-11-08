@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import {
   Center,
   Card,
@@ -35,7 +35,6 @@ export default function UpdateProfile() {
   const [hasError, setHasError] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState(false);
   const [msg, setMsg] = useState("");
-  const { data: session, update } = useSession();
 
   var state;
 
@@ -44,14 +43,17 @@ export default function UpdateProfile() {
   } else state = false;
 
   useEffect(() => {
-    if (!hasEmail) {
+    if (!hasEmail && !isLoading) {
+      console.log("Fetching email");
       setIsLoading(true);
       setHasError(false);
       getSession()
         .then((session) => setEmail(session.user.email))
-        .then(() => setHasEmail(true));
+        .then(() => setHasEmail(true))
+        .then(setIsLoading(false));
     }
-    if (hasEmail && !hasProfile) {
+
+    if (hasEmail && !hasProfile && !isLoading) {
       setIsLoading(true);
       setHasError(false);
       getUser({ email }).then((response) => {
@@ -60,10 +62,12 @@ export default function UpdateProfile() {
               .json()
               .then((response) => setProfile(response))
               .then(setHasProfile(true))
+              .then(setIsLoading(false))
           : setHasError(true);
         console.log("hasError:", hasError);
       });
     }
+
     if (hasEmail && hasProfile) {
       var arr = JSON.parse(JSON.stringify(profile));
       if (arr) {
@@ -88,7 +92,6 @@ export default function UpdateProfile() {
             {
               setMode("View");
               setMsg("");
-              updateSession({ rank, lastName, suffix });
             }
           } else {
             alert("User could not be updated. Please try again.");
@@ -98,21 +101,9 @@ export default function UpdateProfile() {
     }
   };
 
-  const updateSession = async ({ rank, lastName, suffix }) => {
-    await update({
-      ...session,
-      user: {
-        ...session?.user,
-        rank: rank,
-        lastName: lastName,
-        suffix: suffix,
-      },
-    });
-  };
-
   return (
     <>
-      {DeleteDialog(deleteStatus)}
+      {DeleteDialog(deleteStatus, email)}
       {isLoading ? (
         <>
           <Center>
@@ -308,7 +299,7 @@ export default function UpdateProfile() {
                 </Flex>
               )}
               {mode === "Edit" && (
-                <flex>
+                <Flex>
                   <HStack justify={"flex-end"}>
                     <Button
                       bgColor={"#A0C1B9"}
@@ -330,7 +321,7 @@ export default function UpdateProfile() {
                       Update
                     </Button>
                   </HStack>
-                </flex>
+                </Flex>
               )}
             </CardFooter>
           </Card>
