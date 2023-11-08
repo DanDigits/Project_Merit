@@ -17,7 +17,7 @@ import {
   getAllUsers,
   deleteGroup,
   renameGroup,
-  getSupervisorTable,
+  getSupervisor,
 } from "server/mongodb/actions/User";
 import urls from "../../../../utils/getPath";
 import nodemailer from "nodemailer";

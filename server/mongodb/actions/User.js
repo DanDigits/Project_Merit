@@ -199,7 +199,7 @@ export async function renameGroup(group, groupData) {
     return err;
   });
   console.log(group);
-  while (user[i] != undefined) {
+  while (user?.[i] != undefined) {
     index = user[i].group?.indexOf(`${group}`);
     user[i].group[index] = groupData.newGroup;
     console.log(user[i].group[index]);
@@ -232,7 +232,7 @@ export async function deleteGroup(group) {
   const user = await UserSchema?.find({ group }).catch(function (err) {
     return err;
   });
-  while (user[i] != undefined) {
+  while (user?.[i] != undefined) {
     index = user[i].group?.indexOf(`${group}`);
     user[i].group.splice(index, 1);
     await UserSchema?.findOneAndUpdate(
@@ -314,17 +314,23 @@ export async function getGroup(group) {
   await mongoDB();
   let members = [];
   let categories = "Mission Leadership Resources Unit";
+  let supervisorFilter = "firstName lastName rank suffix";
   let filter =
     "email firstName lastName rank suffix mostRecentReportDate totalReports currentQuarter quarterReports" +
     " " +
     categories;
-  let personnel = await UserSchema?.find({ group }, filter)
+
+  let supervisors = await UserSchema?.find(
+    { supervisedGroup: group },
+    supervisorFilter
+  )
     .sort({ lastName: 1, firstName: 1 })
     .catch(function (err) {
       console.log(err);
       return "ERROR";
     });
-  let supervisors = await UserSchema?.find({ supervisedGroup: group }, filter)
+
+  let personnel = await UserSchema?.find({ group }, filter)
     .sort({ lastName: 1, firstName: 1 })
     .catch(function (err) {
       console.log(err);
@@ -366,4 +372,17 @@ export async function getAllUsers() {
       return "ERROR";
     });
   return users;
+}
+
+export async function getSupervisor(group) {
+  let supervisors,
+    i,
+    currentGroup = await getGroup(group);
+
+  // If current group isnt empty, push supervisor profile to supervisors array
+  while (currentGroup?.[0]?.[i] != undefined) {
+    supervisors.push(group[0][i]);
+  }
+
+  return supervisors;
 }
