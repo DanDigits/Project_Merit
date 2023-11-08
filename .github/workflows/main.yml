@@ -4,7 +4,7 @@ on:
 
 name: CI/CD
 env:
-  ecr_repo_name: meritrepo
+  ecr_repo_name: merit-repo
   cluster_name: merit-cluster
   service_name: merit-service
 jobs:
@@ -37,10 +37,14 @@ jobs:
       - name: Login to ECR
         id: ecr
         uses: aws-actions/amazon-ecr-login@v1
+      - name: Export Branch
+        shell: bash
+        run: echo "branch=${$GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+        id: export_branch
       - name: Build Image to ECR and Force Deployment on ECS
         uses: jaroldwong/ecr-push-and-ecs-deploy@v1.1
         with:
           ecr-registry: ${{ steps.ecr.outputs.registry }}
-          ecr-repository: $ecr_repo_name
+          ecr-repository: $ecr_repo_name${{ steps.export_branch.outputs.branch }}
           ecs-cluster: $cluster_name
           ecs-service: $service_name
