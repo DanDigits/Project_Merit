@@ -1,6 +1,7 @@
 on:
   workflow_call:
 
+name: "Lint Code"
 jobs:
   lint:
     runs-on: ubuntu-latest
