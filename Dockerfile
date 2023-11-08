@@ -18,7 +18,7 @@ COPY --from=build --chown=user:user /app/.next/standalone ./
 COPY --from=build --chown=user:user /app/.next/static ./.next/static
 USER user
 
-# Mitigation due to issues with NextAuth and NextJS standalone compilation
+# Mitigation due to issues with next-auth and ECS
 RUN sed -i 's|const errorUrl = new URL(`${basePath}${errorPage}`, origin);|const errorUrl = new URL(`${basePath}${errorPage}`, process.env.NEXTAUTH_URL + ":" + process.env.NEXTAUTH_PORT);|g' .next/server/src/middleware.js 
 RUN sed -i 's|const signInUrl = new URL(`${basePath}${signInPage}`, origin);|const signInUrl = new URL(`${basePath}${signInPage}`, process.env.NEXTAUTH_URL + ":" + process.env.NEXTAUTH_PORT);|g' .next/server/src/middleware.js 
 
@@ -26,10 +26,11 @@ ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NEXTAUTH_SECRET=SECRET
-ENV NEXTAUTH_URL=URL
-ENV NEXTAUTH_PORT=80
-#ENV NEXTAUTH_URL_INTERNAL=127.0.0.1:3000
-ENV DB_URI=URI
+ENV NEXTAUTH_URL=localhost
+ENV NEXT_PUBLIC_NEXTAUTH_URL $NEXTAUTH_URL
+#ENV NEXTAUTH_PORT=URL
+#ENV NEXTAUTH_URL_INTERNAL=localhost:$PORT
+#ENV DB_URI=URI
 #ENV DB_NAME=name
 
 EXPOSE $PORT

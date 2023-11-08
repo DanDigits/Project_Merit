@@ -1,0 +1,57 @@
+on:
+  workflow_call:
+    inputs:
+      branch:
+        type: string
+        required: true
+    secrets:
+      aws_access_key_id:
+        required: true
+      aws_secret_access_key:
+        required: true
+      db_uri:
+        required: true
+      ecr_repo_name:
+        required: true
+      cluster_name:
+        required: true
+      service_name:
+        required: true
+      domain_cert:
+        required: true
+
+name: "Deploy Terraform"
+jobs:
+  instantiate:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
+      BRANCH: ${{ inputs.branch }}
+      DOMAIN_CERT: ${{ secrets.domain_cert }}
+      ECR_REPO: ${{ secrets.ecr_repo_name }}
+      ECS_CLUSTER: ${{ secrets.cluster_name }}
+      ECS_SERVICE: ${{ secrets.service_name }}
+      DB_URI: ${{ secrets.db_uri }}
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.0
+          terraform_wrapper: false
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+      - name: Terraform Init
+        id: init
+        run: terraform init -reconfigure -backend-config="env/${GITHUB_REF##*/}/state.tfvars"
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color -var-file="env/${GITHUB_REF##*/}/instance.tfvars" -var ecr_repo_name="${{ env.ECR_REPO }}${GITHUB_REF##*/}" -var cluster_name="${{ env.ECS_CLUSTER }}-${GITHUB_REF##*/}" -var db_uri="${{ env.DB_URI }}" -var service_name="${{ env.ECS_SERVICE }}-${GITHUB_REF##*/}" -var domain_certificate="${{ env.DOMAIN_CERT }}"
+      - name: Terraform Apply
+        run: terraform apply -var-file="env/${GITHUB_REF##*/}/instance.tfvars" -var ecr_repo_name="${{ env.ECR_REPO }}${GITHUB_REF##*/}" -var cluster_name="${{ env.ECS_CLUSTER }}-${GITHUB_REF##*/}" -var db_uri="${{ env.DB_URI }}" -var service_name="${{ env.ECS_SERVICE }}-${GITHUB_REF##*/}" -var domain_certificate="${{ env.DOMAIN_CERT }}" -auto-approve

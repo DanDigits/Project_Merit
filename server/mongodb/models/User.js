@@ -13,7 +13,27 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  suffix: {
+    type: String,
+    required: false,
+  },
   password: {
+    type: String,
+    required: true,
+  },
+  rank: {
+    type: String,
+    required: true,
+  },
+  verified: {
+    type: Boolean,
+    required: true,
+  },
+  isPasswordLocked: {
+    type: Boolean,
+    required: true,
+  },
+  emailVerification: {
     type: String,
     required: true,
   },

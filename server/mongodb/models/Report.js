@@ -9,19 +9,15 @@ const ReportSchema = new Schema({
     type: String,
     required: true,
   },
-  date_of_creation: {
+  date: {
     type: String,
     required: true,
   },
-  quarter: {
-    type: Number,
+  category: {
+    type: String,
     required: true,
   },
-  year: {
-    type: Number,
-    required: true,
-  },
-  data: {
+  report: {
     type: String,
     required: true,
   },
