@@ -1,6 +1,6 @@
 on:
   push:
-    branches: ["main", "feature"]
+    branches: ["main", "test"]
 
 name: CI/CD
 env:
