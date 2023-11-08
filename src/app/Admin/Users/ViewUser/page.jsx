@@ -79,7 +79,7 @@ export default function Page() {
           )}
           {mode === "Edit" && (
             <>
-              {User}
+              {User(mode)}
               <ButtonGroup>
                 <Button
                   bgColor={"#FFC370"}

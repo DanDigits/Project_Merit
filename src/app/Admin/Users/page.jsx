@@ -97,8 +97,30 @@ export default function Page() {
         ),
       },
       {
-        accessorKey: "name",
+        id: "update",
+        header: "Update",
+        cell: ({ cell }) => (
+          <>
+            <Button
+              size="sm"
+              textColor={"white"}
+              bg={"#1c303c"}
+              opacity={0.85}
+              borderColor={"#354751"}
+              borderWidth={"thin"}
+              _hover={{ color: "black", bg: "white", opacity: 1 }}
+              onClick={() => handleSubmitInfo(cell.row.original.email)}
+            >
+              <Icon as={PiEyeBold} />
+            </Button>
+          </>
+        ),
+      },
+      {
+        accessorFn: (row) => `${row.lastName}, ${row.firstName}`,
+        id: "name",
         header: "Name",
+        cell: (info) => info.getValue(),
       },
 
       {
@@ -108,6 +130,12 @@ export default function Page() {
       {
         accessorKey: "role",
         header: "Role",
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterCategories) => {
+          if (filterCategories.length === 0) return true;
+          const role = row.getValue(columnId);
+          return filterCategories.includes(role);
+        },
       },
       {
         accessorKey: "group",
@@ -132,36 +160,18 @@ export default function Page() {
         header: "Fiscal Total Reports",
       },
       {
-        accessorKey: "lastReport",
+        accessorKey: "mostRecentReportDate",
         header: "Last Report",
       },
       {
-        accessorKey: "lastSignIn",
+        accessorKey: "lastLogin",
         header: "Last Sign-In",
       },
       {
         accessorKey: "status",
         header: "Status",
-      },
-      {
-        id: "update",
-        header: "Update",
-        cell: ({ cell }) => (
-          <>
-            <Button
-              size="sm"
-              textColor={"white"}
-              bg={"#1c303c"}
-              opacity={0.85}
-              borderColor={"#354751"}
-              borderWidth={"thin"}
-              _hover={{ color: "black", bg: "white", opacity: 1 }}
-              onClick={() => handleSubmitInfo(cell.row.original.email)}
-            >
-              <Icon as={PiEyeBold} />
-            </Button>
-          </>
-        ),
+        cell: ({ cell }) =>
+          cell.row.original.status == true ? "Suspended" : "Active",
       },
     ],
 

@@ -66,7 +66,7 @@ export default function Group(group_mode) {
   const handleView = useCallback(
     (name) => {
       secureLocalStorage.setItem("userName", name);
-      router.push("/Admin/ViewUser");
+      router.push("/Admin/Users/ViewUser");
     },
     [router]
   );

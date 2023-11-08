@@ -17,10 +17,10 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import Dialog from "../NewUser/dialog";
-import { createUser } from "./../../../actions/Admin.js";
+//import { createUser } from "./../../../actions/Admin.js";
 
 import secureLocalStorage from "react-secure-storage";
-import { getUser, updateUser } from "./../../../actions/User.js";
+import { getUser /*, updateUser*/ } from "src/app/actions/User.js";
 
 export default function User(user_mode) {
   const router = useRouter();
@@ -29,18 +29,17 @@ export default function User(user_mode) {
   const [lastName, setLastName] = useState("");
   const [suffix, setSuffix] = useState("");
   const [rank, setRank] = useState("");
-  //const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
+
   const [group, setGroup] = useState("");
   const [groupSupervised, setGroupSupervised] = useState("");
-  const [role, setRole] = useState("user");
-  const [entry, setEntry] = useState(null);
+  const [role, setRole] = useState("");
+
   const [totalReports, setTotalReports] = useState("");
   const [lastReport, setLastReport] = useState("");
   const [lastLogin, setLastLogin] = useState("");
   const [status, setStatus] = useState("");
 
+  const [entry, setEntry] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [hasEntry, setHasEntry] = useState(false);
@@ -57,7 +56,6 @@ export default function User(user_mode) {
 
   if (user_mode === "View") {
     state = true;
-    console.log(email);
   } else state = false;
 
   const handleSubmitInfo = (e) => {
@@ -119,6 +117,7 @@ export default function User(user_mode) {
           setRank(arr.rank);
           setRole(arr.role);
           setGroup(arr.group);
+          setGroupSupervised(arr.supervisedGroup);
           setTotalReports(arr.totalReports);
           setLastReport(arr.mostRecentReportDate);
           setLastLogin(arr.lastLogin);
@@ -243,7 +242,7 @@ export default function User(user_mode) {
                   isReadOnly={state}
                   placeholder="Select Rank"
                   value={rank}
-                  variant="login"
+                  variant="trim"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
                   bg="#EDF2F7"
@@ -362,7 +361,7 @@ export default function User(user_mode) {
                 <Select
                   isReadOnly={state}
                   alpha={"1.0"}
-                  variant="login"
+                  variant="trim"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
                   bg="#F7FAFC"
@@ -370,8 +369,12 @@ export default function User(user_mode) {
                   size={"md"}
                   value={role}
                 >
-                  <option value={"user"}>User</option>
-                  <option value={"supervisor"}>Supervisor</option>
+                  <option value={"User"} disabled>
+                    User
+                  </option>
+                  <option value={"Supervisor"} disabled>
+                    Supervisor
+                  </option>
                 </Select>
               </FormControl>
             </>
@@ -383,8 +386,8 @@ export default function User(user_mode) {
                 </FormLabel>
                 <Select
                   isReadOnly={state}
-                  placeholder="Select Category"
-                  variant="login"
+                  placeholder="Select Role"
+                  variant="trim"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
                   bg="#F7FAFC"
@@ -393,12 +396,13 @@ export default function User(user_mode) {
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                 >
-                  <option value={"user"}>User</option>
-                  <option value={"supervisor"}>Supervisor</option>
+                  <option value={"User"}>User</option>
+                  <option value={"Supervisor"}>Supervisor</option>
                 </Select>
               </FormControl>
             </>
           )}
+
           <Box display={!role || role === null ? "none" : "initial"}>
             <FormControl id="group">
               <FormLabel mb={1} fontSize={15} color={"#331E38"}>
@@ -429,7 +433,7 @@ export default function User(user_mode) {
               </Text>
             )}
           </Box>
-          <Box display={role === "supervisor" ? "initial" : "none"}>
+          <Box display={role === "Supervisor" ? "initial" : "none"}>
             <FormControl id="groupSupervised">
               <FormLabel mb={1} fontSize={15} color={"#331E38"}>
                 {user_mode === "New" ? "Assign Managed Group" : "Managed Group"}
@@ -448,7 +452,7 @@ export default function User(user_mode) {
                 onChange={(e) => setGroupSupervised(e.target.value)}
               />
             </FormControl>
-            <Button display={user_mode === "View" ? "initial" : "none"}>
+            <Button mb={6} display={user_mode === "View" ? "initial" : "none"}>
               View Group
             </Button>
             {subNotFound && (

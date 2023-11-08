@@ -6,10 +6,7 @@ const options = ["Supervisor", "User"];
 
 const RoleFilter = ({ columnFilters, setColumnFilters }) => {
   const onChange = (id, value) => {
-    console.log("context", value);
     setColumnFilters((prev) => {
-      const roles = prev.find((filter) => filter.id === "role")?.value;
-
       return prev.concat({
         id: "role",
         value: value,
