@@ -35,15 +35,15 @@ export default function Thesaurus() {
       setArr(
         Object.values(results).slice(
           0,
-          Object.values(results).length < 12
+          Object.values(results).length < 15
             ? Object.values(results).length
-            : 12
+            : 15
         )
       );
       sethasres(true);
     }
     if (hasres) {
-      for (var i = 0; i < arr.length; i++) temp += "-" + arr[i] + "  ";
+      for (var i = 0; i < arr.length; i++) temp += arr[i] + "  ";
 
       setTextSet(true);
       setResultsSet(false);
