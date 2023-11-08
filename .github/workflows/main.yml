@@ -5,6 +5,10 @@ on:
       - test
 
 name: CI/CD
+env:
+  ecr_repo_name: ${{ github.head_ref }}MeritRepo
+  cluster_name: ${{ github.head_ref }}MeritCluster
+  service_name: ${{ github.head_ref }}MeritService
 jobs:
   prettier:
     uses: ./.github/workflows/lint.yml
@@ -17,9 +21,9 @@ jobs:
       aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       domain_cert: ${{ secrets.DOMAIN_CERT }}
       db_uri: ${{ secrets.DB_URI }}
-      ecr_repo_name: ${{ github.head_ref }}MeritRepo
-      cluster_name: ${{ github.head_ref }}MeritCluster
-      service_name: ${{ github.head_ref }}MeritService
+      ecr_repo_name: $ecr_repo_name
+      cluster_name: $cluster_name
+      service_name: $service_name
   aws:
     runs-on: ubuntu-latest
     steps:
@@ -38,6 +42,6 @@ jobs:
         uses: jaroldwong/ecr-push-and-ecs-deploy@v1.1
         with:
           ecr-registry: ${{ steps.ecr.outputs.registry }}
-          ecr-repository: ${{ github.head_ref }}MeritRepo
-          ecs-cluster: ${{ github.head_ref }}MeritCluster
-          ecs-service: ${{ github.head_ref }}MeritService
+          ecr-repository: $ecr_repo_name
+          ecs-cluster: $cluster_name
+          ecs-service: $service_name
