@@ -33,11 +33,11 @@ resource "aws_ecs_task_definition" "task_definition" {
         },
         {
           "name": "NEXTAUTH_URL",
-          "value": "${var.nextauth_port}"
+          "value": "${var.nextauth_url}"
         },
         {
           "name": "NEXTAUTH_PORT",
-          "value": "${var.nextauth_url}"
+          "value": "${var.nextauth_port}"
         },
         {
           "name": "NEXT_PUBLIC_NEXTAUTH_URL",
