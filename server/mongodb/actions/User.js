@@ -149,16 +149,24 @@ export async function modifyUser(userId, userData) {
     user.passwordLocked == true
   ) {
     // General user update
-    // Force server values for entered information
-    userData.role = user?.role;
-    userData.verified = user?.verified;
-    userData.passwordLocked = true;
-    userData.suspended = user?.suspended;
+    const verifyAdminCredentials = await getUser(userData?.adminCredentials);
+    if (verifyAdminCredentials?.role !== "Admin") {
+      /* Administrator header from request did not yield a user in database with Admin role; force
+         important server values onto the PATCH request for security */
+      userData.role = user?.role;
+      userData.verified = user?.verified;
+      userData.passwordLocked = true;
+      userData.suspended = user?.suspended;
+    }
 
     // Check if user is already present in a group; prevent changing group with error return
+    // (user group not empty) && (group request different from user group) && (group request not empty)
     if (
-      (user?.group == undefined || user?.group == [] || user?.group == "") &&
-      userData?.group != user?.group
+      (user?.group != undefined || user?.group != [] || user?.group != "") &&
+      userData?.group != user?.group &&
+      (userData?.group != undefined ||
+        userData?.group != [] ||
+        userData?.group != "")
     ) {
       user.message = "CONFLICT";
       return user;
@@ -334,19 +342,18 @@ export async function makeAdmin(userId, adminId) {
 export async function getGroup(group) {
   await mongoDB();
   let members = [];
-  let personnel = await UserSchema?.find(
-    { group },
-    "-password -__v -_id -passwordLocked -emailVerification -verified"
-  )
+  let categories = "Mission Leadership Resources Unit";
+  let filter =
+    "email firstName lastName rank suffix mostRecentReportDate totalReports currentQuarter quarterReports" +
+    " " +
+    categories;
+  let personnel = await UserSchema?.find({ group }, filter)
     .sort({ lastName: 1, firstName: 1 })
     .catch(function (err) {
       console.log(err);
       return "ERROR";
     });
-  let supervisors = await UserSchema?.find(
-    { supervisedGroup: group },
-    "-password -__v -_id -passwordLocked -emailVerification -verified"
-  )
+  let supervisors = await UserSchema?.find({ supervisedGroup: group }, filter)
     .sort({ lastName: 1, firstName: 1 })
     .catch(function (err) {
       console.log(err);

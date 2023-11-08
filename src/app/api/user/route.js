@@ -243,17 +243,24 @@ export async function POST(Request) {
 // Modify/Edit/Update user data
 export async function PATCH(Request) {
   let res;
+  let req = await Request.json();
   const requestHeaders = headers();
   const user = requestHeaders?.get("user");
   const group = requestHeaders?.get("group");
   const admin = requestHeaders?.get("admin");
 
   if (user == undefined && admin == undefined) {
-    res = await renameGroup(group, await Request.json());
+    res = await renameGroup(group, req);
   } else if (group == undefined && admin == undefined) {
-    res = await modifyUser(user, await Request.json());
-  } else if (user == undefined && group == undefined) {
-    res = await makeAdmin(admin, await Request.json());
+    res = await modifyUser(user, req);
+  } else if (admin != undefined) {
+    if (user == undefined && group == undefined) {
+      res = await makeAdmin(admin, req);
+    } else if (user != undefined && group == undefined) {
+      res = await modifyUser(user, (req.adminCredentials = admin));
+    } else {
+      res.message = "TOO MANY REQUESTS";
+    }
   } else {
     res.message = "ERROR";
   }
