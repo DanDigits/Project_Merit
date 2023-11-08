@@ -1,21 +1,51 @@
-name: lint
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main
+      - test
+
+name: CI/CD
+env:
+  BRANCH: ${{ github.head_ref }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  DOMAIN_CERT: ${{ secrets.DOMAIN_CERT }}
+  ECR_REPO: MeritRepo
+  ECS_CLUSTER: MeritCluster
+  ECS_SERVICE: MeritService
+  DB_URI: ${{ secrets.DB_URI }}
 jobs:
   lint:
+    uses: DanDigits/Project_Merit/.github/workflows/lint.yml
+  instantiate:
+    uses: DanDigits/Project_Merit/.github/workflows/terraform.yml@$BRANCH
+    with:
+      branch: $BRANCH
+    secrets:
+      aws_access_key_id: $AWS_ACCESS_KEY_ID
+      aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
+      domain_cert: $DOMAIN_CERT
+      db_uri: $DB_URI
+      ecr_repo_name: $BRANCH$ECR_REPO
+      cluster_name: $BRANCH$ECS_CLUSTER
+      service_name: $BRANCH$ECS_SERVICE
+  push:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          node-version: 14.x
-      - name: Install dependencies
-        run: npm ci
-      - name: Lint files and run type-checks
-        run: npm run lint
-      - name: Run prettier
-        run: npm run format
+          aws_access_key_id: $AWS_ACCESS_KEY_ID
+          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build Image to ECR and Force Deployment on ECS
+        uses: jaroldwong/ecr-push-and-ecs-deploy@v1.1
+        with:
+          ecr-registry: ${{ steps.login-ecr.outputs.registry }}
+          ecr-repository: $BRANCH$ECR_REPO
+          ecs-cluster: $BRANCH$ECS_CLUSTER
+          ecs-service: $BRANCH$ECS_SERVICE
