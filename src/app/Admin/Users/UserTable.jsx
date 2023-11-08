@@ -31,7 +31,7 @@ import {
 import { FiFilter } from "react-icons/fi";
 import Filters from "../Users/Filters";
 import { useRouter } from "next/navigation";
-//import { deleteUser } from "";
+//import { deleteUser } from "./../../actions/User.js";
 
 export default function UserTable({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI

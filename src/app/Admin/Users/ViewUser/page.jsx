@@ -20,8 +20,8 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import User from "./user";
-//import {deleteUser} from "";
 import secureLocalStorage from "react-secure-storage";
+import { deleteUser } from "./../../../actions/User.js";
 
 export default function Page() {
   const [mode, setMode] = useState("View");
