@@ -27,6 +27,13 @@ import {
   HStack,
   Stack,
   Icon,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
 import { FiFilter } from "react-icons/fi";
 import Filters from "../Users/Filters";
@@ -41,6 +48,8 @@ export default function UserTable({ columns, data }) {
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [openFilter, setOpenFilter] = React.useState(false);
   const [deleteLoading, setDeleteLoading] = React.useState(false);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const table = useReactTable({
     data,
@@ -116,16 +125,37 @@ export default function UserTable({ columns, data }) {
             color={"white"}
             _hover={{ bgColor: "#031926", color: "white" }}
             isLoading={deleteLoading}
-            onClick={() =>
-              handleDelete(
-                table
-                  .getSelectedRowModel()
-                  .flatRows.map(({ original }) => original.name)
-              )
-            }
+            onClick={onOpen}
           >
             Delete
           </Button>
+          <AlertDialog isOpen={isOpen} onClose={onClose}>
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                  Delete Report
+                </AlertDialogHeader>
+                <AlertDialogBody>Are you sure?</AlertDialogBody>
+                <AlertDialogFooter>
+                  <Button onClick={onClose}>Cancel</Button>
+                  <Button
+                    colorScheme="red"
+                    onClick={() =>
+                      handleDelete(
+                        table
+                          .getSelectedRowModel()
+                          .flatRows.map(({ original }) => original.name)
+                      )
+                    }
+                    ml={3}
+                  >
+                    Delete
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
+
           <Button
             size={{ base: "sm", md: "md" }}
             bgColor={"#7eb67d"}
