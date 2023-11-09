@@ -133,7 +133,7 @@ export default function UserTable({ columns, data }) {
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  Delete Report
+                  Delete Users
                 </AlertDialogHeader>
                 <AlertDialogBody>Are you sure?</AlertDialogBody>
                 <AlertDialogFooter>
@@ -144,7 +144,7 @@ export default function UserTable({ columns, data }) {
                       handleDelete(
                         table
                           .getSelectedRowModel()
-                          .flatRows.map(({ original }) => original.name)
+                          .flatRows.map(({ original }) => original.email)
                       )
                     }
                     ml={3}
