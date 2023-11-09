@@ -14,7 +14,8 @@ import {
   Input,
 } from "@chakra-ui/react";
 import GroupDialog from "./GroupDialog.jsx";
-import { getGroup } from "src/app/actions/Reports";
+//import { getGroup } from "src/app/actions/Group";
+import { getUser } from "src/app/actions/User";
 
 export default function UpdatePassword() {
   const [email, setEmail] = useState("");
@@ -25,37 +26,41 @@ export default function UpdatePassword() {
   const [hasError, setHasError] = useState("");
   const [isLoading, setIsLoading] = useState("");
   const [status, setStatus] = useState(false);
+  const [profile, setProfile] = useState(false);
+  const [hasProfile, setHasProfile] = useState(false);
 
   useEffect(() => {
-    if (!hasEmail) {
+    if (!hasEmail && !isLoading) {
       setIsLoading(true);
       setHasError(false);
       getSession()
         .then((session) => setEmail(session.user.email))
         .then(() => setHasEmail(true));
+      setIsLoading(false);
     }
-    if (hasEmail && !hasGroup) {
+
+    if (hasEmail && !hasProfile && !isLoading) {
       setIsLoading(true);
       setHasError(false);
-      getGroup({ email }).then((response) => {
+      getUser({ email }).then((response) => {
         response.ok
           ? response
               .json()
-              .then((response) => setGroup(response))
-              .then(setHasGroup(true))
+              .then((response) => setProfile(response))
+              .then(setHasProfile(true))
           : setHasError(true);
         console.log("hasError:", hasError);
       });
+      setIsLoading(false);
     }
-    if (hasEmail && hasGroup) {
-      var arr = JSON.parse(JSON.stringify(group));
+    if (hasEmail && hasProfile) {
+      var arr = JSON.parse(JSON.stringify(profile));
       if (arr) {
         setGroup(arr.group);
-        setLeader(arr.leader);
         setIsLoading(false);
       }
     }
-  }, [hasEmail, hasGroup, email, group, hasError, isLoading]);
+  }, [hasEmail, hasProfile, email, profile, isLoading]);
 
   return (
     <>
