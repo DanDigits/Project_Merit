@@ -17,10 +17,21 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import Dialog from "../NewUser/dialog";
-//import { createUser } from "./../../../actions/Admin.js";
+import { createUser } from "./../../../actions/Admin.js";
 
 import secureLocalStorage from "react-secure-storage";
-import { getUser /*, updateUser*/ } from "src/app/actions/User.js";
+import { getUser, updateUser } from "src/app/actions/User.js";
+
+const statusMessages = {
+  account: "Account not found.",
+  confirm: "Confirmation must match password.",
+  credentials: "Invalid email or password.",
+  duplicate: "An account already exists for this email address.",
+  email: "Please enter a valid email address.",
+  length: "Password must be a minimum of 8 characters.",
+  missingReg: "All fields except suffix and groups are required.",
+  missingUpd: "Both New Password and New Password Confirmation are required.",
+};
 
 export default function User(user_mode) {
   const router = useRouter();
@@ -29,9 +40,11 @@ export default function User(user_mode) {
   const [lastName, setLastName] = useState("");
   const [suffix, setSuffix] = useState("");
   const [rank, setRank] = useState("");
+  const [password, setPassword] = useState("");
+  const [password2, setPassword2] = useState("");
 
   const [group, setGroup] = useState("");
-  const [groupSupervised, setGroupSupervised] = useState("");
+  const [supervisedGroup, setSupervisedGroup] = useState("");
   const [role, setRole] = useState("");
 
   const [totalReports, setTotalReports] = useState("");
@@ -51,6 +64,7 @@ export default function User(user_mode) {
 
   const [membershipNotFound, setMembershipNotFound] = useState(null);
   const [subNotFound, setSubNotFound] = useState(null);
+  const [msg, setMsg] = useState("");
 
   var state;
 
@@ -60,16 +74,73 @@ export default function User(user_mode) {
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
+
     if (user_mode === "New") {
-      console.log("new user created");
-      var response = "no";
-      if (response === "ok") {
-        setDialogStatus("New");
+      let emailRegex = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/;
+
+      if (
+        password === "" ||
+        password2 === "" ||
+        email === "" ||
+        rank === "" ||
+        firstName === "" ||
+        lastName === "" ||
+        role === ""
+      ) {
+        setMsg(statusMessages.missingReg);
+      } else if (password.length < 8) {
+        setMsg(statusMessages.length);
+      } else if (password !== password2) {
+        setMsg(statusMessages.confirm);
+      } else if (!emailRegex.test(email)) {
+        setMsg(statusMessages.email);
       } else {
-        setMembershipNotFound(true);
-        setSubNotFound(true);
+        createUser({
+          email,
+          password,
+          rank,
+          firstName,
+          lastName,
+          suffix,
+          role,
+          group,
+          supervisedGroup,
+        }).then((response) => {
+          if (!response.ok) {
+            response.json().then((data) => {
+              if (data === "EXISTS") {
+                setMsg(statusMessages.duplicate);
+              }
+            });
+          } else {
+            setDialogStatus("New");
+          }
+        });
       }
     } else if (user_mode === "Edit") {
+      console.log("Updating user profile");
+      if (rank === "" || firstName === "" || lastName === "" || role === "") {
+        setMsg("missing");
+      } else {
+        updateUser({
+          email,
+          rank,
+          firstName,
+          lastName,
+          suffix,
+          role,
+          group,
+          supervisedGroup,
+        }).then((response) => {
+          if (response.ok) {
+            {
+              setMsg("");
+            }
+          } else {
+            alert("User could not be updated. Please try again.");
+          }
+        });
+      }
       console.log("User updated");
       setDialogStatus("Edit");
     }
@@ -117,7 +188,7 @@ export default function User(user_mode) {
           setRank(arr.rank);
           setRole(arr.role);
           setGroup(arr.group);
-          setGroupSupervised(arr.supervisedGroup);
+          setSupervisedGroup(arr.supervisedGroup);
           setTotalReports(arr.totalReports);
           setLastReport(arr.mostRecentReportDate);
           setLastLogin(arr.lastLogin);
@@ -434,14 +505,14 @@ export default function User(user_mode) {
             )}
           </Box>
           <Box display={role === "Supervisor" ? "initial" : "none"}>
-            <FormControl id="groupSupervised">
+            <FormControl id="supervisedGroup">
               <FormLabel mb={1} fontSize={15} color={"#331E38"}>
                 {user_mode === "New" ? "Assign Managed Group" : "Managed Group"}
               </FormLabel>
               <Input
                 isReadOnly={state}
                 type=""
-                value={groupSupervised}
+                value={supervisedGroup}
                 maxLength={64}
                 variant="login"
                 borderWidth={"2px"}
@@ -449,7 +520,7 @@ export default function User(user_mode) {
                 bg="#F7FAFC"
                 mb={3}
                 size={"md"}
-                onChange={(e) => setGroupSupervised(e.target.value)}
+                onChange={(e) => setSupervisedGroup(e.target.value)}
               />
             </FormControl>
             <Button mb={6} display={user_mode === "View" ? "initial" : "none"}>
@@ -539,6 +610,7 @@ export default function User(user_mode) {
             </>
           )}
         </form>
+        {msg}
       </Box>
       {Dialog(dialogStatus)}
     </>

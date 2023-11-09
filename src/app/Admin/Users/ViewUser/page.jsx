@@ -35,7 +35,7 @@ export default function Page() {
     deleteUser({ email }).then((response) => {
       if (response.ok) {
         {
-          window.location.replace("/Admin/User");
+          window.location.replace("/Admin/Users");
         }
       } else {
         alert("Delete failed");
@@ -126,7 +126,7 @@ export default function Page() {
                   bgColor={"#6abbc4"}
                   color={"black"}
                   _hover={{ bgColor: "#031926", color: "white" }}
-                  form="sup-form"
+                  form="user-form"
                   type="submit"
                 >
                   Update

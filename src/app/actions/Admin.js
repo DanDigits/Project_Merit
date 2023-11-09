@@ -10,6 +10,9 @@ export const createUser = async ({
   lastName,
   suffix,
   password,
+  role,
+  group,
+  supervisedGroup,
 }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.signUp, {
     method: "POST",
@@ -26,6 +29,9 @@ export const createUser = async ({
       lastName,
       suffix,
       password,
+      role,
+      group,
+      supervisedGroup,
     }),
   });
 

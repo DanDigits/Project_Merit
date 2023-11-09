@@ -7,6 +7,7 @@ export const signUp = async ({
   lastName,
   suffix,
   password,
+  role = "user",
 }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.signUp, {
     method: "POST",
@@ -22,6 +23,7 @@ export const signUp = async ({
       lastName,
       suffix,
       password,
+      role,
     }),
   });
 
@@ -110,6 +112,9 @@ export const updateUser = async ({
   firstName,
   lastName,
   suffix,
+  role,
+  group,
+  supervisedGroup,
 }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
     method: "PATCH",
@@ -123,6 +128,9 @@ export const updateUser = async ({
       firstName,
       lastName,
       suffix,
+      role,
+      group,
+      supervisedGroup,
     }),
   });
   console.log("Update Response:", response.statusText);
