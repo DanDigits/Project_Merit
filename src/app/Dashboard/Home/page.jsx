@@ -30,6 +30,7 @@ export default function Page() {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [reportDate, setReportDate] = useState("");
   const [totals, setTotals] = useState({
     totalReports: "",
     currentQuarter: "",
@@ -106,6 +107,11 @@ export default function Page() {
       setRank(arr.rank);
       setLastName(arr.lastName);
       setSuffix(arr.suffix);
+      setTotals({
+        totalReports: arr.totalReports,
+        currentQuarter: arr.currentQuarter,
+        quarterReports: arr.quarterReports,
+      });
 
       if (totals.Mission !== "") {
         mission.total = arr.Mission;
@@ -122,6 +128,12 @@ export default function Page() {
       if (totals.Unit !== "") {
         unit.total = arr.Unit;
       }
+
+      if (!profile.mostRecentReportDate) {
+        setReportDate("N/A");
+      } else {
+        setReportDate(arr.mostRecentReportDate);
+      }
     }
 
     setProgress(
@@ -129,10 +141,6 @@ export default function Page() {
         (mission.needed + leadership.needed + resources.needed + unit.needed)) *
         100
     );
-
-    if (!profile.mostRecentReportDate) {
-      //setProfile.mostRecentReportDate("N/A")
-    }
 
     console.log("Dashboard set");
   }
@@ -230,7 +238,7 @@ export default function Page() {
                         justifySelf={{ base: "flex-end", md: "auto" }}
                         fontSize={{ base: "lg", lg: "2xl" }}
                       >
-                        {profile.mostRecentReportDate}
+                        {reportDate}
                       </StatNumber>
                       <StatHelpText fontSize={{ base: "xs", md: "sm" }}>
                         Report Date
