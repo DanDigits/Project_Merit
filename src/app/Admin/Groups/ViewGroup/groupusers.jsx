@@ -25,8 +25,16 @@ import {
   Input,
   HStack,
   ButtonGroup,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
-//import { searchUser, removeUser } from "";
+//import { addUser, removeUser } from "";
+import { useRouter } from "next/navigation";
 
 export default function GroupUsers({ mode, columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -34,24 +42,32 @@ export default function GroupUsers({ mode, columns, data }) {
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilter, setGlobalFilter] = useState("");
   const [openSearch, setOpenSearch] = useState(false);
+  const [searchEmail, setSearchEmail] = useState("");
   const [status, setStatus] = useState(false);
-  const [searchLoading, setSearchLoading] = useState(false);
+  const [addLoading, setAddLoading] = useState(false);
   const [removeLoading, setRemoveLoading] = useState(false);
 
-  const handleSearch = (name) => {
-    if (mode === "New" && name != "") {
-      setSearchLoading(true);
-      searchUser({ name }).then((response) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const handleChange = (e) => {
+    setSearchEmail(e.target.value);
+    setStatus("");
+  };
+
+  const handleSearch = (email) => {
+    if (mode === "New" && email != "") {
+      setAddLoading(true);
+      addUser({ email }).then((response) => {
         if (response.ok) {
           {
             setStatus("success");
+            //setStatus(response.status)
           }
         } else {
           setStatus("error");
-          //setStatus(response.error)
         }
       });
-      setSearchLoading(false);
+      setAddLoading(false);
     }
   };
 
@@ -61,6 +77,8 @@ export default function GroupUsers({ mode, columns, data }) {
       removeUser({ userArray }).then((response) => {
         if (response.ok) {
           {
+            // reload will cause view page to clear
+            // need to rerender table
           }
         } else {
           alert("Remove failed");
@@ -86,6 +104,8 @@ export default function GroupUsers({ mode, columns, data }) {
     debugTable: true,
   });
 
+  const router = useRouter();
+
   return (
     <Box mx={{ base: -4, md: 0 }}>
       <HStack my={2} justify={"space-between"}>
@@ -108,16 +128,37 @@ export default function GroupUsers({ mode, columns, data }) {
             color={"white"}
             _hover={{ bgColor: "#031926", color: "white" }}
             isLoading={removeLoading}
-            onClick={() =>
-              handleRemove(
-                table
-                  .getSelectedRowModel()
-                  .flatRows.map(({ original }) => original.email)
-              )
-            }
+            onClick={onOpen}
           >
             Remove
           </Button>
+          <AlertDialog isOpen={isOpen} onClose={onClose}>
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                  Remove Users
+                </AlertDialogHeader>
+                <AlertDialogBody>Are you sure?</AlertDialogBody>
+                <AlertDialogFooter>
+                  <Button onClick={onClose}>Cancel</Button>
+                  <Button
+                    colorScheme="red"
+                    onClick={() =>
+                      handleRemove(
+                        table
+                          .getSelectedRowModel()
+                          .flatRows.map(({ original }) => original.email)
+                      )
+                    }
+                    ml={3}
+                  >
+                    Remove
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
+
           <Button
             size={{ base: "sm", md: "md" }}
             bgColor={"#7eb67d"}
@@ -133,26 +174,22 @@ export default function GroupUsers({ mode, columns, data }) {
         <Text>Enter member email:</Text>
         <HStack justify={"flex-start"}>
           <Input
+            value={searchEmail}
             size={{ base: "sm", md: "md" }}
             w={{ base: "50%", md: "xs" }}
             variant="login"
             borderWidth={"1px"}
             borderColor={"#70A0AF"}
             bg="#ECECEC"
+            onChange={(e) => handleChange(e)}
           />
           <Button
             size={{ base: "sm", md: "md" }}
             bgColor={"#6abbc4"}
             color={"black"}
             _hover={{ bgColor: "#031926", color: "white" }}
-            isLoading={searchLoading}
-            onClick={() =>
-              handleSearch(
-                table
-                  .getSelectedRowModel()
-                  .flatRows.map(({ original }) => original.email)
-              )
-            }
+            isLoading={addLoading}
+            onClick={() => handleSearch(searchEmail)}
           >
             Search
           </Button>
@@ -161,7 +198,7 @@ export default function GroupUsers({ mode, columns, data }) {
           <p>There was an error when searching for member.</p>
         )}
         {status === "invalid" && <p>The member you entered does not exist.</p>}
-        {status === "assigned" && (
+        {status === "unable" && (
           <p>The member you entered is already in a group.</p>
         )}
         {status === "success" && <p>Member successfully added.</p>}

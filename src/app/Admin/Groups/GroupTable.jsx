@@ -13,6 +13,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Table,
   Tbody,
   Text,
@@ -26,6 +32,7 @@ import {
   Select,
   HStack,
   Stack,
+  useDisclosure,
 } from "@chakra-ui/react";
 //import { deleteGroup } from "";
 import { useRouter } from "next/navigation";
@@ -36,6 +43,7 @@ export default function GroupTable({ columns, data }) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [deleteLoading, setDeleteLoading] = React.useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const table = useReactTable({
     data,
@@ -94,16 +102,37 @@ export default function GroupTable({ columns, data }) {
             color={"white"}
             _hover={{ bgColor: "#031926", color: "white" }}
             isLoading={deleteLoading}
-            onClick={() =>
-              handleDelete(
-                table
-                  .getSelectedRowModel()
-                  .flatRows.map(({ original }) => original._id)
-              )
-            }
+            onClick={onOpen}
           >
             Delete
           </Button>
+          <AlertDialog isOpen={isOpen} onClose={onClose}>
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                  Delete Report
+                </AlertDialogHeader>
+                <AlertDialogBody>Are you sure?</AlertDialogBody>
+                <AlertDialogFooter>
+                  <Button onClick={onClose}>Cancel</Button>
+                  <Button
+                    colorScheme="red"
+                    onClick={() =>
+                      handleDelete(
+                        table
+                          .getSelectedRowModel()
+                          .flatRows.map(({ original }) => original._id)
+                      )
+                    }
+                    ml={3}
+                  >
+                    Delete
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
+
           <Button
             size={{ base: "sm", md: "md" }}
             bgColor={"#7eb67d"}

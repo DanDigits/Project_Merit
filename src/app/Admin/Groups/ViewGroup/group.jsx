@@ -13,10 +13,11 @@ import {
 } from "@chakra-ui/react";
 import { PiEyeDuotone } from "react-icons/pi";
 import { useRouter } from "next/navigation";
-
-import GroupUsers from "./groupusers";
 import Dialog from "../NewGroup/dialog";
 //import { createGroup, getGroup, updateGroup } from "";
+
+import GroupUsers from "./groupusers";
+//import { getGroup, updateGroup } from "";
 import secureLocalStorage from "react-secure-storage";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
@@ -41,31 +42,29 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 export default function Group(group_mode) {
   const router = useRouter();
   const [dialogStatus, setDialogStatus] = useState(false);
-  const [name, setName] = useState("");
   const [supervisor, setSupervisor] = useState("");
   const [supEmail, setSupEmail] = useState("");
   const [total, setTotal] = useState(0);
-  const [entry, setEntry] = useState("");
 
+  const [entry, setEntry] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [hasEntry, setHasEntry] = useState(false);
 
   const [hasGroupName, setHasGroupName] = useState(false);
   const [groupName, setGroupName] = useState(
-    String(secureLocalStorage.getItem("groupID"))
+    String(secureLocalStorage.getItem("groupName"))
   );
 
   var state;
 
   if (group_mode === "View") {
     state = true;
-    console.log(groupName);
   } else state = false;
 
   const handleView = useCallback(
-    (name) => {
-      secureLocalStorage.setItem("userName", name);
+    (email) => {
+      secureLocalStorage.setItem("Email", email);
       router.push("/Admin/Users/ViewUser");
     },
     [router]
@@ -74,7 +73,7 @@ export default function Group(group_mode) {
   const handleSubmitInfo = (e) => {
     e.preventDefault();
     if (group_mode === "New") {
-      /*createGroup({ groupName, supEmail, supervisor }).then(
+      /*createGroup({ groupName, supEmail }).then(
         (response) => {
           if (response.ok) {
             {
@@ -85,8 +84,6 @@ export default function Group(group_mode) {
           }
         }
       );*/
-      console.log("new group created");
-      setDialogStatus("New");
     } else if (group_mode === "Edit") {
       /*updateGroup({ groupName, supEmail }).then(
         (response) => {
@@ -99,8 +96,6 @@ export default function Group(group_mode) {
           }
         }
       );*/
-      console.log("group updated");
-      setDialogStatus("Edit");
     }
   };
 
@@ -117,7 +112,7 @@ export default function Group(group_mode) {
         console.log("hasEntry:", entry);
       }
       if (hasGroupName && !hasEntry) {
-        secureLocalStorage.removeItem("groupID");
+        secureLocalStorage.removeItem("groupName");
         console.log("hasgroupname && !hasEntry", groupName, hasEntry);
         setIsLoading(true);
         setHasError(false);
@@ -138,7 +133,7 @@ export default function Group(group_mode) {
         console.log("hasReportId && hasEntry", groupName, hasEntry);
         var arr = JSON.parse(JSON.stringify(entry));
         if (arr) {
-          setName(arr.groupName);
+          setGroupName(arr.groupName);
           setSupEmail(arr.supEmail);
           setSupervisor(arr.supervisor);
           setTotal(arr.total);
@@ -175,14 +170,6 @@ export default function Group(group_mode) {
         ),
       },
       {
-        accessorKey: "user",
-        header: () => "Name",
-      },
-      {
-        accessorKey: "email",
-        header: () => "Email",
-      },
-      {
         id: "view",
         header: "View",
         cell: ({ cell }) => (
@@ -202,21 +189,41 @@ export default function Group(group_mode) {
           </>
         ),
       },
+      {
+        accessorKey: "lastName",
+        header: () => "Last Name",
+      },
+      {
+        accessorKey: "firstName",
+        header: () => "First Name",
+      },
+      {
+        accessorKey: "suffix",
+        header: () => "Suffix",
+      },
+      {
+        accessorKey: "rank",
+        header: () => "Rank",
+      },
+      {
+        accessorKey: "email",
+        header: () => "Email",
+      },
     ],
     []
   );
   const data = useMemo(
     () => [
       {
-        user: "user1",
+        firstName: "user1",
         email: "user1@gmail.com",
       },
       {
-        user: "user2",
+        firstName: "user2",
         email: "user2@gmail.com",
       },
       {
-        user: "user3",
+        firstName: "user3",
         email: "user3@gmail.com",
       },
     ],
@@ -244,14 +251,14 @@ export default function Group(group_mode) {
           id="group-form"
           onSubmit={(e) => handleSubmitInfo(e)}
         >
-          <FormControl id="name" isRequired>
+          <FormControl id="groupName" isRequired>
             <FormLabel mb={1} fontSize={15} color={"#331E38"}>
               Group Name:
             </FormLabel>
             <Input
               isReadOnly={state}
               type=""
-              value={name}
+              value={groupName}
               maxLength={64}
               variant="login"
               borderWidth={"2px"}
@@ -259,11 +266,11 @@ export default function Group(group_mode) {
               bg="#F7FAFC"
               mb={3}
               size={"md"}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setGroupName(e.target.value)}
             />
           </FormControl>
           <FormControl
-            display={group_mode === "New" ? "none" : "initial"}
+            display={group_mode === "View" ? "initial" : "none"}
             id="supervisor"
           >
             <FormLabel mb={1} fontSize={15} color={"#331E38"}>
@@ -325,7 +332,7 @@ export default function Group(group_mode) {
             )}
           </>
           <>
-            {(group_mode === "View" || group_mode === "Edit") && (
+            {group_mode != "New" && (
               <>
                 <Text fontWeight={"semibold"} fontSize={15} color={"#331E38"}>
                   Group Members:

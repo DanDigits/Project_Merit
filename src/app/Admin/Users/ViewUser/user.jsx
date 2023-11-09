@@ -135,14 +135,13 @@ export default function User(user_mode) {
           if (response.ok) {
             {
               setMsg("");
+              setDialogStatus("Edit");
             }
           } else {
             alert("User could not be updated. Please try again.");
           }
         });
       }
-      console.log("User updated");
-      setDialogStatus("Edit");
     }
   };
 
@@ -295,10 +294,10 @@ export default function User(user_mode) {
                     type=""
                     value={rank}
                     maxLength={64}
-                    variant="login"
+                    variant="trim"
                     borderWidth={"2px"}
                     borderColor={"#70A0AF"}
-                    bg="#EDF2F7"
+                    bg="#F7FAFC"
                     mb={3}
                     size={"md"}
                   />
@@ -316,7 +315,7 @@ export default function User(user_mode) {
                   variant="trim"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
-                  bg="#EDF2F7"
+                  bg="#F7FAFC"
                   mb={3}
                   size={"md"}
                   _hover={{ bgColor: "#706993" }}
@@ -423,56 +422,80 @@ export default function User(user_mode) {
               </FormControl>
             </HStack>
           )}
-          {state ? (
-            <>
-              <FormControl id="role" isRequired>
+          <HStack>
+            {state ? (
+              <>
+                <FormControl id="role" isRequired>
+                  <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                    Role
+                  </FormLabel>
+                  <Select
+                    isReadOnly={state}
+                    alpha={"1.0"}
+                    variant="trim"
+                    borderWidth={"2px"}
+                    borderColor={"#70A0AF"}
+                    bg="#F7FAFC"
+                    mb={6}
+                    size={"md"}
+                    value={role}
+                  >
+                    <option value={"User"} disabled>
+                      User
+                    </option>
+                    <option value={"Supervisor"} disabled>
+                      Supervisor
+                    </option>
+                  </Select>
+                </FormControl>
+              </>
+            ) : (
+              <>
+                <FormControl id="role" isRequired>
+                  <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                    Role
+                  </FormLabel>
+                  <Select
+                    isReadOnly={state}
+                    placeholder="Select Role"
+                    variant="trim"
+                    borderWidth={"2px"}
+                    borderColor={"#70A0AF"}
+                    bg="#F7FAFC"
+                    mb={6}
+                    size={"md"}
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                  >
+                    <option value={"User"}>User</option>
+                    <option value={"Supervisor"}>Supervisor</option>
+                  </Select>
+                </FormControl>
+              </>
+            )}
+            {user_mode === "Edit" && (
+              <FormControl id="status" isRequired>
                 <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-                  Role
+                  Status
                 </FormLabel>
                 <Select
                   isReadOnly={state}
-                  alpha={"1.0"}
+                  placeholder="Select Status"
                   variant="trim"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
                   bg="#F7FAFC"
                   mb={6}
                   size={"md"}
-                  value={role}
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
                 >
-                  <option value={"User"} disabled>
-                    User
-                  </option>
-                  <option value={"Supervisor"} disabled>
-                    Supervisor
-                  </option>
+                  <option value={"Active"}>Active</option>
+                  <option value={"Suspended"}>Suspended</option>
                 </Select>
               </FormControl>
-            </>
-          ) : (
-            <>
-              <FormControl id="role" isRequired>
-                <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-                  Role
-                </FormLabel>
-                <Select
-                  isReadOnly={state}
-                  placeholder="Select Role"
-                  variant="trim"
-                  borderWidth={"2px"}
-                  borderColor={"#70A0AF"}
-                  bg="#F7FAFC"
-                  mb={6}
-                  size={"md"}
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                >
-                  <option value={"User"}>User</option>
-                  <option value={"Supervisor"}>Supervisor</option>
-                </Select>
-              </FormControl>
-            </>
-          )}
+            )}
+          </HStack>
 
           <Box display={!role || role === null ? "none" : "initial"}>
             <FormControl id="group">

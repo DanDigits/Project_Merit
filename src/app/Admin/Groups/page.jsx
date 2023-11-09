@@ -11,6 +11,7 @@ import { Center, Spinner, Text, Button, Icon, Heading } from "@chakra-ui/react";
 import { PiEyeBold } from "react-icons/pi";
 import GroupTable from "./GroupTable";
 //import { getAllGroups } from "";
+import { getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
 
@@ -96,22 +97,6 @@ export default function Page() {
         ),
       },
       {
-        accessorKey: "groupName",
-        header: "Group Name",
-      },
-      {
-        accessorKey: "supervisor",
-        header: "Supervisor",
-      },
-      {
-        accessorKey: "email",
-        header: "Email",
-      },
-      {
-        accessorKey: "total",
-        header: "Total Members",
-      },
-      {
         id: "update",
         header: "Update",
         cell: ({ cell }) => (
@@ -130,6 +115,22 @@ export default function Page() {
             </Button>
           </>
         ),
+      },
+      {
+        accessorKey: "groupName",
+        header: "Group Name",
+      },
+      {
+        accessorKey: "supervisor",
+        header: "Supervisor",
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
+      },
+      {
+        accessorKey: "total",
+        header: "Total Members",
       },
     ],
 
@@ -177,7 +178,6 @@ export default function Page() {
         </>
       ) : (
         <>
-          {console.log(groups)}
           <Heading mb={10}>Manage Groups</Heading>
           <GroupTable columns={columns} data={data} />
         </>

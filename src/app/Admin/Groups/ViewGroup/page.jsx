@@ -17,16 +17,18 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import Group from "./group";
-//import {deleteGroup} from "";
 import secureLocalStorage from "react-secure-storage";
+//import {deleteGroup} from "";
 
 export default function Page() {
   const [mode, setMode] = useState("View");
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const groupId = String(secureLocalStorage.getItem("groupID"));
+  const [groupName, setGroupName] = useState(
+    String(secureLocalStorage.getItem("groupName"))
+  );
 
   const handleDelete = () => {
-    deleteGroup({ groupId }).then((response) => {
+    deleteGroup({ groupName }).then((response) => {
       if (response.ok) {
         {
           window.location.replace("/Admin/Group");
@@ -76,7 +78,7 @@ export default function Page() {
           )}
           {mode === "Edit" && (
             <>
-              {Group}
+              {Group(mode)}
               <ButtonGroup>
                 <Button
                   bgColor={"#FFC370"}
