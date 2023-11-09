@@ -29,14 +29,19 @@ export default function Page() {
   const [reportId, setReportId] = useState(
     String(secureLocalStorage.getItem("reportID"))
   );
+  var reportArray = [];
 
   const handleDelete = () => {
-    deleteReport({ reportId }).then((response) => {
+    reportArray.push(reportId);
+    console.log("Report Id: " + reportId);
+    console.log("Report Array is ", reportArray[0]);
+    deleteReport({ reportArray }).then((response) => {
       if (response.ok) {
         {
           window.location.replace("/Dashboard/Reports");
         }
       } else {
+        console.log("Error: " + response.error);
         alert("Delete failed");
       }
     });
@@ -45,10 +50,11 @@ export default function Page() {
   return (
     <>
       <Card
-        p={2}
+        p={{ base: 0, md: 2 }}
+        mx={{ base: -4, md: 0 }}
         alignSelf={"center"}
         size={{ base: "sm", md: "lg" }}
-        w={'{ md: "lg" }'}
+        w={{ md: "100%" }}
         bgColor={"white"}
       >
         <VStack m="5vh">
@@ -57,20 +63,21 @@ export default function Page() {
           {mode === "View" && (
             <>
               {Report(mode)}
+
               <ButtonGroup>
                 <Link href="/Dashboard/Reports">
                   <Button
-                    bgColor={"#A0C1B9"}
-                    color={"#331E38"}
-                    _hover={{ bgColor: "#706993", color: "white" }}
+                    bgColor={"#7eb67d"}
+                    color={"#black"}
+                    _hover={{ bgColor: "#031926", color: "white" }}
                   >
                     Back
                   </Button>
                 </Link>
                 <Button
-                  bgColor={"#70A0AF"}
-                  color={"white"}
-                  _hover={{ bgColor: "#706993", color: "white" }}
+                  bgColor={"#6abbc4"}
+                  color={"black"}
+                  _hover={{ bgColor: "#031926", color: "white" }}
                   onClick={() => setMode("Edit")}
                 >
                   Edit
@@ -83,9 +90,9 @@ export default function Page() {
               {Report(mode, reportId)}
               <ButtonGroup>
                 <Button
-                  bgColor={"#F4E8C1"}
+                  bgColor={"#FFC370"}
                   color={"black"}
-                  _hover={{ bgColor: "red", color: "white" }}
+                  _hover={{ bgColor: "#DF2935", color: "white" }}
                   onClick={onOpen}
                 >
                   Delete
@@ -113,17 +120,17 @@ export default function Page() {
                   </AlertDialogOverlay>
                 </AlertDialog>
                 <Button
-                  bgColor={"#A0C1B9"}
-                  color={"#331E38"}
-                  _hover={{ bgColor: "#706993", color: "white" }}
+                  bgColor={"#7eb67d"}
+                  color={"#black"}
+                  _hover={{ bgColor: "#031926", color: "white" }}
                   onClick={() => setMode("View")}
                 >
                   Cancel
                 </Button>
                 <Button
-                  bgColor={"#70A0AF"}
-                  color={"white"}
-                  _hover={{ bgColor: "#706993", color: "white" }}
+                  bgColor={"#6abbc4"}
+                  color={"black"}
+                  _hover={{ bgColor: "#031926", color: "white" }}
                   form="report-form"
                   type="submit"
                 >

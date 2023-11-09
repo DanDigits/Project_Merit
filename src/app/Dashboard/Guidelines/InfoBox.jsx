@@ -12,10 +12,10 @@ const InfoBox = ({ content }) => {
 
   return (
     <Card
-      backgroundColor="#706993"
+      backgroundColor="#e6e1d5"
       p="1.5em"
       w="100%"
-      color="white"
+      color="black"
       fontSize={{ base: "sm" }}
     >
       <CardHeader
@@ -27,6 +27,7 @@ const InfoBox = ({ content }) => {
       </CardHeader>
       <CardBody>
         <Text>{paragraphContent}</Text>
+        {paragraphContent && <br />}
         <UnorderedList fontSize={{ base: "sm", md: "md" }}>
           {listContent.map((text, index) => (
             <ListItem key={index}>

@@ -38,6 +38,8 @@ export const authOptions = {
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address)
         const user = login(credentials);
+        console.log(user);
+
         return user;
       },
     }),
@@ -50,7 +52,7 @@ export const authOptions = {
       if (user) {
         return {
           ...token,
-          id: user.id,
+          email: user.email,
           rank: user.rank,
           firstName: user.firstName,
           lastName: user.lastName,
@@ -59,10 +61,18 @@ export const authOptions = {
       }
 
       if (trigger === "update") {
-        return { ...token, ...session.user };
-      }
+        console.log("update callback", { token, user, session });
+        console.log("Session rank:", session.user.rank);
+        token.rank = "test";
+        token.firstName = "test";
+        token.lastName = "test";
+        token.suffix = "test";
 
-      return token;
+        return {
+          token,
+        };
+      }
+      return { ...token, ...user };
     },
     async session({ session, token, user }) {
       console.log("session callback", { token, user, session });

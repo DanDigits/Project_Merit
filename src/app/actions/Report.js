@@ -1,4 +1,5 @@
 import getPath from "../../../utils/getPath";
+import saveAs from "file-saver";
 
 /** Create new report */
 export const createReport = async ({
@@ -13,6 +14,7 @@ export const createReport = async ({
     mode: "same-origin",
     headers: {
       "Content-Type": "application/json",
+      request: "1",
     },
     body: JSON.stringify({
       title,
@@ -80,7 +82,7 @@ export const getLastReport = async ({ email }) => {
       user: email,
     },
   });
-  console.log(response.statusText);
+  console.log("getLastReport response: ", response.statusText);
 
   return response;
 };
@@ -95,7 +97,7 @@ export const getTotals = async ({ email }) => {
       user: email,
     },
   });
-  console.log(response.statusText);
+  console.log("getTotals response: ", response.statusText);
 
   return response;
 };
@@ -116,14 +118,41 @@ export const getReport = async ({ reportId }) => {
   return response;
 };
 
-export const deleteReport = async ({ reportId }) => {
+export const deleteReport = async ({ reportArray }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.reports.delete, {
     method: "DELETE",
     mode: "same-origin",
-    headers: {
-      report: reportId,
-    },
+    body: JSON.stringify({ id: reportArray }),
   });
+  console.log(response.statusText);
+
+  return response;
+};
+
+export const exportReports = async ({ reportArray }) => {
+  const response = await fetch(getPath.baseUrl + getPath.api.reports.create, {
+    method: "POST",
+    mode: "same-origin",
+    headers: {
+      request: "2",
+    },
+    body: JSON.stringify({ id: reportArray }),
+  });
+
+  // Extract filename from header
+  const filename = response.headers
+    .get("content-disposition")
+    .split(";")
+    .find((n) => n.includes("filename="))
+    .replace("filename=", "")
+    .replace('"', "")
+    .replace('"', "")
+    .trim();
+  const blob = await response.blob();
+
+  // Download the file
+  saveAs(blob, filename);
+
   console.log(response.statusText);
 
   return response;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import {
   Center,
   Card,
@@ -35,7 +35,6 @@ export default function UpdateProfile() {
   const [hasError, setHasError] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState(false);
   const [msg, setMsg] = useState("");
-  const { data: session, update } = useSession();
 
   var state;
 
@@ -44,14 +43,17 @@ export default function UpdateProfile() {
   } else state = false;
 
   useEffect(() => {
-    if (!hasEmail) {
+    if (!hasEmail && !isLoading) {
+      console.log("Fetching email");
       setIsLoading(true);
       setHasError(false);
       getSession()
         .then((session) => setEmail(session.user.email))
-        .then(() => setHasEmail(true));
+        .then(() => setHasEmail(true))
+        .then(setIsLoading(false));
     }
-    if (hasEmail && !hasProfile) {
+
+    if (hasEmail && !hasProfile && !isLoading) {
       setIsLoading(true);
       setHasError(false);
       getUser({ email }).then((response) => {
@@ -60,10 +62,12 @@ export default function UpdateProfile() {
               .json()
               .then((response) => setProfile(response))
               .then(setHasProfile(true))
+              .then(setIsLoading(false))
           : setHasError(true);
         console.log("hasError:", hasError);
       });
     }
+
     if (hasEmail && hasProfile) {
       var arr = JSON.parse(JSON.stringify(profile));
       if (arr) {
@@ -88,7 +92,6 @@ export default function UpdateProfile() {
             {
               setMode("View");
               setMsg("");
-              updateSession({ rank, lastName, suffix });
             }
           } else {
             alert("User could not be updated. Please try again.");
@@ -98,21 +101,9 @@ export default function UpdateProfile() {
     }
   };
 
-  const updateSession = async ({ rank, lastName, suffix }) => {
-    await update({
-      ...session,
-      user: {
-        ...session?.user,
-        rank: rank,
-        lastName: lastName,
-        suffix: suffix,
-      },
-    });
-  };
-
   return (
     <>
-      {DeleteDialog(deleteStatus)}
+      {DeleteDialog(deleteStatus, email)}
       {isLoading ? (
         <>
           <Center>
@@ -128,10 +119,10 @@ export default function UpdateProfile() {
       ) : (
         <>
           <Card
-            p={2}
+            p={{ base: 0, md: 2 }}
             alignSelf={"center"}
-            size={{ base: "sm", md: "md" }}
-            w={{ md: "lg" }}
+            size={{ base: "sm", md: "lg" }}
+            w={{ base: "100%", lg: "lg" }}
             bgColor={"white"}
           >
             <CardHeader mb={-5} fontSize={30} color={"black"}>
@@ -287,20 +278,20 @@ export default function UpdateProfile() {
               {mode === "View" && (
                 <Flex width={"100%"}>
                   <Button
-                    justifySelf={"right"}
-                    bgColor={"#70A0AF"}
+                    size={{ base: "sm", md: "md" }}
+                    bgColor={"#6abbc4"}
                     color={"white"}
-                    _hover={{ bgColor: "#706993", color: "white" }}
+                    _hover={{ bgColor: "#031926", color: "white" }}
                     onClick={() => setMode("Edit")}
                   >
                     Edit Profile
                   </Button>
                   <Spacer />
                   <Button
-                    justifySelf={"left"}
-                    bgColor={"red"}
+                    size={{ base: "sm", md: "md" }}
+                    bgColor={"#DF2935"}
                     color={"white"}
-                    _hover={{ bgColor: "#706993", color: "white" }}
+                    _hover={{ bgColor: "#031926", color: "white" }}
                     onClick={() => setDeleteStatus(true)}
                   >
                     Delete Account
@@ -308,12 +299,12 @@ export default function UpdateProfile() {
                 </Flex>
               )}
               {mode === "Edit" && (
-                <flex>
+                <Flex>
                   <HStack justify={"flex-end"}>
                     <Button
                       bgColor={"#A0C1B9"}
                       color={"#331E38"}
-                      _hover={{ bgColor: "#706993", color: "white" }}
+                      _hover={{ bgColor: "#031926", color: "white" }}
                       onClick={() => setMode("View")}
                     >
                       Cancel
@@ -322,7 +313,7 @@ export default function UpdateProfile() {
                     <Button
                       bgColor={"#70A0AF"}
                       color={"white"}
-                      _hover={{ bgColor: "#706993", color: "white" }}
+                      _hover={{ bgColor: "#031926", color: "white" }}
                       form="profile-form"
                       type="submit"
                       onClick={(e) => handleSubmitInfo(e)}
@@ -330,7 +321,7 @@ export default function UpdateProfile() {
                       Update
                     </Button>
                   </HStack>
-                </flex>
+                </Flex>
               )}
             </CardFooter>
           </Card>
