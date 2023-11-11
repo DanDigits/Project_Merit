@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import bcrypt from "bcryptjs";
 import mongoDB from "../dbConnection";
 import UserSchema from "../models/User";
@@ -150,30 +151,30 @@ export async function modifyUser(userId, userData) {
   ) {
     // General user update
     // Verify user credentials if admin header exists in request, and force security if verification fails
-    if (userData?.adminCredentials != undefined) {
-      const verifyAdminCredentials = await getUser(userData?.adminCredentials);
-      if (verifyAdminCredentials?.role !== "Admin") {
-        userData.role = user?.role;
-        userData.verified = user?.verified;
-        userData.passwordLocked = true;
-        userData.suspended = user?.suspended;
+    // if (userData?.adminCredentials != undefined) {
+    //   const verifyAdminCredentials = await getUser(userData?.adminCredentials);
+    //   if (verifyAdminCredentials?.role !== "Admin") {
+    //     userData.role = user?.role;
+    //     userData.verified = user?.verified;
+    //     userData.passwordLocked = true;
+    //     userData.suspended = user?.suspended;
 
-        // Check if user is already present in a group; prevent changing group with error return
-        // (user group not empty) && (group in request different from user group) && (group request not empty)
-        if (
-          (user?.group != undefined ||
-            user?.group != [] ||
-            user?.group != "") &&
-          userData?.group != user?.group &&
-          (userData?.group != undefined ||
-            userData?.group != [] ||
-            userData?.group != "")
-        ) {
-          user.message = "CONFLICT";
-          return user;
-        }
-      }
-    }
+    //     // Check if user is already present in a group; prevent changing group with error return
+    //     // (user group not empty) && (group in request different from user group) && (group request not empty)
+    //     if (
+    //       (user?.group != undefined ||
+    //         user?.group != [] ||
+    //         user?.group != "") &&
+    //       userData?.group != user?.group &&
+    //       (userData?.group != undefined ||
+    //         userData?.group != [] ||
+    //         userData?.group != "")
+    //     ) {
+    //       user.message = "CONFLICT";
+    //       return user;
+    //     }
+    //   }
+    // }
 
     // Update user
     user = await UserSchema.findOneAndUpdate({ email: userId }, userData).catch(
@@ -216,12 +217,29 @@ export async function renameGroup(group, groupData) {
 // Delete a user
 export async function deleteUser(userId) {
   await mongoDB();
-  const user = await UserSchema.findOneAndDelete({ email: userId }).catch(
-    function (err) {
-      return err;
+  // This code is for deleting a single user at a time
+  // user = await UserSchema.findOneAndDelete({ email: userId }).catch(
+  //   function (err) {
+  //     return err;
+  //   }
+  // );
+  let i = 0;
+  let length = userId?.id?.length;
+  let users;
+
+  if (length == undefined) {
+    return "ERROR";
+  } else {
+    while (i < length) {
+      const report = await UserSchema?.findByIdAndDelete({
+        _id: userId?.id[i],
+      }).catch(function (err) {
+        users[i].push(report);
+      });
+      i++;
     }
-  );
-  return user;
+  }
+  return users;
 }
 
 // Delete a group by looping through the members, and removing
