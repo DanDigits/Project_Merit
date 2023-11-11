@@ -16,6 +16,7 @@ import {
 import GroupDialog from "./GroupDialog.jsx";
 //import { getGroup } from "src/app/actions/Group";
 import { getUser } from "src/app/actions/User";
+import { getSupervisor } from "./../../actions/Group.js";
 
 export default function UpdatePassword() {
   const [email, setEmail] = useState("");
@@ -28,6 +29,8 @@ export default function UpdatePassword() {
   const [status, setStatus] = useState(false);
   const [profile, setProfile] = useState(false);
   const [hasProfile, setHasProfile] = useState(false);
+  const [membership, setMembership] = useState("");
+  const [hasMembership, setHasMembership] = useState("");
 
   useEffect(() => {
     if (!hasEmail && !isLoading) {
@@ -53,12 +56,21 @@ export default function UpdatePassword() {
       });
       setIsLoading(false);
     }
-    if (hasEmail && hasProfile) {
-      var arr = JSON.parse(JSON.stringify(profile));
-      if (arr) {
-        setGroup(arr.group);
-        setIsLoading(false);
-      }
+
+    if (hasEmail && hasProfile && !isLoading) {
+      setGroup(JSON.parse(JSON.stringify(profile)));
+      setIsLoading(true);
+      setHasError(false);
+      getSupervisor({ group }).then((response) => {
+        response.ok
+          ? response
+              .json()
+              .then((response) => setMembership(response))
+              .then(setHasMembership(true))
+          : setHasError(true);
+        console.log("hasError:", hasError);
+      });
+      setIsLoading(false);
     }
   }, [hasEmail, hasProfile, email, profile, isLoading]);
 
