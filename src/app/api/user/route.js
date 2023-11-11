@@ -11,7 +11,6 @@ import {
   getUser,
   passwordLock,
   suspendUser,
-  makeAdmin,
   getGroup,
   getGroupOrphans,
   getAllUsers,
@@ -80,7 +79,7 @@ export async function resendMail(userId, subject) {
   return userData;
 }
 
-// Routes
+// Routes ----------------------------------------------------------------------------
 export async function GET(Request) {
   const requestHeaders = headers();
   const request = requestHeaders.get("request");

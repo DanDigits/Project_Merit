@@ -33,11 +33,11 @@ resource "aws_ecs_task_definition" "task_definition" {
         },
         {
           "name": "NEXTAUTH_URL",
-          "value": "${var.nextauth_port}"
+          "value": "${var.nextauth_url}"
         },
         {
           "name": "NEXTAUTH_PORT",
-          "value": "${var.nextauth_url}"
+          "value": "${var.nextauth_port}"
         },
         {
           "name": "NEXT_PUBLIC_NEXTAUTH_URL",
@@ -78,6 +78,11 @@ resource "aws_iam_role" "task_execution_role" {
 resource "aws_iam_role_policy_attachment" "task_execution_role_policy" {
   role       = aws_iam_role.task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "task_cloudwatch_role_policy" {
+  role       = aws_iam_role.task_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
 
 # Security Group -------------------------------------------------
