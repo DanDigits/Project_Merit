@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import Dialog from "../NewUser/dialog";
-import { createUser } from "./../../../actions/Admin.js";
+import { createUser } from "src/app/actions/Admin.js";
 
 import secureLocalStorage from "react-secure-storage";
 import { getUser, updateUser } from "src/app/actions/User.js";
