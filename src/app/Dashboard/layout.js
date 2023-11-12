@@ -1,7 +1,8 @@
 "use client";
 import { ChakraProvider } from "@chakra-ui/react";
 import { customTheme } from "../styles/customTheme";
-import React from "react";
+import { useEffect, useState } from "react";
+import { getSession, useSession } from "next-auth/react";
 import {
   IconButton,
   Box,
