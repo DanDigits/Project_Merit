@@ -7,6 +7,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
+import { getSession } from "next-auth/react";
 import { createColumnHelper } from "@tanstack/react-table";
 import {
   Center,
@@ -24,8 +25,8 @@ import {
   Input,
 } from "@chakra-ui/react";
 import GroupTable from "./GroupTable";
-//import { getGroup } from "";
 import { useRouter } from "next/navigation";
+import { getGroup } from "./../../actions/Group.js";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   const ref = useRef(null);
@@ -49,16 +50,19 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 export default function Page() {
   const router = useRouter();
   const [group, setGroup] = useState("");
+  const [groupName, setGroupName] = useState(""); // need to update
+  const [groupTotal, setGroupTotal] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [hasGroup, setHasGroup] = useState(false);
+  const [hasGroupName, setHasGroupName] = useState(false);
   const [index, setIndex] = useState("0");
   const [openCreate, setOpenCreate] = useState(false);
   const [searchGroup, setSearchGroup] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
   const [status, setStatus] = useState("");
 
-  const groupName = "Group 1";
+  //const groupName = "Alpha 1";
   const totalMembers = 4;
 
   const handleCreate = () => {
@@ -71,25 +75,38 @@ export default function Page() {
     setStatus("");
   };
 
-  /*useEffect(() => {
-    if (!hasGroup) {
-      console.log("!hasgroup", hasGroup);
+  useEffect(() => {
+    if (!hasGroupName && !isLoading) {
+      console.log("Fetching email and supervisedGroup");
       setIsLoading(true);
       setHasError(false);
-      getAllGroup({ index }).then((response) => {
+      getSession()
+        .then((session) => {
+          //var managed = session.user.supervisedGroup;
+          var managed = "Alpha 1";
+          if (managed) {
+            setGroupName(managed);
+          }
+        })
+        .then(setHasGroupName(true))
+        .then(setIsLoading(false));
+    }
+
+    if (hasGroupName && !hasGroup && !isLoading) {
+      setIsLoading(true);
+      setHasError(false);
+      getGroup({ groupName }).then((response) => {
         response.ok
           ? response
               .json()
               .then((response) => setGroup(response))
               .then(setHasGroup(true))
+              .then(setIsLoading(false))
           : setHasError(true);
+        console.log("hasError:", hasError);
       });
     }
-    if (hasGroup) {
-      console.log("hasgroup", hasGroup);
-      setIsLoading(false);
-    }
-  }, [hasGroup, index]);*/
+  }, [group, hasGroup, groupName]);
 
   const columns = React.useMemo(() => [
     {
@@ -173,49 +190,6 @@ export default function Page() {
     },
   ]);
 
-  const data = useMemo(() => [
-    {
-      firstName: "first",
-      lastName: "last",
-      email: "user1@gmail.com",
-      progress: 50,
-      conduct: 0,
-      duties: 2,
-      teamwork: 3,
-      training: 2,
-    },
-    {
-      firstName: "first",
-      lastName: "last",
-      email: "user2@gmail.com",
-      progress: 71,
-      conduct: 4,
-      duties: 1,
-      teamwork: 2,
-      training: 3,
-    },
-    {
-      firstName: "first",
-      lastName: "last",
-      email: "user3@gmail.com",
-      progress: 0,
-      conduct: 0,
-      duties: 0,
-      teamwork: 0,
-      training: 0,
-    },
-    {
-      firstName: "first",
-      lastName: "last",
-      email: "user4@gmail.com",
-      progress: 100,
-      conduct: 6,
-      duties: 3,
-      teamwork: 3,
-      training: 4,
-    },
-  ]);
-
   return (
     <>
       {hasError && <Text>SOMETHING WENT WRONG</Text>}
@@ -231,7 +205,7 @@ export default function Page() {
             />
           </Center>
         </>
-      ) : data.length == 0 ? (
+      ) : group.length == 0 ? (
         <Card
           p={{ base: 0, md: 2 }}
           mx={{ base: -4, md: 0 }}
@@ -299,11 +273,11 @@ export default function Page() {
             <CardBody mt={-4}>
               <VStack align={"start"}>
                 <Text>Group Name: {groupName}</Text>
-                <Text>Total Members: {totalMembers}</Text>
+                <Text>Total Members: {group[1].length}</Text>
               </VStack>
             </CardBody>
           </Card>
-          <GroupTable columns={columns} data={data} />
+          <GroupTable columns={columns} data={group[1]} />
         </>
       )}
     </>
