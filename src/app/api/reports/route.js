@@ -79,7 +79,7 @@ export async function GET() {
   // Switch case to differentiate GET requests
   switch (request) {
     case "1": {
-      // Get 20 of a Users reports, ordered by date most recent
+      // Get Users reports, ordered by date most recent
       const user = requestHeaders.get("user"); // or "email";
       const index = requestHeaders.get("index");
       res = await getUserReports(user, index);
