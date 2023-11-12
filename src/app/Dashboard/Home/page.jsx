@@ -15,160 +15,135 @@ import {
 import { Stack, Heading } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
-import { getLastReport, getTotals } from "./../../actions/Report.js";
+import { getUser } from "./../../actions/User.js";
 import StatusBox from "./statusBox";
 
 export default function Page() {
   const [hasEmail, setHasEmail] = useState(false);
+  const [hasProfile, setHasProfile] = useState(false);
+  const [profile, setProfile] = useState("");
   const [email, setEmail] = useState("");
   const [rank, setRank] = useState("");
   const [lastName, setLastName] = useState("");
   const [suffix, setSuffix] = useState("");
 
   const [hasError, setHasError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const [hasReport, setHasReport] = useState(false);
-  const [report, setReport] = useState({
-    title: "",
-    category: "",
-    date: "",
-    report: "",
-  });
-
-  const [hasTotals, setHasTotals] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [reportDate, setReportDate] = useState("");
   const [totals, setTotals] = useState({
     totalReports: "",
     currentQuarter: "",
     quarterReports: "",
-    Duties: "",
-    Conduct: "",
-    Training: "",
-    Teamwork: "",
   });
 
-  const [duties] = useState({
-    catagory: "Primary / Additional Duties",
-    shorten: "duties",
-    total: 0,
-    needed: 5,
-  });
-  const [conduct] = useState({
-    catagory: "Standards, Conduct, Character & Military Bearings",
-    shorten: "conduct",
+  const [mission] = useState({
+    category: "Executing the Mission",
+    shorten: "mission",
     total: 0,
     needed: 3,
   });
-  const [training] = useState({
-    catagory: "Training Requirements",
-    shorten: "training",
+  const [leadership] = useState({
+    category: "Leading People",
+    shorten: "leadership",
     total: 0,
     needed: 3,
   });
-  const [teamwork] = useState({
-    catagory: "Teamwork / Fellowership",
-    shorten: "teamwork",
+  const [resources] = useState({
+    category: "Managing Resources",
+    shorten: "resources",
+    total: 0,
+    needed: 3,
+  });
+  const [unit] = useState({
+    category: "Improving the Unit",
+    shorten: "unit",
     total: 0,
     needed: 3,
   });
 
   useEffect(() => {
-    if (!hasEmail) {
+    if (!hasEmail && !isLoading) {
       setIsLoading(true);
       setHasError(false);
+      console.log("Fetching email...");
       getSession()
         .then((session) => setEmail(session.user.email))
         .then(() => setHasEmail(true));
-    }
-
-    if (hasEmail) {
-      getSession().then((session) => setRank(session.user.rank));
-      getSession().then((session) => setLastName(session.user.lastName));
-      getSession().then((session) => setSuffix(session.user.suffix));
-    }
-
-    if (hasEmail && !hasTotals) {
-      console.log("hasEmail && !hasTotals", email, hasTotals);
-      setIsLoading(true);
-      setHasError(false);
-
-      getTotals({ email }).then((response) => {
-        response.ok
-          ? response
-              .json()
-              .then((response) => setTotals(response))
-              .then(setHasTotals(true))
-          : setTotals({ date: "N/A" });
-        console.log("hasError:", hasError);
-      });
-    }
-
-    if (hasEmail && !hasReport) {
-      console.log("hasEmail && !hasReport", email, hasReport);
-      setIsLoading(true);
-      setHasError(false);
-
-      getLastReport({ email }).then((response) => {
-        response.ok
-          ? response
-              .json()
-              .then((response) => setReport(response))
-              .then(setHasReport(true))
-          : setHasError(true);
-        console.log("hasError:", hasError);
-      });
-    }
-
-    if (hasEmail && hasTotals) {
-      /*
-      console.log("hasEmail && hasTotals", email, hasTotals);
-      console.log("totals", totals);
-      console.log("Fiscal Year: ", totals.totalReports);
-      console.log("Current Quarter: ", totals.currentQuarter);
-      console.log("Quarter Total: ", totals.quarterReports);
-      console.log("Duties: ", totals.Duties);
-      console.log("Conduct: ", totals.Conduct);
-      console.log("Training: ", totals.Training);
-      console.log("Teamwork: ", totals.Teamwork); */
-
-      if (totals.Duties !== "") {
-        duties.total = totals.Duties;
-      }
-
-      if (totals.Conduct !== "") {
-        conduct.total = totals.Conduct;
-      }
-
-      if (totals.Training !== "") {
-        training.total = totals.Training;
-      }
-
-      if (totals.Teamwork !== "") {
-        teamwork.total = totals.Teamwork;
-      }
-      setProgress(
-        (totals.totalReports /
-          (duties.needed +
-            conduct.needed +
-            training.needed +
-            teamwork.needed)) *
-          100
-      );
-      console.log("Progress: ", progress);
-    }
-
-    if (hasEmail && hasReport) {
-      if (!report.date) {
-        setReport({ date: "N/A" });
-      }
-      console.log("Date is now" + report.date);
-    }
-
-    if (hasEmail && hasTotals && hasReport) {
+      console.log("Got email");
       setIsLoading(false);
     }
-  }, [hasEmail, hasTotals, hasReport, email, report, totals]);
+
+    if (hasEmail && !hasProfile && !isLoading) {
+      setIsLoading(true);
+      setHasError(false);
+      console.log("Fetching profile");
+      getUser({ email }).then((response) => {
+        response.ok
+          ? response
+              .json()
+              .then((response) => setProfile(response))
+              .then(setHasProfile(true))
+              .then(console.log("Got profile"))
+          : setHasError(true);
+      });
+      setIsLoading(false);
+      if (hasError) {
+        console.log("Error fetching profile");
+      }
+    }
+
+    if (hasEmail && hasProfile) {
+      setDashboard();
+    }
+  }, [hasEmail, hasProfile, profile]);
+
+  function setDashboard() {
+    console.log("Setting Dashboard");
+    console.log("Profile: ", profile);
+    var arr = JSON.parse(JSON.stringify(profile));
+
+    if (arr) {
+      setRank(arr.rank);
+      setLastName(arr.lastName);
+      setSuffix(arr.suffix);
+      setTotals({
+        totalReports: arr.totalReports,
+        currentQuarter: arr.currentQuarter,
+        quarterReports: arr.quarterReports,
+      });
+
+      if (totals.Mission !== "") {
+        mission.total = arr.Mission;
+      }
+
+      if (totals.Leadership !== "") {
+        leadership.total = arr.Leadership;
+      }
+
+      if (totals.Resources !== "") {
+        resources.total = arr.Resources;
+      }
+
+      if (totals.Unit !== "") {
+        unit.total = arr.Unit;
+      }
+
+      if (!profile.mostRecentReportDate) {
+        setReportDate("N/A");
+      } else {
+        setReportDate(arr.mostRecentReportDate);
+      }
+    }
+
+    setProgress(
+      (totals.totalReports /
+        (mission.needed + leadership.needed + resources.needed + unit.needed)) *
+        100
+    );
+
+    console.log("Dashboard set");
+  }
 
   return (
     <>
@@ -263,7 +238,7 @@ export default function Page() {
                         justifySelf={{ base: "flex-end", md: "auto" }}
                         fontSize={{ base: "lg", lg: "2xl" }}
                       >
-                        {report.date}
+                        {reportDate}
                       </StatNumber>
                       <StatHelpText fontSize={{ base: "xs", md: "sm" }}>
                         Report Date
@@ -287,10 +262,10 @@ export default function Page() {
               columns={{ base: 1, lg: 2 }}
               spacing={{ base: 4, md: 6 }}
             >
-              <StatusBox content={duties}></StatusBox>
-              <StatusBox content={teamwork}></StatusBox>
-              <StatusBox content={training}></StatusBox>
-              <StatusBox content={conduct}></StatusBox>
+              <StatusBox content={mission}></StatusBox>
+              <StatusBox content={leadership}></StatusBox>
+              <StatusBox content={resources}></StatusBox>
+              <StatusBox content={unit}></StatusBox>
             </SimpleGrid>
           </Stack>
         </Card>

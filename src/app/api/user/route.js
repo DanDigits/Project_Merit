@@ -10,6 +10,14 @@ import {
   deleteUser,
   getUser,
   passwordLock,
+  suspendUser,
+  makeAdmin,
+  getGroup,
+  getGroupOrphans,
+  getAllUsers,
+  deleteGroup,
+  renameGroup,
+  getSupervisor,
 } from "server/mongodb/actions/User";
 import urls from "../../../../utils/getPath";
 import nodemailer from "nodemailer";
@@ -26,16 +34,16 @@ const transporter = nodemailer.createTransport({
   secure: false,
   requireTLS: true,
 });
-
+// Send email, wasnt named sendEmail
 export async function resendMail(userId, subject) {
   // New verification code for every email
   let userData = await passwordLock(userId);
 
-  // Email user search/shuffle failed
+  // Email user search failed
   if (userData?.email == undefined) {
     return "ERROR";
   } else if (subject == "signup") {
-    // Send verification email if user is new
+    // Send 2FA email if user is new
     const mailData = {
       from: process.env.EMAIL_FROM,
       to: userData.email,
@@ -52,7 +60,7 @@ export async function resendMail(userId, subject) {
     });
     setTimeout(deleteUser, 60000 * 1440 * 3, userData.email); // REPLACE THIS WITH DAILY CHECK ON DB
   } else {
-    // Send 2FA email for forgotten password
+    // Send 2FA email to change password
     const mailData = {
       from: process.env.EMAIL_FROM,
       to: userData.email,
@@ -106,7 +114,7 @@ export async function GET(Request) {
         }
       }
       case "3": {
-        // Resend email
+        // Resend respective email
         const forgot = requestHeaders?.get("forgot");
         const user = requestHeaders?.get("user");
         if (forgot == undefined && user == undefined) {
@@ -120,12 +128,50 @@ export async function GET(Request) {
         }
         break;
       }
+      case "4": {
+        // Get given group members/users
+        const group = requestHeaders?.get("group");
+        res = await getGroup(group);
+        if (res == "ERROR") {
+          return new Response(JSON.stringify(res), { status: 400 });
+        } else {
+          return new Response(JSON.stringify(res), { status: 200 });
+        }
+      }
+      case "5": {
+        // Get users without groups
+        res = await getGroupOrphans();
+        if (res == "ERROR") {
+          return new Response(JSON.stringify(res), { status: 400 });
+        } else {
+          return new Response(JSON.stringify(res), { status: 200 });
+        }
+      }
+      case "6": {
+        // Get all users
+        res = await getAllUsers();
+        if (res == "ERROR") {
+          return new Response(JSON.stringify(res), { status: 400 });
+        } else {
+          return new Response(JSON.stringify(res), { status: 200 });
+        }
+      }
+      case "7": {
+        // Get members under a supervisor
+        const group = requestHeaders?.get("group");
+        res = await getSupervisorTable(group);
+        if (res == "ERROR") {
+          return new Response(JSON.stringify(res), { status: 400 });
+        } else {
+          return new Response(JSON.stringify(res), { status: 200 });
+        }
+      }
       default: {
         return new Response("ERROR", { status: 400 });
       }
     }
   } else if (verificationCode != undefined) {
-    // Email 2FA code exists in URL, verify user either for new signup or for forgot password reset
+    // If email 2FA code exists in URL, verify user either for new signup or for forgot password reset
     let extension = "";
     res = await verifyUser(verificationCode);
 
@@ -154,31 +200,70 @@ export async function GET(Request) {
   }
 }
 
+// Register new user with signup data
 export async function POST(Request) {
-  // Register new user with signup data
-  Request.verified = false;
-  let res = await signUp(await Request.json());
-  if (res?.id != undefined && res != "ConflictError") {
-    resendMail(res.email, "signup");
+  let req = await Request.json();
+  const requestHeaders = headers();
+  let admin = requestHeaders?.get("admin");
+  let registrar = await getUser(admin);
 
-    // HTTP Response
-    return new Response("OK", { status: 200 });
-  } else if (res.name == "ValidationError") {
-    return new Response(res, { status: 422 });
+  // Check if user was created by an administrator, and set verified accordingly
+  if (registrar?.role == "Admin") {
+    req.verified = true;
+    admin = true;
+  } else {
+    req.verified = false;
+    req.role = "User";
+    admin = false;
+  }
+
+  // Create user
+  let res = await signUp(req);
+
+  // HTTP Responses
+  if (res.name) {
+    if (res.name == "ValidationError") {
+      return new Response(res, { status: 422 });
+    } else {
+      return new Response(res.message, { status: 400 });
+    }
   } else if (res == "ConflictError") {
     return new Response(JSON.stringify("EXISTS"), { status: 409 });
-  } else if (res.name) {
-    return new Response(res.message, { status: 400 });
+  } else if (res?.id != undefined && admin == false) {
+    resendMail(res.email, "signup");
+    return new Response("OK", { status: 200 });
+  } else if (res?.id != undefined && admin == true) {
+    resendMail(res.email, "forgotPassword"); // Change temp password
+    return new Response("OK", { status: 200 });
   } else {
     return new Response("SERVER ERROR", { status: 400 });
   }
 }
 
+// Modify/Edit/Update user data
 export async function PATCH(Request) {
-  // Modify/Edit/Update user data
+  let res;
+  let req = await Request.json();
   const requestHeaders = headers();
-  const user = requestHeaders.get("user");
-  const res = await modifyUser(user, await Request.json());
+  const user = requestHeaders?.get("user");
+  const group = requestHeaders?.get("group");
+  const admin = requestHeaders?.get("admin");
+
+  if (user == undefined && admin == undefined) {
+    res = await renameGroup(group, req);
+  } else if (group == undefined && admin == undefined) {
+    res = await modifyUser(user, req);
+  } else if (admin != undefined) {
+    if (user == undefined && group == undefined) {
+      res = await makeAdmin(admin, req);
+    } else if (user != undefined && group == undefined) {
+      res = await modifyUser(user, (req.adminCredentials = admin));
+    } else {
+      res.message = "TOO MANY REQUESTS";
+    }
+  } else {
+    res.message = "ERROR";
+  }
 
   // HTTP Response
   if (res.name == "ValidationError" /*|| res.message == "INCORRECT"*/) {
@@ -195,11 +280,20 @@ export async function PATCH(Request) {
   }
 }
 
+// Delete a user, or a group
 export async function DELETE() {
-  // Delete a user
+  let res;
   const requestHeaders = headers();
-  const user = requestHeaders.get("user");
-  const res = await deleteUser(user);
+  const user = requestHeaders?.get("user");
+  const group = requestHeaders?.get("group");
+
+  if (user == undefined) {
+    res = await deleteGroup(group);
+  } else if (group == undefined) {
+    res = await deleteUser(user);
+  } else {
+    res = "ERROR";
+  }
 
   // HTTP Response
   if (res.id) {

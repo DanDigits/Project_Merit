@@ -1,6 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { getSession } from "next-auth/react";
+import React from "react";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -15,15 +14,10 @@ import {
 import { deleteUser } from "src/app/actions/User";
 import { signOut } from "next-auth/react";
 
-export default function DeleteDialog(deleteStatus) {
+export default function DeleteDialog(deleteStatus, email) {
   const { onClose } = useDisclosure();
-  const [email, setEmail] = useState("");
-  const cancelRef = React.useRef();
 
-  useEffect(() => {
-    getSession().then((session) => setEmail(session.user.email));
-    console.log("Email:", email);
-  });
+  const cancelRef = React.useRef();
 
   const handleDelete = () => {
     deleteUser({ email }).then((response) => {

@@ -3,10 +3,10 @@ import React from "react";
 import Select from "react-select";
 
 const options = [
-  { id: "Training", text: "Training" },
-  { id: "Conduct", text: "Conduct" },
-  { id: "Teamwork", text: "Teamwork" },
-  { id: "Duties", text: "Duties" },
+  { id: "Mission", text: "Executing the Mission" },
+  { id: "Leadership", text: "Leading People" },
+  { id: "Resources", text: "Managing Resources" },
+  { id: "Unit", text: "Improving the Unit" },
 ];
 
 const CategoryFilter = ({ columnFilters, setColumnFilters }) => {

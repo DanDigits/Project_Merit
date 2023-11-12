@@ -1,21 +1,55 @@
-name: lint
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches: ["main", "test"]
+
+name: CI/CD
+env:
+  ecr_repo_name: meritrepo
+  cluster_name: merit-cluster
+  service_name: merit-service
 jobs:
-  lint:
+  prettier:
+    uses: ./.github/workflows/lint.yml
+  terraform:
+    uses: ./.github/workflows/terraform.yml
+    with:
+      branch: $GITHUB_REF_NAME
+    secrets:
+      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      domain_cert: ${{ secrets.DOMAIN_CERT }}
+      db_uri: ${{ secrets.DB_URI }}
+      ecr_repo_name: meritrepo
+      cluster_name: merit-cluster
+      service_name: merit-service
+  aws:
+    needs:
+      - terraform
+      - prettier
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v1
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          node-version: 14.x
-      - name: Install dependencies
-        run: npm ci
-      - name: Lint files and run type-checks
-        run: npm run lint
-      - name: Run prettier
-        run: npm run format
+          aws-region: us-east-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Login to ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Export Branch & Modified Names
+        shell: bash
+        run: |
+          echo "branch=meritrepo$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
+          echo "cluster=merit-cluster-$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
+          echo "service=merit-service-$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
+        id: exports
+      - name: Build Image to ECR and Force Deployment on ECS
+        uses: jaroldwong/ecr-push-and-ecs-deploy@v1.1
+        with:
+          ecr-registry: ${{ steps.ecr.outputs.registry }}
+          ecr-repository: ${{ steps.exports.outputs.branch }}
+          ecs-cluster: ${{ steps.exports.outputs.cluster }}
+          ecs-service: ${{ steps.exports.outputs.service }}

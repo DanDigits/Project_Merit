@@ -7,6 +7,7 @@ export const signUp = async ({
   lastName,
   suffix,
   password,
+  role = "user",
 }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.signUp, {
     method: "POST",
@@ -22,6 +23,7 @@ export const signUp = async ({
       lastName,
       suffix,
       password,
+      role,
     }),
   });
 
@@ -37,6 +39,19 @@ export const getUser = async ({ email }) => {
     headers: {
       user: email,
       request: "2",
+    },
+  });
+  console.log("getUser response: ", response.statusText);
+
+  return response;
+};
+
+export const getAllUsers = async () => {
+  const response = await fetch(getPath.baseUrl + getPath.api.user.get, {
+    method: "GET",
+    mode: "same-origin",
+    headers: {
+      request: "6",
     },
   });
   console.log(response.statusText);
@@ -97,6 +112,9 @@ export const updateUser = async ({
   firstName,
   lastName,
   suffix,
+  role,
+  group,
+  supervisedGroup,
 }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
     method: "PATCH",
@@ -110,6 +128,9 @@ export const updateUser = async ({
       firstName,
       lastName,
       suffix,
+      role,
+      group,
+      supervisedGroup,
     }),
   });
   console.log("Update Response:", response.statusText);

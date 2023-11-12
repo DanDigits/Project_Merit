@@ -82,7 +82,7 @@ export const getLastReport = async ({ email }) => {
       user: email,
     },
   });
-  console.log(response.statusText);
+  console.log("getLastReport response: ", response.statusText);
 
   return response;
 };
@@ -97,7 +97,7 @@ export const getTotals = async ({ email }) => {
       user: email,
     },
   });
-  console.log(response.statusText);
+  console.log("getTotals response: ", response.statusText);
 
   return response;
 };

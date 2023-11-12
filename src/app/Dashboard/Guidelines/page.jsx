@@ -8,46 +8,166 @@ import {
   VStack,
   Center,
   Card,
+  Link,
 } from "@chakra-ui/react";
 
 import InfoBox from "./InfoBox";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 
-const infoDos = {
-  title: "II. Do:",
-  paragraphContent: " ",
+const FoundationalChanges = {
+  title: "Foundational Changes",
+  paragraphContent:
+    "In 2023 the USAF adopted the following changes for performance reviews:",
   listContent: [
-    "Be honest on the report",
-    "Take your time",
-    "Use action-oriented, hard-hitting impact statements",
-    "Get to the point",
-    "Quantify results",
-    "Fill up the entire form",
-    "Stay within your scope",
-    "Use bullet format",
-    "Spell out uncommon acronyms the first time you use them",
-    "Abbreviate words like gov't for goverment in the interest of space",
-    "Be error free (no misspellings, no extra spaces, correct capitalization",
-    "Review previous reports, PIF, and UIF if applicable",
+    "COMPETENCY-BASED ASSESSMENTS: Evaluating behaviors and outcomes provides a more accurate, holistic performance assessment",
+    "PERFORMANCE STATEMENTS: Narrative-style writing and plain language to describe performance; they are efficient and clear, improving the ability to understand performance",
+    "MAJOR PERFORMANCE AREAS (MPA): align the duties and responsibilities of Airmen's everyday performance and/or behaviors to develop the mission-focused Airmen we need; MPA’s include Executing the Mission, Leading People, Managing Resources, and Improving the Unit",
+    "AIRMAN LEADERSHIP QUALITIES (ALQ): Represent performance characteristics we want to define, develop, incentivize, and measure in our Airmen",
   ],
 };
 
-const infoDonts = {
-  title: "III. Don't:",
-  paragraphContent: " ",
+const MPAList = {
+  title: "Major Performance Areas (MPAs)",
+  paragraphContent:
+    "There are ten Airman Leadership Qualities broken into four Major Performance Areas:",
   listContent: [
-    "Use prohibited statements",
-    "Include additional duties unless focused toward the mission",
-    "Use terminology only your organization understands",
-    "Leave white space, unless, of course, you're trying to send a negative message",
-    "Put your credibility on the line (don't rate everyone #1 if they aren't)",
-    "Use 'all caps' for emphasis",
-    "Use periods after bullets",
-    "Use more than one exclamation in a row",
-    "Use 'fluffy' statements with no meat behind them",
+    "EXECUTING THE MISSION: Job Proficiency, Initiative, Adaptability",
+    "LEADING PEOPLE: Inclusion & Teamwork, Emotional Intelligence, Communication",
+    "MANAGING RESOURCES: Stewardship, Accountability",
+    "IMPROVING THE UNIT: Decision Making, Innovation",
   ],
 };
+
+const MPAExecutingMission = {
+  title: "MPA I. Executing the Mission",
+  paragraphContent:
+    "Effectively uses knowledge initiative, and adaptability to produce timely, high quality, quantity results to positively impact the mission.",
+  listContent: [
+    "JOB PROFICIENCY: Demonstrates knowledge and professional skill in assigned duties, achieving positive results and impact in support of the mission.",
+    "INITIATIVE: Assesses and takes independent or directed action to complete a task or mission that influences the mission or organization.",
+    "ADAPTABILITY: Adjusts to changing conditions, to include plans, information, processes, requirements and obstacles in accomplishing the mission.",
+  ],
+};
+
+const MPALeadingPeople = {
+  title: "MPA II. Leading People",
+  paragraphContent:
+    "Fosters cohesive teams, effectively communicates, and uses emotional intelligence to take care of people and accomplish the mission.",
+  listContent: [
+    "INCLUSION & TEAMWORK: Collaborates effectively with others to achieve an inclusive climate in pursuit of a common goal or to complete a task or mission.",
+    "EMOTIONAL INTELLIGENCE: Exercises self-awareness, manages their own emotions effectively; demonstrates an understanding of others’ emotions, and appropriately manages relationships.",
+    "COMMUNICATION: Articulates information in a clear and timely manner, both verbally and non-verbally, through active listening and messaging tailored to the appropriate audience.",
+  ],
+};
+
+const MPAManagingResources = {
+  title: "MPA III. Managing Resources",
+  paragraphContent:
+    "Manages assigned resources effectively and takes responsibility for actions, behaviors to maximize organizational performance.",
+  listContent: [
+    "STEWARDSHIP: Demonstrates responsible management of assigned resources, which may include time, equipment, people, funds and/or facilities.",
+    "ACCOUNTABILITY: Takes responsibility for the actions and behaviors of self and/or team; demonstrates reliability and transparency.",
+  ],
+};
+
+const MPAImprovingUnit = {
+  title: "MPA IV. Improving the Unit",
+  paragraphContent:
+    "Demonstrates critical thinking and fosters innovation to find creative solutions and improve mission execution.",
+  listContent: [
+    "DECISION MAKING: Makes well-informed, effective and timely decisions under one’s control that weigh constraints, risks, and benefits.",
+    "INNOVATION: Thinks creatively about different ways to solve problems, implements improvements and demonstrates calculated risk-taking.",
+  ],
+};
+
+const CommunicatingCompetencies = {
+  title: "Using Narrative-Style Performance Statements",
+  listContent: [
+    "The SHIFT to Performance Statements: To best communicate Airmen’s performance, the Air Force has replaced bullets with Performance Statements. Performance Statements use narrative-style writing and plain language to describe Airmen’s performance in each of the four Major Performance Areas without the need of extensive technical or contextual knowledge. Performance Statements should function as standalone sentences and include two elements: 1) the behavior or action taken by an Airman; and 2) the impact, results, or outcome of that behavior/action. If using acronyms and abbreviations, only utilize the approved Air Force Acronym and Abbreviation List, unless noted by an approved category.",
+    "Adopting a QUALITY over QUANTITY Mentality: Raters are encouraged to refer to the 10 MPAs when writing Performance Statements, but should not attempt to include them all. Instead, raters should select noteworthy anecdotes that are representative of the Airman’s behaviors and achievements in the context of their position and rank. This new writing style helps shift our performance evaluation culture from the impractical attempt to synthesize an Airman’s entire performance on one page to using representative examples that best capture the essence of an Airman’s behaviors and results, whether successful or not. A coherent performance statement should identify a specific competency and describe how well it was performed in line with a given MPA (Major Performance Areas) or ALQ.",
+  ],
+};
+
+const WritingPerformanceStatements = {
+  title: "Writing Performance Statements",
+  paragraphContent:
+    "Performance Statements are the AF narrative-style of writing to communicate performance. They are efficient, increase clarity, and improve the ability to understand performance correctly and equitably. Guidance for writing Performance Statements is deliberately not overly prescriptive to enable flexibility and freedom when capturing performance.",
+  listContent: [
+    "Each Performance Statement will be a standalone sentence and include 1. action and 2. at least one of the following: impact or results/outcome.",
+    "Performance Statements are plain language and avoid using uncommon acronyms and abbreviations.",
+  ],
+};
+
+const WritingPerformanceStatementsDos = {
+  title: "Do:",
+  listContent: [
+    "Consider writing two Performance Staments in a single MPA, aiming for each Performance Statement to be around 150-175 characters in length (max 350 characters).",
+    "Include a scene (context), a person, an action, and/or a tool/instrument (the means) used to achieve that action. Any combination of these elements can craft a noteworthy narrative.",
+    "Think about the scope, or range of impact, a particular behavior/skill has; and the quality, or depth/meaningfulness, of its impact.",
+    "Make your narrative believable and relate to the community's prior experiences, expectations, and cultural norms to resonate with your intend audience.",
+    "Consider whether an outside reader can make sense of the who, what, when, where, and why of the statement",
+    "Describe Airmen’s successes and developmental needs or shortcomings. An Airman may exhibit proficiency in taking initiative and fostering innovation worthy of acknowledgement, even if their actions fall short of producing tangible results. Others may need additional support suggesting where they almost reached proficiency in an area of importance to their position and how to go about doing so.",
+  ],
+};
+
+const WritingPerformanceStatementsDonts = {
+  title: "Don't:",
+  listContent: [
+    "Use overly clichéd superlatives, over-the-top praise, or overly common descriptors, which reduces credibility and distracts from the specific story being conveyed.",
+    "Include overly general or vague statements. Instead, link your feedback to the 10 ALQs and identify opportunities for future development.",
+  ],
+};
+
+const NeedsImprovementEx = {
+  title:
+    "I. Needs Improvement Example for MPA: Executing the Mission; ALQ: Adaptability",
+  paragraphContent:
+    "MSgt Bailey learned a Primary Care Team member tested COVID positive, and, after being prompted, notified her Flight Commander at morning huddle, while waiting for direction on future actions to take.",
+  listContent: [
+    "Needs further growth to enhance understanding and/or performance.",
+  ],
+};
+
+const DevelopingEx = {
+  title:
+    "II. Developing Example for MPA: Executing the Mission; ALQ: Adaptability",
+  paragraphContent:
+    "When MSgt Bailey learned a Primary Care Team member tested COVID positive, she notified her Flight Commander, and, with direction from her leadership, her team was able to determine a plan to resolve the issue.",
+  listContent: ["Generally accepts new information and changing conditions"],
+};
+
+const ProficientEx = {
+  title:
+    "III. Proficient Example for MPA: Executing the Mission; ALQ: Adaptability",
+  paragraphContent:
+    "Learning a Primary Care Team member tested COVID positive, MSgt Bailey responded professionally with appropriate action adjusting the daily schedule and created a new plan ensuring team coverage.",
+  listContent: [
+    "Adjusts to change or ambiguity with composure to meet mission objectives",
+  ],
+};
+
+const HighlyProficientEx = {
+  title:
+    "IV. Highly Proficient Example for MPA: Executing the Mission; ALQ: Adaptability",
+  paragraphContent:
+    "MSgt Bailey learned a Primary Care Team member tested COVID positive and, without prompting, empowered a SSgt as Team leader deciding on adjustments, ensuring team coverage and mission accomplishment.",
+  listContent: [
+    "Independently adjusts to change or ambiguity with composure; empowers others to implement changes to meet mission objectives",
+  ],
+};
+
+const ExceptionallySkilledEx = {
+  title:
+    "V. Exceptionally Skilled Example for MPA: Executing the Mission; ALQ: Adaptability",
+  paragraphContent:
+    "When a Primary Care Team member tested COVID positive, MSgt Bailey independently acted to empower a SSgt as Team lead ensuring coverage, mentoring them to create/brief new plans to Medical Group for process improvement.",
+  listContent: [
+    "Leverages changes as an opportunity to better meet mission objectives; inspires others to be more adaptable and equips them to handle changes independently",
+  ],
+};
+
 const infoWordChoice1 = {
-  title: "IV. Good Words to Use:",
+  title: "Good Words to Use:",
   paragraphContent: "Use vivid words to emphasize action and results",
   listContent: [
     "Cut",
@@ -70,7 +190,7 @@ const infoWordChoice1 = {
 };
 
 const infoWordChoice2 = {
-  title: "V. Mundane Words:",
+  title: "Mundane Words:",
   paragraphContent: "Mundane words should be avoided as they are unspecific",
   listContent: [
     "Capable",
@@ -93,138 +213,18 @@ const infoWordChoice2 = {
   ],
 };
 
-const infoBasics = {
-  title: "I. The Basics",
-  paragraphContent: " ",
-  listContent: [
-    "Review the ratee's previous performance reports",
-    "Gather input from the ratee in advance",
-    "Don't use prohibited statements (see section xx)",
-    "Take the time to write a quality report",
-    "Proofread your product",
-    "Follow the do's and don'ts",
-    "Use strong word choice",
-    "Provide context",
-    "Stratify your descriptions",
-    "Use common acronyms instead of writing them out",
-  ],
-};
-
-const eprFundamentals = {
-  title: "I. Fundamentals",
-  paragraphContent: " ",
-  listContent: [
-    "Think ahead (ex. keep a log of the ratee's accomplishments throughout the period)",
-    "Take time to write a good report",
-    "Write and proofread in private",
-    "Do not discuss ratings with the ratee before the report is on record",
-    "Do not overrate",
-    "Avoid highlighting a single, non-severe incident",
-    "Do not underrate in order to show improvement in later performance reports",
-    "Before writing, determine which promotion category the person fits",
-    "Use of a 'promote' statement sends a strong statement -- use it wisely",
-    "Avoid nicknames, calls signs, or code names",
-  ],
-};
-
-const eprWritingTips = {
-  title: "II. Writing Tips",
-  paragraphContent: " ",
-  listContent: [
-    "Did the member initiate, develop, implement, and follow through with a new plan, project, or program?",
-    "Did the member chair any meetings, committees, or subcommittees related to duty performance?",
-    "Did the individual volunteer for any projects, additional duties, community involvement, or extracurricular activities?",
-    "What recognition (awards, letters of appreciation, etc.) did the individual recieve?",
-    "How did the individual save money, time, or resources in the office?",
-    "What type of leader, both on and off duty, is the individual?",
-  ],
-};
-
-const eprPromotions = {
-  title: "III. Promotion Categories",
-  paragraphContent: " ",
-  listContent: [
-    "1: Not recommended for promotion",
-    "2: Not recommended for promotion at this time",
-    "3: Consider for promotion",
-    "4: Ready for promotion",
-    "5: Ready for immediate promotion",
-  ],
-};
-
-const oprFundamentals = {
-  title: "I. Fundamentals",
-  paragraphContent: " ",
-  listContent: [
-    "OPR should assess duty performance and performance reflect the leadership",
-    "Do not consider previous Promotion Recomendation Form recommendations or promotion elegibility",
-    "Do not consider non-work related statuses/activities",
-    "Promotion recommendations are prohibited",
-    "Recommendations to attend the next level of PME or next assignment are permitted",
-    "Include incident(s)/negative trait(s) that warrant documentation to hold a member accountable",
-  ],
-};
-
-const oprWritingTips = {
-  title: "II. Writing Tips",
-  paragraphContent: " ",
-  listContent: [
-    "Focus on duty performance",
-    "Clearly illustrate both abilities and potential",
-    "Record performance in dynamic terms",
-    "Focus on results, not just activity",
-    "Use term understood across the Air Force",
-    "Focus on primary duty performance rather than additional duties",
-    "Stratify statements to highlight top performers",
-    "Include PME/Assignment recommendation if applicable",
-  ],
-};
-
-const oprVeiledPromotion = {
-  title: "III. Prohibited Promotion Statement Examples",
-  paragraphContent: " ",
-  listContent: [
-    "Lt Col X is senior officer material",
-    "Capt X has excelled in a Major's billet",
-    "Major X should be a group commander now",
-    "Capt X is ready for our toughest field grade jobs",
-  ],
-};
-
-const eprEx = {
-  title: "EPR Example",
-  paragraphContent: " ",
-  listContent: [
-    "My #1 of 5 SNCOs--proactive leader--exemplary supervisor who led the busiest section in the division",
-    "Established long-term programs to improve support to customers--stockage and issue effectiveness",
-    " ratings were consistently highest in command and top 5 in Air Force throughout year--visionary manager",
-    "   His team virtually eliminated out-of-stock situations for customers--herculean effort made to look easy",
-    "   Led section to new heights in all process performance indicators--team continued to exceed every goal",
-    "Modernized section's outdated process for tracking late products--on-time rate now at 100% for first time",
-    "Devoted two nights a week of off-duty time to ensure the unit's training requirements were met--unselfish",
-    "   All three of his trainees fully qualified in minimum time--significantly improved section's effectiveness",
-    "Eliminated over $6 million in serviceable excess inventory in only four months as key member of quality",
-    " improved team--surpassed expectations--hands-on leadership was the catalyst for the entire effort",
-    "	Simultaneously reduced over $320,000 in due-in excess--greatest decrease in the division's history",
-    "Model community leader--President, local food pantry--volunteered off-duty time regularly in soup kitchen",
-    "Leader, motivator, skilled tactician--leads the pack--keep him in the front--promote to SMSgt now!",
-  ],
-};
-
-const oprEx = {
-  title: "OPR Example",
-  paragraphContent: " ",
-  listContent: [
-    "Led efforts that resulted in historic gains for our Airmen and kept AF readiness at the forefront in congress",
-    "	Spearheaded quality of life improvements--pay table reform, retirement redux repeal, significant pay raise",
-    "	Garnered over $200M for new family housing, $225M for housing allowances, and increased bonuses",
-    "Developed MAJCOM Top Readiness Concerns brief for OSD--provided the real story on AF readiness",
-    "Guided analysis of impact of long-term contingency operations on Air Force people, budget, and equipment",
-    "Protected programs vital to AF future--AF lead for C-5 engine upgrade, $200M effort--flawless execution",
-    "Authored $10M budget proposal and defended to congress on the Hill--program fully funded as a result",
-    "Forged DoD-wide definition of TEMPO for $100M Congressional Report on Personnel TEMPO legislation",
-    "Advised CSAF on Aerospace Expeditionary Force readiness prior to deployment--impacted all AEF units",
-  ],
+const infoWordChoice3 = {
+  title: "Acceptable Abbreviations:",
+  paragraphContent: (
+    <Link
+      fontSize={{ base: "sm", md: "md" }}
+      isExternal
+      href="https://www.afpc.af.mil/Career-Management/Acronyms/"
+    >
+      Air Force Acronym & Abbreviation List <ExternalLinkIcon mx="2px" />
+    </Link>
+  ),
+  listContent: [],
 };
 
 export default function Page() {
@@ -257,7 +257,7 @@ export default function Page() {
                 mx={{ base: "0.5", md: "1em" }}
                 _selected={{ color: "white", bg: "#031926" }}
               >
-                OPR
+                Formatting
               </Tab>
               <Tab
                 fontSize={{ base: "sm", md: "md" }}
@@ -266,7 +266,7 @@ export default function Page() {
                 mx={{ base: "0.5", md: "1em" }}
                 _selected={{ color: "white", bg: "#031926" }}
               >
-                EPR
+                Word Choices
               </Tab>
               <Tab
                 fontSize={{ base: "sm", md: "md" }}
@@ -282,31 +282,36 @@ export default function Page() {
           <TabPanels>
             <TabPanel>
               <VStack>
-                <InfoBox content={infoBasics}></InfoBox>
-                <InfoBox content={infoDos}></InfoBox>
-                <InfoBox content={infoDonts}></InfoBox>
+                <InfoBox content={FoundationalChanges}></InfoBox>
+                <InfoBox content={MPAList}></InfoBox>
+                <InfoBox content={MPAExecutingMission}></InfoBox>
+                <InfoBox content={MPALeadingPeople}></InfoBox>
+                <InfoBox content={MPAManagingResources}></InfoBox>
+                <InfoBox content={MPAImprovingUnit}></InfoBox>
+              </VStack>
+            </TabPanel>
+            <TabPanel>
+              <VStack>
+                <InfoBox content={CommunicatingCompetencies}></InfoBox>
+                <InfoBox content={WritingPerformanceStatements}></InfoBox>
+                <InfoBox content={WritingPerformanceStatementsDos}></InfoBox>
+                <InfoBox content={WritingPerformanceStatementsDonts}></InfoBox>
+              </VStack>
+            </TabPanel>
+            <TabPanel>
+              <VStack>
+                <InfoBox content={infoWordChoice3}></InfoBox>
                 <InfoBox content={infoWordChoice1}></InfoBox>
                 <InfoBox content={infoWordChoice2}></InfoBox>
               </VStack>
             </TabPanel>
             <TabPanel>
               <VStack>
-                <InfoBox content={oprFundamentals}></InfoBox>
-                <InfoBox content={oprWritingTips}></InfoBox>
-                <InfoBox content={oprVeiledPromotion}></InfoBox>
-              </VStack>
-            </TabPanel>
-            <TabPanel>
-              <VStack>
-                <InfoBox content={eprFundamentals}></InfoBox>
-                <InfoBox content={eprWritingTips}></InfoBox>
-                <InfoBox content={eprPromotions}></InfoBox>
-              </VStack>
-            </TabPanel>
-            <TabPanel>
-              <VStack>
-                <InfoBox content={eprEx}></InfoBox>
-                <InfoBox content={oprEx}></InfoBox>
+                <InfoBox content={NeedsImprovementEx}></InfoBox>
+                <InfoBox content={DevelopingEx}></InfoBox>
+                <InfoBox content={ProficientEx}></InfoBox>
+                <InfoBox content={HighlyProficientEx}></InfoBox>
+                <InfoBox content={ExceptionallySkilledEx}></InfoBox>
               </VStack>
             </TabPanel>
           </TabPanels>
