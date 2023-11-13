@@ -57,19 +57,7 @@ export const authOptions = {
           firstName: user.firstName,
           lastName: user.lastName,
           suffix: user.suffix,
-        };
-      }
-
-      if (trigger === "update") {
-        console.log("update callback", { token, user, session });
-        console.log("Session rank:", session.user.rank);
-        token.rank = "test";
-        token.firstName = "test";
-        token.lastName = "test";
-        token.suffix = "test";
-
-        return {
-          token,
+          role: user.role,
         };
       }
       return { ...token, ...user };
@@ -87,6 +75,7 @@ export const authOptions = {
           firstName: token.firstName,
           lastName: token.lastName,
           suffix: token.suffix,
+          role: token.role,
         },
       };
     },
