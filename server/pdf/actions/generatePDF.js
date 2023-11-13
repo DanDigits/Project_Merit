@@ -94,11 +94,11 @@ export async function pdf(stream, reportId) {
         width: doc.page.width - doc.page.margins.left - doc.page.margins.right,
       }
     );
-
-    if (doc.y + spaceNeeded > doc.page.height) {
+    
+    if (doc.y + spaceNeeded > doc.page.height - doc.page.margins.bottom) {
       // Move to a new page before starting the report
       doc.addPage();
-    }
+    }    
 
     // Display date, title, and data for each report
     doc
