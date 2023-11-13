@@ -5,7 +5,6 @@ import { getUser } from "server/mongodb/actions/User";
 //import PDFDocument from "pdfkit";
 import PDFDocument from "../pdfkit.standalone";
 
-// Create PDF
 export async function pdf(stream, reportId) {
   let doc;
 
@@ -86,6 +85,16 @@ export async function pdf(stream, reportId) {
       doc.text(`MPA: ${longCategory}\n`);
       doc.text("\n");
       doc.font("Times-Roman");
+    }
+
+    // Check if there is enough space on the current page for the entire report
+    const spaceNeeded = doc.heightOfString(report.report, {
+      width: doc.page.width - doc.page.margins.left - doc.page.margins.right,
+    });
+
+    if (doc.y + spaceNeeded > doc.page.height) {
+      // Move to a new page before starting the report
+      doc.addPage();
     }
 
     // Display date, title, and data for each report
