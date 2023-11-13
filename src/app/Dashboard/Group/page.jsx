@@ -62,7 +62,6 @@ export default function Page() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [status, setStatus] = useState("");
 
-  //const groupName = "Alpha 1";
   const totalMembers = 4;
 
   const handleCreate = () => {
