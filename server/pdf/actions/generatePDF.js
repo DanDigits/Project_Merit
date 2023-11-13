@@ -88,9 +88,12 @@ export async function pdf(stream, reportId) {
     }
 
     // Check if there is enough space on the current page for the entire report
-    const spaceNeeded = doc.heightOfString(report.report, {
-      width: doc.page.width - doc.page.margins.left - doc.page.margins.right,
-    });
+    const spaceNeeded = doc.heightOfString(
+      `Date: ${report.date}\n${report.title}\n${report.report}\n\n`,
+      {
+        width: doc.page.width - doc.page.margins.left - doc.page.margins.right,
+      }
+    );
 
     if (doc.y + spaceNeeded > doc.page.height) {
       // Move to a new page before starting the report
