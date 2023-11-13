@@ -24,13 +24,13 @@ export default function UpdatePassword() {
   const [group, setGroup] = useState("");
   const [hasGroup, setHasGroup] = useState("");
   const [leader, setLeader] = useState("");
+  const [hasLeader, setHasLeader] = useState("");
   const [hasError, setHasError] = useState("");
   const [isLoading, setIsLoading] = useState("");
   const [status, setStatus] = useState(false);
   const [profile, setProfile] = useState(false);
   const [hasProfile, setHasProfile] = useState(false);
   const [membership, setMembership] = useState("");
-  const [hasMembership, setHasMembership] = useState("");
 
   useEffect(() => {
     if (!hasEmail && !isLoading) {
@@ -58,15 +58,17 @@ export default function UpdatePassword() {
     }
 
     if (hasEmail && hasProfile && !isLoading) {
-      setGroup(JSON.parse(JSON.stringify(profile)));
+      //setGroup(profile.group);
+      setGroup("Alpha 1");
       setIsLoading(true);
       setHasError(false);
       getSupervisor({ group }).then((response) => {
+        // currently does not accomodate multiple groups
         response.ok
           ? response
               .json()
-              .then((response) => setMembership(response))
-              .then(setHasMembership(true))
+              .then((response) => setLeader(response))
+              .then(setHasLeader(true))
           : setHasError(true);
         console.log("hasError:", hasError);
       });
