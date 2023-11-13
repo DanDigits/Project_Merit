@@ -37,9 +37,9 @@ export default function Page() {
             Password
           </Button>
           <Button
-            bgColor={"#70A0AF"}
+            bgColor={"#6abbc4"}
             color={"white"}
-            _hover={{ bgColor: "#706993", color: "white" }}
+            _hover={{ bgColor: "#031926", color: "white" }}
             onClick={() => setMode("Group")}
           >
             Group
