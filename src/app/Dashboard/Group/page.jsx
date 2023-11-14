@@ -10,6 +10,12 @@ import React, {
 import { getSession } from "next-auth/react";
 import { createColumnHelper } from "@tanstack/react-table";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Center,
   Spinner,
   Text,
@@ -23,10 +29,12 @@ import {
   VStack,
   Box,
   Input,
+  useDisclosure,
 } from "@chakra-ui/react";
 import GroupTable from "./GroupTable";
 import { useRouter } from "next/navigation";
 import { getGroup } from "./../../actions/Group.js";
+//import { renameGroup, deleteGroup } from "";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   const ref = useRef(null);
@@ -47,6 +55,33 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   );
 }
 
+const handleDelete = () => {
+  /*deleteGroup({ groupName }).then((response) => {
+    if (response.ok) {
+      {
+        window.location.reload;
+      }
+    } else {
+      console.log("Error: " + response.error);
+      alert("Delete failed");
+    }
+  });*/
+};
+
+const handleRename = (groupName) => {
+  console.log(groupName);
+  /* renameGroup({ groupName }).then((response) => {
+    if (response.ok) {
+      {
+        window.location.reload;
+      }
+    } else {
+      console.log("Error: " + response.error);
+      alert("Rename failed");
+    }
+  });*/
+};
+
 export default function Page() {
   const router = useRouter();
   const [group, setGroup] = useState("");
@@ -61,8 +96,12 @@ export default function Page() {
   const [searchGroup, setSearchGroup] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
   const [status, setStatus] = useState("");
+  const [newName, setNewName] = useState("");
 
-  const totalMembers = 4;
+  const [fetching, setFetching] = useState(false);
+  const [rename, setRename] = useState(false);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleCreate = () => {
     setStatus("invalid");
@@ -76,6 +115,7 @@ export default function Page() {
 
   useEffect(() => {
     if (!hasGroupName && !isLoading) {
+      setFetching(true);
       console.log("Fetching email and supervisedGroup");
       setIsLoading(true);
       setHasError(false);
@@ -133,7 +173,10 @@ export default function Page() {
       ),
     },
     {
-      accessorFn: (row) => `${row.lastName}, ${row.firstName}`,
+      accessorFn: (row) =>
+        `${row.lastName}` +
+        (row.suffix ? ` ${row.suffix}` : ``) +
+        `, ${row.firstName}`,
       id: "name",
       header: "Name",
       cell: (info) => info.getValue(),
@@ -192,7 +235,7 @@ export default function Page() {
   return (
     <>
       {hasError && <Text>SOMETHING WENT WRONG</Text>}
-      {isLoading ? (
+      {isLoading || !fetching ? (
         <>
           <Center>
             <Spinner
@@ -258,24 +301,84 @@ export default function Page() {
         <>
           {console.log(group)}
           <Heading mb={7}>Manage Group</Heading>
-          <Card
-            p={{ base: 0, md: 2 }}
-            mx={{ base: -4, md: 0 }}
-            mb={8}
-            size={{ base: "sm", md: "lg" }}
-            w="50%"
-            bgColor={"white"}
-          >
-            <CardHeader p={3} fontSize={"lg"} fontWeight={"bold"}>
-              Group Info
-            </CardHeader>
-            <CardBody mt={-4}>
-              <VStack align={"start"}>
-                <Text>Group Name: {groupName}</Text>
-                <Text>Total Members: {group[1].length}</Text>
-              </VStack>
-            </CardBody>
-          </Card>
+          <HStack justify={"space-between"} align={"flex-start"}>
+            <Card
+              p={{ base: 0, md: 2 }}
+              mx={{ base: -4, md: 0 }}
+              mb={8}
+              size={{ base: "sm", md: "lg" }}
+              w="50%"
+              bgColor={"white"}
+            >
+              <CardHeader p={3} fontSize={"lg"} fontWeight={"bold"}>
+                Group Info
+              </CardHeader>
+              <CardBody mt={-4}>
+                <VStack align={"start"}>
+                  {rename ? (
+                    <HStack>
+                      <Text>Group Name: </Text>
+                      <Input
+                        w={"xs"}
+                        value={newName}
+                        variant="login"
+                        borderWidth={"1px"}
+                        borderColor={"#70A0AF"}
+                        bg="#ECECEC"
+                        onChange={(e) => setNewName(e.target.value)}
+                      ></Input>
+                      <Button onClick={() => handleRename(newName)}>
+                        Submit
+                      </Button>
+                    </HStack>
+                  ) : (
+                    <Text>Group Name: {groupName}</Text>
+                  )}
+                  <Text>Total Members: {group[1].length}</Text>
+                </VStack>
+              </CardBody>
+            </Card>
+            <HStack>
+              <Button
+                bgColor={"#6abbc4"}
+                color={"black"}
+                _hover={{ bgColor: "#031926", color: "white" }}
+                onClick={() => setRename(!rename)}
+              >
+                Rename
+              </Button>
+              <Button
+                bgColor={"#FFC370"}
+                color={"black"}
+                _hover={{ bgColor: "#DF2935", color: "white" }}
+                onClick={onOpen}
+              >
+                Delete Group
+              </Button>
+              <AlertDialog isOpen={isOpen} onClose={onClose}>
+                <AlertDialogOverlay>
+                  <AlertDialogContent>
+                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                      Delete Group
+                    </AlertDialogHeader>
+                    <AlertDialogBody>Are you sure?</AlertDialogBody>
+                    <AlertDialogFooter>
+                      <Button onClick={onClose}>Cancel</Button>
+                      <Button
+                        colorScheme="red"
+                        onClick={() => {
+                          handleDelete();
+                        }}
+                        ml={3}
+                      >
+                        Delete
+                      </Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialogOverlay>
+              </AlertDialog>
+            </HStack>
+          </HStack>
           <GroupTable columns={columns} data={group[1]} />
         </>
       )}
