@@ -280,24 +280,22 @@ export async function PATCH(Request) {
 }
 
 // Delete a user, or a group
-export async function DELETE() {
-  let res;
+export async function DELETE(Request) {
+  let res, req;
+  req = await Request.json();
   const requestHeaders = headers();
-  const user = requestHeaders?.get("user");
   const group = requestHeaders?.get("group");
 
-  if (user == undefined) {
+  if (group != undefined) {
     res = await deleteGroup(group);
-  } else if (group == undefined) {
-    res = await deleteUser(user);
   } else {
-    res = "ERROR";
+    res = await deleteUser(req);
   }
 
   // HTTP Response
-  if (res.id) {
+  if (res) {
     return new Response("OK", { status: 200 });
-  } else if (res) {
+  } else {
     return new Response(res, { status: 400 });
   }
 }

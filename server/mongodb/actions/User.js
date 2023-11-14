@@ -2,6 +2,7 @@
 import bcrypt from "bcryptjs";
 import mongoDB from "../dbConnection";
 import UserSchema from "../models/User";
+import ReportSchema from "../models/Report";
 
 // Login user to site
 export async function login({ email, password }) {
@@ -214,7 +215,7 @@ export async function renameGroup(group, groupData) {
   return user;
 }
 
-// Delete a user
+// Delete a user and their reports
 export async function deleteUser(userId) {
   await mongoDB();
   // This code is for deleting a single user at a time
@@ -224,18 +225,34 @@ export async function deleteUser(userId) {
   //   }
   // );
   let i = 0;
-  let length = userId?.id?.length;
-  let users;
+  let j = 0;
+  let length = userId?.email?.length;
+  let user, users, reports, report;
 
   if (length == undefined) {
     return "ERROR";
   } else {
     while (i < length) {
-      const report = await UserSchema?.findByIdAndDelete({
-        _id: userId?.id[i],
+      user = await UserSchema?.findOneAndDelete({
+        email: userId?.email[i],
       }).catch(function (err) {
-        users[i].push(report);
+        users[i].push(user);
       });
+      reports = await ReportSchema?.find(
+        { email: userId?.email[i] },
+        "_id"
+      ).catch(function (err) {
+        console.log("NO REPORTS FOR USER");
+      });
+      console.log(reports[0]?.id);
+      while (reports[j] != undefined) {
+        report = await ReportSchema?.findByIdAndDelete(reports[j].id).catch(
+          function (err) {
+            return err;
+          }
+        );
+        j++;
+      }
       i++;
     }
   }
