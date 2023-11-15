@@ -169,18 +169,6 @@ const MobileNav = ({ onOpen, ...rest }) => {
         icon={<FiMenu />}
       />
       <Box justifyContent={{ base: "space-between", md: "flex-end" }}>
-        <Button
-          variant="ghost"
-          onClick={() => router.push("/Dashboard/NewReport")}
-          fontSize={20}
-          textColor={"white"}
-          _hover={{ bg: "white", color: "#031926" }}
-          textOverflow={"inherit"}
-          leftIcon={<AiOutlineFileAdd />}
-        >
-          New Report
-        </Button>
-
         <Menu>
           <MenuButton
             as={Button}
@@ -189,15 +177,11 @@ const MobileNav = ({ onOpen, ...rest }) => {
             textColor={"white"}
             _hover={{ bg: "white", color: "#031926" }}
             leftIcon={<FaUser />}
-          >
-            <Text display={{ base: "none", md: "flex" }}>
-              {rank} {lastName} {suffix}
-            </Text>
-          </MenuButton>
+          ></MenuButton>
           <MenuList>
             <MenuItem
               textColor={"#331E38"}
-              onClick={() => router.push("/Dashboard/Profile")}
+              onClick={() => router.push("/Admin/Profile")}
             >
               Profile
             </MenuItem>

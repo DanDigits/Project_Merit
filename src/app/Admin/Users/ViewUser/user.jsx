@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import Dialog from "../NewUser/dialog";
-import { createUser } from "./../../../actions/Admin.js";
+import { createUser } from "src/app/actions/Admin.js";
 
 import secureLocalStorage from "react-secure-storage";
 import { getUser, updateUser } from "src/app/actions/User.js";
@@ -291,15 +291,14 @@ export default function User(user_mode) {
                   </FormLabel>
                   <Input
                     isReadOnly={state}
-                    type=""
-                    value={rank}
-                    maxLength={64}
+                    alpha={"1.0"}
                     variant="trim"
                     borderWidth={"2px"}
                     borderColor={"#70A0AF"}
                     bg="#F7FAFC"
                     mb={3}
                     size={"md"}
+                    value={rank}
                   />
                 </FormControl>
               </>
@@ -318,7 +317,6 @@ export default function User(user_mode) {
                   bg="#F7FAFC"
                   mb={3}
                   size={"md"}
-                  _hover={{ bgColor: "#706993" }}
                   onChange={(e) => setRank(e.target.value)}
                 >
                   <option value={"AB"}>Airman Basic (AB)</option>
@@ -366,7 +364,7 @@ export default function User(user_mode) {
               <Input
                 isReadOnly={state}
                 type=""
-                value={email}
+                value={email == "null" ? "" : email}
                 maxLength={64}
                 variant="login"
                 borderWidth={"2px"}

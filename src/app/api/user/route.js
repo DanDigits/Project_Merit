@@ -17,12 +17,13 @@ import {
   deleteGroup,
   renameGroup,
   getSupervisor,
+  getGroups,
 } from "server/mongodb/actions/User";
 import urls from "../../../../utils/getPath";
 import nodemailer from "nodemailer";
 import { redirect } from "next/navigation";
 
-// Mail related functions
+/* Mail related functions */
 const transporter = nodemailer.createTransport({
   port: process.env.EMAIL_SERVER_PORT,
   host: process.env.EMAIL_SERVER_HOST,
@@ -165,6 +166,15 @@ export async function GET(Request) {
           return new Response(JSON.stringify(res), { status: 200 });
         }
       }
+      case "8": {
+        // Get groups
+        res = await getGroups();
+        if (res == "ERROR") {
+          return new Response(JSON.stringify(res), { status: 400 });
+        } else {
+          return new Response(JSON.stringify(res), { status: 200 });
+        }
+      }
       default: {
         return new Response("ERROR", { status: 400 });
       }
@@ -280,24 +290,22 @@ export async function PATCH(Request) {
 }
 
 // Delete a user, or a group
-export async function DELETE() {
-  let res;
+export async function DELETE(Request) {
+  let res, req;
+  req = await Request.json();
   const requestHeaders = headers();
-  const user = requestHeaders?.get("user");
   const group = requestHeaders?.get("group");
 
-  if (user == undefined) {
+  if (group != undefined) {
     res = await deleteGroup(group);
-  } else if (group == undefined) {
-    res = await deleteUser(user);
   } else {
-    res = "ERROR";
+    res = await deleteUser(req);
   }
 
   // HTTP Response
-  if (res.id) {
+  if (res) {
     return new Response("OK", { status: 200 });
-  } else if (res) {
+  } else {
     return new Response(res, { status: 400 });
   }
 }

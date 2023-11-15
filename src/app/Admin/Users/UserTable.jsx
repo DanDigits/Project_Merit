@@ -38,7 +38,7 @@ import {
 import { FiFilter } from "react-icons/fi";
 import Filters from "../Users/Filters";
 import { useRouter } from "next/navigation";
-//import { deleteUser } from "./../../actions/User.js";
+import { deleteUser } from "./../../actions/User.js";
 
 export default function UserTable({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -69,9 +69,10 @@ export default function UserTable({ columns, data }) {
   });
 
   const handleDelete = (userArray) => {
+    console.log(userArray);
     if (userArray && userArray.length != 0) {
       setDeleteLoading(true);
-      deleteGroup({ userArray }).then((response) => {
+      deleteUser({ userArray }).then((response) => {
         if (response.ok) {
           {
             setDeleteLoading(false);

@@ -29,10 +29,12 @@ export default function Page() {
   const [email, setEmail] = useState(
     String(secureLocalStorage.getItem("email"))
   );
+  var userArray = [];
 
   const handleDelete = () => {
-    console.log("Attempting to delete account: " + email);
-    deleteUser({ email }).then((response) => {
+    userArray.push(email);
+    console.log("Attempting to delete account: " + userArray);
+    deleteUser({ userArray }).then((response) => {
       if (response.ok) {
         {
           window.location.replace("/Admin/Users");

@@ -117,7 +117,10 @@ export default function Page() {
         ),
       },
       {
-        accessorFn: (row) => `${row.lastName}, ${row.firstName}`,
+        accessorFn: (row) =>
+          `${row.lastName}` +
+          (row.suffix ? ` ${row.suffix}` : ``) +
+          `, ${row.firstName}`,
         id: "name",
         header: "Name",
         cell: (info) => info.getValue(),
@@ -197,7 +200,9 @@ export default function Page() {
       {
         membership: "unassigned",
         managed: "",
-        name: "user2",
+        firstName: "user2",
+        lastName: "last",
+        suffix: "jr.",
         email: "user2@gmail.com",
         role: "User",
       },
