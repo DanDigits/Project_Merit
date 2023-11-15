@@ -26,11 +26,15 @@ import { deleteUser } from "./../../../actions/User.js";
 export default function Page() {
   const [mode, setMode] = useState("View");
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const userId = String(secureLocalStorage.getItem("userID"));
+  const [email, setEmail] = useState(
+    String(secureLocalStorage.getItem("email"))
+  );
+  var userArray = [];
 
   const handleDelete = () => {
-    console.log("Attempting to delete account: " + userId);
-    deleteUser({ userId }).then((response) => {
+    userArray.push(email);
+    console.log("Attempting to delete account: " + userArray);
+    deleteUser({ userArray }).then((response) => {
       if (response.ok) {
         {
           window.location.replace("/Admin/Users");

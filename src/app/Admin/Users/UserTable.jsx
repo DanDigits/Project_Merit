@@ -68,10 +68,11 @@ export default function UserTable({ columns, data }) {
     debugTable: true,
   });
 
-  const handleDelete = (userId) => {
-    if (userId && userId.length != 0) {
+  const handleDelete = (userArray) => {
+    console.log(userArray);
+    if (userArray && userArray.length != 0) {
       setDeleteLoading(true);
-      deleteUser({ userId }).then((response) => {
+      deleteUser({ userArray }).then((response) => {
         if (response.ok) {
           {
             setDeleteLoading(false);
@@ -144,7 +145,7 @@ export default function UserTable({ columns, data }) {
                       handleDelete(
                         table
                           .getSelectedRowModel()
-                          .flatRows.map(({ original }) => original._id)
+                          .flatRows.map(({ original }) => original.email)
                       )
                     }
                     ml={3}

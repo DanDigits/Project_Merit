@@ -156,13 +156,11 @@ export const updatePassword = async ({ email, password, newPassword }) => {
   return response;
 };
 
-export const deleteUser = async ({ userId }) => {
+export const deleteUser = async ({ userArray }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.delete, {
     method: "DELETE",
     mode: "same-origin",
-    headers: {
-      user: userId,
-    },
+    body: JSON.stringify({ email: userArray }),
   });
   console.log(response.statusText);
 
