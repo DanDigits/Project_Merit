@@ -31,10 +31,10 @@ export async function getReport(reportData) {
       return err;
     });
   }
+  report.date = report?.date.slice(0, 10);
   if (report == null) {
     report = "None";
   }
-  console.log(report);
   return report;
 }
 
@@ -184,7 +184,9 @@ export async function updateUserReportStatistics(email) {
 export async function getUserReports(email, parameter) {
   await mongoDB();
   const categories = ["Mission", "Leadership", "Resources", "Unit"];
-  let reports, index;
+  let reports,
+    index,
+    i = 0;
 
   //index = parseInt(parameter);
   //Find # of the users most recent reports, after the given index, pagination; currently not implemented
@@ -195,6 +197,12 @@ export async function getUserReports(email, parameter) {
     .catch(function (err) {
       return err;
     });
+
+  while (reports[i] != undefined) {
+    reports[i].date = reports[i]?.date.slice(0, 10);
+    console.log(reports[i].date);
+    i++;
+  }
   return reports;
 }
 

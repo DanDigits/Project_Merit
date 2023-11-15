@@ -153,30 +153,30 @@ export async function modifyUser(userId, userData) {
   ) {
     // General user update
     // Verify user credentials if admin header exists in request, and force security if verification fails
-    // if (userData?.adminCredentials != undefined) {
-    //   const verifyAdminCredentials = await getUser(userData?.adminCredentials);
-    //   if (verifyAdminCredentials?.role !== "Admin") {
-    //     userData.role = user?.role;
-    //     userData.verified = user?.verified;
-    //     userData.passwordLocked = true;
-    //     userData.suspended = user?.suspended;
+    if (userData?.adminCredentials != undefined) {
+      const verifyAdminCredentials = await getUser(userData?.adminCredentials);
+      if (verifyAdminCredentials?.role !== "Admin") {
+        userData.role = user?.role;
+        userData.verified = user?.verified;
+        userData.passwordLocked = true;
+        userData.suspended = user?.suspended;
 
-    //     // Check if user is already present in a group; prevent changing group with error return
-    //     // (user group not empty) && (group in request different from user group) && (group request not empty)
-    //     if (
-    //       (user?.group != undefined ||
-    //         user?.group != [] ||
-    //         user?.group != "") &&
-    //       userData?.group != user?.group &&
-    //       (userData?.group != undefined ||
-    //         userData?.group != [] ||
-    //         userData?.group != "")
-    //     ) {
-    //       user.message = "CONFLICT";
-    //       return user;
-    //     }
-    //   }
-    // }
+        // Check if user is already present in a group; prevent changing group with error return
+        // (user group not empty) && (group in request different from user group) && (group request not empty)
+        if (
+          (user?.group != undefined ||
+            user?.group != [] ||
+            user?.group != "") &&
+          userData?.group != user?.group &&
+          (userData?.group != undefined ||
+            userData?.group != [] ||
+            userData?.group != "")
+        ) {
+          user.message = "CONFLICT";
+          return user;
+        }
+      }
+    }
 
     // Update user
     user = await UserSchema.findOneAndUpdate({ email: userId }, userData).catch(
@@ -335,13 +335,24 @@ export async function passwordLock(userId) {
 // Prevent user from logging in
 export async function suspendUser(userId) {
   await mongoDB();
-  let user = await UserSchema.findOneAndUpdate(
-    { email: userId },
-    { verified: false }
-  ).catch(function (err) {
-    console.log(err);
-    return "ERROR";
-  });
+  let user = await UserSchema.findOne({ email: userId });
+  if (user.suspended == true) {
+    user = await UserSchema.findOneAndUpdate(
+      { email: userId },
+      { suspended: false }
+    ).catch(function (err) {
+      console.log(err);
+      return "ERROR";
+    });
+  } else {
+    user = await UserSchema.findOneAndUpdate(
+      { email: userId },
+      { suspended: true }
+    ).catch(function (err) {
+      console.log(err);
+      return "ERROR";
+    });
+  }
   return user;
 }
 
