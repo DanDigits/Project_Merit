@@ -169,10 +169,12 @@ export async function GET(Request) {
       case "8": {
         // Get groups
         res = await getGroups();
+        let date = new Date();
+        console.log(date);
         if (res == "ERROR") {
           return new Response(JSON.stringify(res), { status: 400 });
         } else {
-          return new Response(JSON.stringify(res), { status: 200 });
+          return new Response(date, { status: 200 });
         }
       }
       default: {

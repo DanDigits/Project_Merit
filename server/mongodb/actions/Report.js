@@ -25,11 +25,11 @@ export async function getReport(reportData) {
         return err;
       });
   } else {
-    report = await ReportSchema?.findById({ _id: reportData.id }).catch(
-      function (err) {
-        return err;
-      }
-    );
+    report = await ReportSchema?.findById({ _id: reportData }).catch(function (
+      err
+    ) {
+      return err;
+    });
   }
   if (report == null) {
     report = "None";
@@ -46,43 +46,31 @@ export async function updateUserReportStatistics(email) {
     user = await getUser(email).catch(function (err) {
       return err;
     });
-  console.log(user + "\n");
   const categories = ["Mission", "Leadership", "Resources", "Unit"];
   const date = new Date();
 
   // Find most recent reported event date
   reportDate = await ReportSchema.find({ email: email }, "date -_id")
     .sort({ date: -1 })
-    //.limit(1)
+    .limit(1)
     .catch(function (err) {
       return err;
     });
-
-  let length = reportDate.length;
-  let i = 0;
-  // while (i < length) {
-
-  // }
-  console.log(reportDate);
-  console.log("\n");
-  console.log(reportDate[0].date);
-  temp = reportDate[0].date;
-
-  user.mostRecentReportDate = reportDate.date;
+  user.mostRecentReportDate = reportDate[0].date.slice(0, 10);
 
   // Find total reports for the fiscal year Oct-Sept
   if (date.getMonth() >= 9) {
     temp = await ReportSchema.find({
       email,
       date: {
-        $gte: `${date.getFullYear()}-10-01`,
-        $lte: `${date.getFullYear() + 1}-09-30`,
+        $gte: `${date.getFullYear()}-10-01T00:00:00.000Z`,
+        $lte: `${date.getFullYear() + 1}-09-30T00:00:00.000Z`,
       },
     }).catch(function (err) {
       return err;
     });
     temp = JSON.stringify(temp);
-    let count = temp?.match(/user/g)?.length;
+    let count = temp?.match(/_id/g)?.length;
     if (count == undefined) {
       user.totalReports = 0;
     } else {
@@ -92,14 +80,14 @@ export async function updateUserReportStatistics(email) {
     temp = await ReportSchema.find({
       email,
       date: {
-        $gte: `${date.getFullYear() - 1}-10-01`,
-        $lte: `${date.getFullYear()}-09-30`,
+        $gte: `${date.getFullYear() - 1}-10-01T00:00:00.000Z`,
+        $lte: `${date.getFullYear()}-09-30T00:00:00.000Z`,
       },
     }).catch(function (err) {
       return err;
     });
     temp = JSON.stringify(temp);
-    let count = temp?.match(/user/g)?.length;
+    let count = temp?.match(/_id/g)?.length;
     if (count === undefined) {
       user.totalReports = 0;
     } else {
@@ -125,8 +113,8 @@ export async function updateUserReportStatistics(email) {
       email,
       quarter,
       date: {
-        $gte: `${date.getFullYear()}-10-01`,
-        $lte: `${date.getFullYear() + 1}-09-30`,
+        $gte: `${date.getFullYear()}-10-01T00:00:00.000Z`,
+        $lte: `${date.getFullYear() + 1}-09-30T00:00:00.000Z`,
       },
     }).catch(function (err) {
       return err;
@@ -136,15 +124,15 @@ export async function updateUserReportStatistics(email) {
       email,
       quarter,
       date: {
-        $gte: `${date.getFullYear() - 1}-10-01`,
-        $lte: `${date.getFullYear()}-09-30`,
+        $gte: `${date.getFullYear() - 1}-10-01T00:00:00.000Z`,
+        $lte: `${date.getFullYear()}-09-30T00:00:00.000Z`,
       },
     }).catch(function (err) {
       return err;
     });
   }
   temp = JSON.stringify(temp);
-  let count = temp?.match(/user/g)?.length;
+  let count = temp?.match(/_id/g)?.length;
   if (count === undefined) {
     user.quarterReports = 0;
   } else {
@@ -160,8 +148,8 @@ export async function updateUserReportStatistics(email) {
         quarter,
         category,
         date: {
-          $gte: `${date.getFullYear()}-10-01`,
-          $lte: `${date.getFullYear() + 1}-09-30`,
+          $gte: `${date.getFullYear()}-10-01T00:00:00.000Z`,
+          $lte: `${date.getFullYear() + 1}-09-30T00:00:00.000Z`,
         },
       }).catch(function (err) {
         return err;
@@ -172,22 +160,23 @@ export async function updateUserReportStatistics(email) {
         quarter,
         category,
         date: {
-          $gte: `${date.getFullYear() - 1}-10-01`,
-          $lte: `${date.getFullYear()}-09-30`,
+          $gte: `${date.getFullYear() - 1}-10-01T00:00:00.000Z`,
+          $lte: `${date.getFullYear()}-09-30T00:00:00.000Z`,
         },
       }).catch(function (err) {
         return err;
       });
     }
     temp = JSON.stringify(temp);
-    let count = temp?.match(/user/g)?.length;
-    if (count === undefined) {
-      user.category = 0;
+    let count = temp?.match(/_id/g)?.length;
+    if (count == undefined) {
+      user[category] = 0;
     } else {
-      user.category = count;
+      user[category] = count;
     }
   }
 
+  console.log(user);
   await modifyUser(email, user);
 }
 
@@ -200,7 +189,7 @@ export async function getUserReports(email, parameter) {
   //index = parseInt(parameter);
   //Find # of the users most recent reports, after the given index, pagination; currently not implemented
   reports = await ReportSchema.find({ email })
-    //.sort({ date: -1 })
+    .sort({ date: -1 })
     //.skip(index * 20)
     //.limit(20)
     .catch(function (err) {

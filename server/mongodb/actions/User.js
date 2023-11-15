@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import mongoDB from "../dbConnection";
 import UserSchema from "../models/User";
 import ReportSchema from "../models/Report";
+import { mongo } from "mongoose";
 
 // Login user to site
 export async function login({ email, password }) {
@@ -236,7 +237,7 @@ export async function deleteUser(userId) {
       user = await UserSchema?.findOneAndDelete({
         email: userId?.email[i],
       }).catch(function (err) {
-        users[i].push(user);
+        return err;
       });
       reports = await ReportSchema?.find(
         { email: userId?.email[i] },
@@ -256,7 +257,7 @@ export async function deleteUser(userId) {
       i++;
     }
   }
-  return users;
+  return i;
 }
 
 // Delete a group by looping through the members, and removing
@@ -423,6 +424,7 @@ export async function getSupervisor(group) {
 }
 
 export async function getGroups() {
+  await mongoDB();
   let groups = await UserSchema?.find().distinct("group");
   console.log(groups);
   return groups;

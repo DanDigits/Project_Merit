@@ -96,7 +96,7 @@ const UserSchema = new Schema({
     default: 0,
   },
   mostRecentReportDate: {
-    type: Number,
+    type: String,
     required: false,
     default: 0,
   },
