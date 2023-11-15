@@ -177,6 +177,16 @@ export async function GET(Request) {
           return new Response(date, { status: 200 });
         }
       }
+      case "9": {
+        // Get given group members/users
+        const group = requestHeaders?.get("group");
+        res = await getSupervisor(group);
+        if (res == "ERROR") {
+          return new Response(JSON.stringify(res), { status: 400 });
+        } else {
+          return new Response(JSON.stringify(res), { status: 200 });
+        }
+      }
       default: {
         return new Response("ERROR", { status: 400 });
       }
