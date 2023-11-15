@@ -46,7 +46,7 @@ export default function Dialog(status) {
                   </Button>
                 </Link>
 
-                <Link href="/Dashboard/Users/NewUser">
+                <Link href="/Admin/Users/NewUser">
                   <Button
                     bgColor={"#70A0AF"}
                     color={"white"}

@@ -115,6 +115,8 @@ export const updateUser = async ({
   role,
   group,
   supervisedGroup,
+  suspended,
+  verified,
 }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
     method: "PATCH",
@@ -131,6 +133,8 @@ export const updateUser = async ({
       role,
       group,
       supervisedGroup,
+      suspended,
+      verified,
     }),
   });
   console.log("Update Response:", response.statusText);

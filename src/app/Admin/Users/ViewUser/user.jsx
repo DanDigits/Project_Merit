@@ -42,6 +42,7 @@ export default function User(user_mode) {
   const [rank, setRank] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
+  const [verified, setVerified] = useState(null);
 
   const [group, setGroup] = useState("");
   const [supervisedGroup, setSupervisedGroup] = useState("");
@@ -122,6 +123,9 @@ export default function User(user_mode) {
       if (rank === "" || firstName === "" || lastName === "" || role === "") {
         setMsg("missing");
       } else {
+        var suspended;
+        if (status === "Suspended") suspended = true;
+        else suspended = false;
         updateUser({
           email,
           rank,
@@ -131,6 +135,8 @@ export default function User(user_mode) {
           role,
           group,
           supervisedGroup,
+          suspended,
+          verified,
         }).then((response) => {
           if (response.ok) {
             {
@@ -193,7 +199,8 @@ export default function User(user_mode) {
           setLastLogin(arr.lastLogin);
           setEmail(arr.email);
           setIsLoading(false);
-          if (arr.status === true) {
+          setVerified(arr.verified);
+          if (arr.suspended === true) {
             setStatus("Suspended");
           } else {
             setStatus("Active");
@@ -494,6 +501,28 @@ export default function User(user_mode) {
                 >
                   <option value={"Active"}>Active</option>
                   <option value={"Suspended"}>Suspended</option>
+                </Select>
+              </FormControl>
+            )}
+            {user_mode === "Edit" && (
+              <FormControl id="verified" isRequired>
+                <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                  Verified
+                </FormLabel>
+                <Select
+                  isReadOnly={state}
+                  placeholder="Select Verified Status"
+                  variant="trim"
+                  borderWidth={"2px"}
+                  borderColor={"#70A0AF"}
+                  bg="#F7FAFC"
+                  mb={6}
+                  size={"md"}
+                  value={verified}
+                  onChange={(e) => setVerified(e.target.value)}
+                >
+                  <option value={true}>Verified</option>
+                  <option value={false}>Not Verified</option>
                 </Select>
               </FormControl>
             )}

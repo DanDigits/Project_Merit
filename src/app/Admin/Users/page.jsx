@@ -171,10 +171,10 @@ export default function Page() {
         header: "Last Sign-In",
       },
       {
-        accessorKey: "status",
+        accessorKey: "suspended",
         header: "Status",
         cell: ({ cell }) =>
-          cell.row.original.status == true ? "Suspended" : "Active",
+          cell.row.original.suspended == true ? "Suspended" : "Active",
       },
     ],
 
