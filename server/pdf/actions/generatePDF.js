@@ -5,9 +5,7 @@ import { getUser } from "server/mongodb/actions/User";
 //import PDFDocument from "pdfkit";
 import PDFDocument from "../pdfkit.standalone";
 
-// Create PDF
 export async function pdf(stream, reportId) {
-  let currentCategory = "";
   let doc;
 
   // Pull information from all listed reports
@@ -15,6 +13,15 @@ export async function pdf(stream, reportId) {
 
   // Find user information from reportIds
   let user = await getUser(reports[0].email);
+
+  // Group reports by category and sort within each category by date
+  reports.sort((a, b) => {
+    if (a.category !== b.category) {
+      return a.category.localeCompare(b.category); // Sort by category first
+    }
+    // If in the same category, sort by date in descending order
+    return new Date(b.date) - new Date(a.date);
+  });
 
   // Create PDF object and pipe information to parameter stream
   doc = new PDFDocument({ bufferPages: true });
@@ -42,12 +49,14 @@ export async function pdf(stream, reportId) {
   doc.moveDown(2);
 
   // Loop through performance reports
+  let currentCategory = "";
   doc.fillColor("black");
+
   reports.forEach((report) => {
     const category = report.category;
     var longCategory;
 
-    // Group by year and quarter
+    // Group by category
     if (currentCategory !== category) {
       currentCategory = category;
 
@@ -76,6 +85,19 @@ export async function pdf(stream, reportId) {
       doc.text(`MPA: ${longCategory}\n`);
       doc.text("\n");
       doc.font("Times-Roman");
+    }
+
+    // Check if there is enough space on the current page for the entire report
+    const spaceNeeded = doc.heightOfString(
+      `Date: ${report.date}\n${report.title}\n${report.report}\n\n`,
+      {
+        width: doc.page.width - doc.page.margins.left - doc.page.margins.right,
+      }
+    );
+
+    if (doc.y + spaceNeeded > doc.page.height - doc.page.margins.bottom) {
+      // Move to a new page before starting the report
+      doc.addPage();
     }
 
     // Display date, title, and data for each report
