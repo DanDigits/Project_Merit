@@ -59,9 +59,11 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 export default function Page() {
   const router = useRouter();
   const [group, setGroup] = useState("");
+  const [groupLength, setGroupLength] = useState("");
   const [groupName, setGroupName] = useState(""); // need to update
-  const [groupTotal, setGroupTotal] = useState("");
   const [profile, setProfile] = useState("");
+  const [groupUsers, setGroupUsers] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [hasEmail, setHasEmail] = useState(false);
@@ -69,6 +71,7 @@ export default function Page() {
   const [hasProfile, setHasProfile] = useState(false);
   const [hasGroupName, setHasGroupName] = useState(false);
   const [index, setIndex] = useState("0");
+
   const [openCreate, setOpenCreate] = useState(false);
   const [searchGroup, setSearchGroup] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
@@ -76,7 +79,7 @@ export default function Page() {
   const [newName, setNewName] = useState("");
   const [email, setEmail] = useState("");
 
-  const [fetching, setFetching] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [rename, setRename] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -154,8 +157,13 @@ export default function Page() {
       setFetching(true);
       setIsLoading(true);
       setHasError(false);
-      console.log("supervisedGroup" + { profile });
-      setGroupName(profile.supervisedGroup);
+
+      var arr = JSON.parse(JSON.stringify(profile));
+      if (arr) {
+        setGroupName(arr.supervisedGroup);
+      }
+
+      setGroupName("Alpha 1");
       setHasGroupName(true);
       setIsLoading(false);
       setFetching(false);
@@ -170,10 +178,18 @@ export default function Page() {
               .json()
               .then((response) => setGroup(response))
               .then(setHasGroup(true))
-              .then(setIsLoading(false))
           : setHasError(true);
         console.log("hasError:", hasError);
       });
+    }
+    if (hasGroupName && hasGroup) {
+      var arr = JSON.parse(JSON.stringify(group));
+      if (arr) {
+        console.log("Arr = ", arr);
+        setGroupLength(arr["1"].length);
+        setGroupUsers(arr["1"]);
+      }
+      setIsLoading(false);
     }
   }, [group, hasGroup, groupName, email, hasEmail, profile, hasProfile]);
 
@@ -265,7 +281,7 @@ export default function Page() {
   return (
     <>
       {hasError && <Text>SOMETHING WENT WRONG</Text>}
-      {isLoading || !fetching ? (
+      {isLoading || fetching ? (
         <>
           <Center>
             <Spinner
@@ -277,7 +293,7 @@ export default function Page() {
             />
           </Center>
         </>
-      ) : group.length == 0 ? (
+      ) : groupLength == 0 ? (
         <Card
           p={{ base: 0, md: 2 }}
           mx={{ base: -4, md: 0 }}
@@ -329,7 +345,6 @@ export default function Page() {
         </Card>
       ) : (
         <>
-          {console.log(group)}
           <Heading mb={7}>Manage Group</Heading>
           <HStack justify={"space-between"} align={"flex-start"}>
             <Card
@@ -364,7 +379,7 @@ export default function Page() {
                   ) : (
                     <Text>Group Name: {groupName}</Text>
                   )}
-                  <Text>Total Members: {group[1].length}</Text>
+                  <Text>Total Members: {groupLength}</Text>
                 </VStack>
               </CardBody>
             </Card>
@@ -409,7 +424,7 @@ export default function Page() {
               </AlertDialog>
             </HStack>
           </HStack>
-          <GroupTable columns={columns} data={group[1]} />
+          <GroupTable columns={columns} data={groupUsers} />
         </>
       )}
     </>

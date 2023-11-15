@@ -72,13 +72,13 @@ export default function SidebarWithHeader({ children }) {
 }
 
 const SidebarContent = ({ onClose, ...rest }) => {
-  const [role, setRole] = useState("user");
+  const [role, setRole] = useState("User");
   const { update } = useSession();
 
   useEffect(() => {
     getSession().then((session) => {
-      setRole("supervisor");
-      //setRole(session.user.role);
+      //setRole("Supervisor");
+      setRole(session.user.role);
     });
   }, [update]);
 
@@ -146,7 +146,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
           </Button>
         </NextLink>
 
-        {role === "supervisor" && (
+        {role === "Supervisor" && (
           <NextLink href={"/Dashboard/Group"} passHref>
             <Button
               variant="ghost"
