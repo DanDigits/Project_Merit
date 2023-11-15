@@ -60,7 +60,7 @@ export default function Page() {
   const router = useRouter();
   const [group, setGroup] = useState("");
   const [groupLength, setGroupLength] = useState("");
-  const [groupName, setGroupName] = useState(""); // need to update
+  const [groupName, setGroupName] = useState("");
   const [profile, setProfile] = useState("");
   const [groupUsers, setGroupUsers] = useState("");
 
@@ -153,7 +153,7 @@ export default function Page() {
       }
     }
 
-    if (hasProfile && !hasGroupName && !isLoading) {
+    if (hasEmail && hasProfile && !isLoading) {
       setFetching(true);
       setIsLoading(true);
       setHasError(false);
@@ -161,17 +161,21 @@ export default function Page() {
       var arr = JSON.parse(JSON.stringify(profile));
       if (arr) {
         setGroupName(arr.supervisedGroup);
+
+        if (!groupName || groupName == "") {
+          setGroupName(arr.supervisedGroup[0]);
+        }
       }
 
-      setGroupName("Alpha 1");
       setHasGroupName(true);
       setIsLoading(false);
       setFetching(false);
     }
 
-    if (hasGroupName && !hasGroup && !isLoading) {
+    if (hasEmail && hasProfile && hasGroupName && !hasGroup && !isLoading) {
       setIsLoading(true);
       setHasError(false);
+      console.log("Searching for group: " + groupName);
       getGroup({ groupName }).then((response) => {
         response.ok
           ? response
@@ -181,8 +185,10 @@ export default function Page() {
           : setHasError(true);
         console.log("hasError:", hasError);
       });
+      setIsLoading(false);
     }
-    if (hasGroupName && hasGroup) {
+
+    if (hasEmail && hasProfile && hasGroupName && hasGroup) {
       var arr = JSON.parse(JSON.stringify(group));
       if (arr) {
         console.log("Arr = ", arr);

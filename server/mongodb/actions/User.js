@@ -437,6 +437,10 @@ export async function getSupervisor(group) {
 export async function getGroups() {
   await mongoDB();
   let groups = await UserSchema?.find().distinct("group");
+
+  // Filter out empty strings
+  groups = groups.filter((group) => group !== "" && group !== null);
+
   console.log(groups);
   return groups;
 }
