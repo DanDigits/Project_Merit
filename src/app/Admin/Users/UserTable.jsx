@@ -69,6 +69,7 @@ export default function UserTable({ columns, data }) {
   });
 
   const handleDelete = (userArray) => {
+    console.log(userArray);
     if (userArray && userArray.length != 0) {
       setDeleteLoading(true);
       deleteUser({ userArray }).then((response) => {
