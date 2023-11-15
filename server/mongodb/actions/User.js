@@ -421,3 +421,9 @@ export async function getSupervisor(group) {
 
   return supervisors;
 }
+
+export async function getGroups() {
+  let groups = await UserSchema?.find().distinct("group");
+  console.log(groups);
+  return groups;
+}
