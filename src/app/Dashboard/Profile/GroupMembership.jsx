@@ -59,7 +59,6 @@ export default function UpdatePassword() {
 
     if (hasEmail && hasProfile && !isLoading) {
       setGroup(profile.group);
-      //setGroup("Alpha 1");
       setIsLoading(true);
       setHasError(false);
       getSupervisor({ group }).then((response) => {
