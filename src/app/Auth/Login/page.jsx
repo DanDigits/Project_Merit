@@ -20,7 +20,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, getSession, useSession } from "next-auth/react";
 import {
   signUp,
   requestReset,
@@ -77,6 +77,7 @@ export default function Page() {
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [role, setRole] = useState("");
 
   /**
    * Parameters pulled from the url
@@ -242,8 +243,14 @@ export default function Page() {
               setMode("Verification Needed");
             }
           } else {
+            getSession().then((session) => setRole(session.user.role));
+            console.log("Role:" + role);
             window.location.replace("/Dashboard/Home");
-            console.log(response);
+            /*if (role == "Admin"){
+              window.location.replace("/Admin/Users")
+            } else {
+              window.location.replace("/Dashboard/Home");
+            }*/
           }
         });
       }

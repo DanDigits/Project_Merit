@@ -291,15 +291,14 @@ export default function User(user_mode) {
                   </FormLabel>
                   <Input
                     isReadOnly={state}
-                    type=""
-                    value={rank}
-                    maxLength={64}
+                    alpha={"1.0"}
                     variant="trim"
                     borderWidth={"2px"}
                     borderColor={"#70A0AF"}
                     bg="#F7FAFC"
                     mb={3}
                     size={"md"}
+                    value={rank}
                   />
                 </FormControl>
               </>
@@ -318,7 +317,6 @@ export default function User(user_mode) {
                   bg="#F7FAFC"
                   mb={3}
                   size={"md"}
-                  _hover={{ bgColor: "#706993" }}
                   onChange={(e) => setRank(e.target.value)}
                 >
                   <option value={"AB"}>Airman Basic (AB)</option>
@@ -366,7 +364,7 @@ export default function User(user_mode) {
               <Input
                 isReadOnly={state}
                 type=""
-                value={email}
+                value={email == "null" ? "" : email}
                 maxLength={64}
                 variant="login"
                 borderWidth={"2px"}
