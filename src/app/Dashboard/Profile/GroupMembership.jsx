@@ -3,6 +3,12 @@
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Card,
   Button,
   ButtonGroup,
@@ -12,11 +18,12 @@ import {
   FormControl,
   FormLabel,
   Input,
+  useDisclosure,
 } from "@chakra-ui/react";
 import GroupDialog from "./GroupDialog.jsx";
 //import { getGroup } from "src/app/actions/Group";
 import { getUser } from "src/app/actions/User";
-import { getSupervisor } from "./../../actions/Group.js";
+import { getSupervisor, leaveGroup } from "./../../actions/Group.js";
 
 export default function UpdatePassword() {
   const [email, setEmail] = useState("");
@@ -31,6 +38,9 @@ export default function UpdatePassword() {
   const [profile, setProfile] = useState(false);
   const [hasProfile, setHasProfile] = useState(false);
   const [membership, setMembership] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     if (!hasEmail && !isLoading) {
@@ -74,6 +84,22 @@ export default function UpdatePassword() {
       setIsLoading(false);
     }
   }, [hasEmail, hasProfile, email, profile, isLoading]);
+
+  const handleLeave = () => {
+    console.log("Attempting to leave group: " + group);
+    leaveGroup({ email }).then((response) => {
+      if (response.ok) {
+        {
+          setDeleteLoading(false);
+          window.location.reload;
+        }
+      } else {
+        setDeleteLoading(false);
+        console.log("Error: " + response.error);
+        alert("Delete failed");
+      }
+    });
+  };
 
   return (
     <>
@@ -136,10 +162,32 @@ export default function UpdatePassword() {
               _hover={{ bgColor: "#706993", color: "white" }}
               form="report-form"
               type="submit"
-              onClick={() => setStatus(true)}
+              onClick={onOpen}
             >
               Leave Group
             </Button>
+            <AlertDialog isOpen={isOpen} onClose={onClose}>
+              <AlertDialogOverlay>
+                <AlertDialogContent>
+                  <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                    Leave Group
+                  </AlertDialogHeader>
+                  <AlertDialogBody>Are you sure?</AlertDialogBody>
+                  <AlertDialogFooter>
+                    <Button onClick={onClose}>Cancel</Button>
+                    <Button
+                      colorScheme="red"
+                      onClick={() => {
+                        handleLeave();
+                      }}
+                      ml={3}
+                    >
+                      Delete
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialogOverlay>
+            </AlertDialog>
           </ButtonGroup>
         </CardFooter>
       </Card>

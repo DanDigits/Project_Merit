@@ -28,7 +28,9 @@ import {
   Stack,
 } from "@chakra-ui/react";
 //import { deleteGroup } from "";
+
 import { useRouter } from "next/navigation";
+import { removeFromGroup } from "./../../actions/Group.js";
 
 export default function GroupTable({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -65,9 +67,10 @@ export default function GroupTable({ columns, data }) {
   const handleRemove = (userArray) => {
     if (userArray && userArray.length != 0) {
       setRemoveLoading(true);
-      removeUser({ userArray }).then((response) => {
+      removeFromGroup({ userArray }).then((response) => {
         if (response.ok) {
           {
+            console.log("removed from group");
           }
         } else {
           alert("Remove failed");

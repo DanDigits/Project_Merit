@@ -34,7 +34,7 @@ import {
 import GroupTable from "./GroupTable";
 import { useRouter } from "next/navigation";
 import { getGroup } from "./../../actions/Group.js";
-//import { renameGroup, deleteGroup } from "";
+import { renameGroup, deleteGroup } from "./../../actions/Group.js";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   const ref = useRef(null);
@@ -54,33 +54,6 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
     />
   );
 }
-
-const handleDelete = () => {
-  /*deleteGroup({ groupName }).then((response) => {
-    if (response.ok) {
-      {
-        window.location.reload;
-      }
-    } else {
-      console.log("Error: " + response.error);
-      alert("Delete failed");
-    }
-  });*/
-};
-
-const handleRename = (groupName) => {
-  console.log(groupName);
-  /* renameGroup({ groupName }).then((response) => {
-    if (response.ok) {
-      {
-        window.location.reload;
-      }
-    } else {
-      console.log("Error: " + response.error);
-      alert("Rename failed");
-    }
-  });*/
-};
 
 export default function Page() {
   const router = useRouter();
@@ -111,6 +84,34 @@ export default function Page() {
   const handleChange = (e) => {
     setSearchGroup(e.target.value);
     setStatus("");
+  };
+
+  const handleDelete = () => {
+    console.log("Attempting to delete group: " + groupName);
+    deleteGroup({ groupName }).then((response) => {
+      if (response.ok) {
+        {
+          window.location.reload;
+        }
+      } else {
+        console.log("Error: " + response.error);
+        alert("Delete failed");
+      }
+    });
+  };
+
+  const handleRename = (groupName) => {
+    console.log(groupName);
+    renameGroup({ groupName, newName }).then((response) => {
+      if (response.ok) {
+        {
+          window.location.reload;
+        }
+      } else {
+        console.log("Error: " + response.error);
+        alert("Rename failed");
+      }
+    });
   };
 
   useEffect(() => {

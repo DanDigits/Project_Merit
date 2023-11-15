@@ -444,6 +444,9 @@ export default function User(user_mode) {
                     <option value={"Supervisor"} disabled>
                       Supervisor
                     </option>
+                    <option value={"Admin"} disabled>
+                      Admin
+                    </option>
                   </Select>
                 </FormControl>
               </>
@@ -467,6 +470,7 @@ export default function User(user_mode) {
                   >
                     <option value={"User"}>User</option>
                     <option value={"Supervisor"}>Supervisor</option>
+                    <option value={"Admin"}>Admin</option>
                   </Select>
                 </FormControl>
               </>
