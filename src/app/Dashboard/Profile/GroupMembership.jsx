@@ -72,7 +72,6 @@ export default function UpdatePassword() {
       setIsLoading(true);
       setHasError(false);
       getSupervisor({ group }).then((response) => {
-        // currently does not accomodate multiple groups
         response.ok
           ? response
               .json()

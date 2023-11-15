@@ -10,10 +10,10 @@ import React, {
 import { Center, Spinner, Text, Button, Icon, Heading } from "@chakra-ui/react";
 import { PiEyeBold } from "react-icons/pi";
 import GroupTable from "./GroupTable";
-//import { getAllGroups } from "";
 import { getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
+import { getAllGroups } from "./../../actions/Group.js";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   const ref = useRef(null);
@@ -55,7 +55,8 @@ export default function Page() {
       console.log("!hasgroups", hasGroups);
       setIsLoading(true);
       setHasError(false);
-      getAllGroups({ index }).then((response) => {
+      //getAllGroups({ index }).then((response) => {
+      getAllGroups().then((response) => {
         response.ok
           ? response
               .json()
@@ -137,30 +138,6 @@ export default function Page() {
     [handleSubmitInfo]
   );
 
-  const data = useMemo(
-    () => [
-      {
-        groupName: "group1",
-        supervisor: "sup1",
-        email: "sup1@gmail.com",
-        total: 9,
-      },
-      {
-        groupName: "group2",
-        supervisor: "sup2",
-        email: "sup2@gmail.com",
-        total: 24,
-      },
-      {
-        groupName: "group3",
-        supervisor: "sup3",
-        email: "sup3@gmail.com",
-        total: 12,
-      },
-    ],
-    []
-  );
-
   return (
     <>
       {hasError && <Text>SOMETHING WENT WRONG</Text>}
@@ -179,7 +156,7 @@ export default function Page() {
       ) : (
         <>
           <Heading mb={10}>Manage Groups</Heading>
-          <GroupTable columns={columns} data={data} />
+          <GroupTable columns={columns} data={groups} />
         </>
       )}
     </>

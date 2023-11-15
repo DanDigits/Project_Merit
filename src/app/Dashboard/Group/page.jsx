@@ -33,6 +33,7 @@ import {
 } from "@chakra-ui/react";
 import GroupTable from "./GroupTable";
 import { useRouter } from "next/navigation";
+import { getUser } from "./../../actions/User.js";
 import { getGroup } from "./../../actions/Group.js";
 import { renameGroup, deleteGroup } from "./../../actions/Group.js";
 
@@ -60,9 +61,12 @@ export default function Page() {
   const [group, setGroup] = useState("");
   const [groupName, setGroupName] = useState(""); // need to update
   const [groupTotal, setGroupTotal] = useState("");
+  const [profile, setProfile] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [hasEmail, setHasEmail] = useState(false);
   const [hasGroup, setHasGroup] = useState(false);
+  const [hasProfile, setHasProfile] = useState(false);
   const [hasGroupName, setHasGroupName] = useState(false);
   const [index, setIndex] = useState("0");
   const [openCreate, setOpenCreate] = useState(false);
@@ -70,6 +74,7 @@ export default function Page() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [status, setStatus] = useState("");
   const [newName, setNewName] = useState("");
+  const [email, setEmail] = useState("");
 
   const [fetching, setFetching] = useState(false);
   const [rename, setRename] = useState(false);
@@ -115,21 +120,45 @@ export default function Page() {
   };
 
   useEffect(() => {
-    if (!hasGroupName && !isLoading) {
-      setFetching(true);
-      console.log("Fetching email and supervisedGroup");
+    if (!hasEmail && !isLoading) {
       setIsLoading(true);
       setHasError(false);
+      console.log("Fetching email...");
       getSession()
-        .then((session) => {
-          //var managed = session.user.supervisedGroup;
-          var managed = "Alpha 1";
-          if (managed) {
-            setGroupName(managed);
-          }
-        })
-        .then(setHasGroupName(true))
-        .then(setIsLoading(false));
+        .then((session) => setEmail(session.user.email))
+        .then(() => setHasEmail(true));
+      console.log("Got email");
+      setIsLoading(false);
+    }
+
+    if (hasEmail && !hasProfile && !isLoading) {
+      setIsLoading(true);
+      setHasError(false);
+      console.log("Fetching profile");
+      getUser({ email }).then((response) => {
+        response.ok
+          ? response
+              .json()
+              .then((response) => setProfile(response))
+              .then(setHasProfile(true))
+              .then(console.log("Got profile"))
+          : setHasError(true);
+      });
+      setIsLoading(false);
+      if (hasError) {
+        console.log("Error fetching profile");
+      }
+    }
+
+    if (hasProfile && !hasGroupName && !isLoading) {
+      setFetching(true);
+      setIsLoading(true);
+      setHasError(false);
+      console.log("supervisedGroup" + { profile });
+      setGroupName(profile.supervisedGroup);
+      setHasGroupName(true);
+      setIsLoading(false);
+      setFetching(false);
     }
 
     if (hasGroupName && !hasGroup && !isLoading) {
@@ -146,7 +175,7 @@ export default function Page() {
         console.log("hasError:", hasError);
       });
     }
-  }, [group, hasGroup, groupName]);
+  }, [group, hasGroup, groupName, email, hasEmail, profile, hasProfile]);
 
   const columns = React.useMemo(() => [
     {
