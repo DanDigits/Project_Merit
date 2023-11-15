@@ -43,8 +43,9 @@ export default function Page() {
   const [index, setIndex] = useState("0");
 
   const handleSubmitInfo = useCallback(
-    (email) => {
-      secureLocalStorage.setItem("email", email);
+    (user) => {
+      secureLocalStorage.setItem("userID", user._id);
+      secureLocalStorage.setItem("email", user.email);
       router.push("/Admin/Users/ViewUser");
     },
     [router]
@@ -109,7 +110,7 @@ export default function Page() {
               borderColor={"#354751"}
               borderWidth={"thin"}
               _hover={{ color: "black", bg: "white", opacity: 1 }}
-              onClick={() => handleSubmitInfo(cell.row.original.email)}
+              onClick={() => handleSubmitInfo(cell.row.original)}
             >
               <Icon as={PiEyeBold} />
             </Button>
