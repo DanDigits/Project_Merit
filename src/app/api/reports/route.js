@@ -15,14 +15,19 @@ import {
 import { pdf } from "server/pdf/actions/generatePDF";
 
 export async function POST(Request) {
+  let req = await Request.json();
+  let res,
+    time,
+    date = new Date();
   const requestHeaders = headers();
   const request = requestHeaders.get("request");
-  let res;
 
   switch (request) {
     case "1": {
       // Create a report
-      res = await createReport(await Request.json());
+      time = date.toISOString().slice(10);
+      req.date = req.date + time;
+      res = await createReport(req);
 
       // HTTP Response
       if (res.name == "ValidationError") {
@@ -47,9 +52,7 @@ export async function POST(Request) {
       // }
 
       // Download a PDF of given report(s)
-      const req = await Request.json();
       const stream = new PassThrough();
-      const date = new Date();
       pdf(stream, req);
 
       // HTTP response, may be ineffective due to how stream operates
