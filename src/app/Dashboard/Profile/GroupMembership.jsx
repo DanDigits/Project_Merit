@@ -35,7 +35,7 @@ export default function UpdatePassword() {
   const [hasError, setHasError] = useState("");
   const [isLoading, setIsLoading] = useState("");
   const [status, setStatus] = useState(false);
-  const [profile, setProfile] = useState(false);
+  const [profile, setProfile] = useState("");
   const [hasProfile, setHasProfile] = useState(false);
   const [membership, setMembership] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -60,6 +60,7 @@ export default function UpdatePassword() {
           ? response
               .json()
               .then((response) => setProfile(response))
+              .then(console.log("Profile: " + profile))
               .then(setHasProfile(true))
           : setHasError(true);
         console.log("hasError:", hasError);
@@ -68,7 +69,11 @@ export default function UpdatePassword() {
     }
 
     if (hasEmail && hasProfile && !isLoading) {
-      setGroup(profile.group);
+      var arr = JSON.parse(JSON.stringify(profile));
+      if (arr && arr.group) {
+        setGroup(arr.group);
+      }
+      console.log("Group: " + arr.group);
       setIsLoading(true);
       setHasError(false);
       getSupervisor({ group }).then((response) => {
@@ -82,7 +87,7 @@ export default function UpdatePassword() {
       });
       setIsLoading(false);
     }
-  }, [hasEmail, hasProfile, email, profile, isLoading]);
+  }, [hasEmail, hasProfile, email, profile, isLoading, group, hasGroup]);
 
   const handleLeave = () => {
     console.log("Attempting to leave group: " + group);

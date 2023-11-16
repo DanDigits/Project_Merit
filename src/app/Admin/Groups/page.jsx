@@ -118,7 +118,7 @@ export default function Page() {
         ),
       },
       {
-        accessorKey: "groupName",
+        accessorKey: "group",
         header: "Group Name",
       },
       {

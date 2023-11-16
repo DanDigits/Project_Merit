@@ -163,7 +163,7 @@ export default function Page() {
         setGroupName(arr.supervisedGroup);
 
         if (!groupName || groupName == "") {
-          setGroupName(arr.supervisedGroup[0]);
+          setGroupName(arr.supervisedGroup);
         }
       }
 
