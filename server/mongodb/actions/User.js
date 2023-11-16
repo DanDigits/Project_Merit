@@ -212,6 +212,25 @@ export async function renameGroup(group, groupData) {
     );
     i++;
   }
+
+  i = 0;
+  const supervisor = await UserSchema?.find({ supervisedGroup }).catch(
+    function (err) {
+      return err;
+    }
+  );
+  console.log(group);
+  while (supervisor?.[i] != undefined) {
+    index = supervisor[i].supervisedGroup?.indexOf(`${supervisedGroup}`);
+    supervisor[i].supervisedGroup[index] = groupData.newGroup;
+    console.log(supervisor[i].supervisedGroup[index]);
+    await UserSchema?.findOneAndUpdate(
+      { email: supervisor[i].email },
+      { supervisedGroup: supervisor[i].supervisedGroup }
+    );
+    i++;
+  }
+
   user.id = "OK";
   return user;
 }
