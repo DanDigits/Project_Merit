@@ -382,7 +382,7 @@ export async function getGroup(group) {
   await mongoDB();
   let members = [];
   let categories = "Mission Leadership Resources Unit";
-  let supervisorFilter = "firstName lastName rank suffix";
+  let supervisorFilter = "firstName lastName rank suffix email";
   let filter =
     "email firstName lastName rank suffix mostRecentReportDate totalReports currentQuarter quarterReports" +
     " " +
@@ -443,13 +443,14 @@ export async function getAllUsers() {
 }
 
 export async function getSupervisor(group) {
-  let supervisors,
-    i,
+  let supervisors = [],
+    i = 0,
     currentGroup = await getGroup(group);
 
   // If current group isnt empty, push supervisor profile to supervisors array
   while (currentGroup?.[0]?.[i] != undefined) {
-    supervisors.push(group[0][i]);
+    supervisors.push(currentGroup[0][i]);
+    i++;
   }
 
   return supervisors;
@@ -457,8 +458,22 @@ export async function getSupervisor(group) {
 
 export async function getGroups() {
   await mongoDB();
+  let i = 0;
+  let array = [];
   let groups = await UserSchema?.find().distinct("group");
-  return groups;
+
+  // Filter out empty strings
+  groups = groups.filter((group) => group !== "" && group != null);
+
+  while (i < groups?.length) {
+    let supervisor = await UserSchema?.find(
+      { supervisedGroup: groups[i] },
+      "firstName lastName rank suffix email"
+    );
+    array.push([groups[i], supervisor[0]]);
+    i++;
+  }
+  return array;
 }
 
 export async function removeMultipleUsers(users) {

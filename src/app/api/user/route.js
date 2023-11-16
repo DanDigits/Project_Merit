@@ -173,7 +173,7 @@ export async function GET(Request) {
         if (res == "ERROR") {
           return new Response(JSON.stringify(res), { status: 400 });
         } else {
-          return new Response(res, { status: 200 });
+          return new Response(JSON.stringify(res), { status: 200 });
         }
       }
       case "9": {
