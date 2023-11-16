@@ -27,12 +27,11 @@ import {
   HStack,
   Stack,
 } from "@chakra-ui/react";
-//import { deleteGroup } from "";
 
-import { useRouter } from "next/navigation";
 import { removeFromGroup } from "./../../actions/Group.js";
+import { getUser, updateUser } from "src/app/actions/User.js";
 
-export default function GroupTable({ columns, data }) {
+export default function GroupTable({ group, columns, data }) {
   // Use the state and functions returned from useTable to build your UI
 
   const [rowSelection, setRowSelection] = useState({});
@@ -48,19 +47,27 @@ export default function GroupTable({ columns, data }) {
     setStatus("");
   };
 
-  const handleSearch = (name) => {
+  const handleSearch = (email) => {
     setSearchLoading(true);
-    /*searchUser({ name }).then((response) => {
-      if (response.ok) {
-        {
-          setStatus("success");
-        }
-      } else {
-        setStatus("error");
-        //setStatus(response.error)
-      }
-    });*/
-    setStatus("invalid");
+    if (email != "") {
+      getUser({ email }).then((response) => {
+        response.ok
+          ? response
+              .json()
+              .then((response) => JSON.parse(JSON.stringify(response)).group)
+              .then((response) => {
+                response === ""
+                  ? updateUser({ email, group }).then((response) => {
+                      if (response.ok) {
+                        setStatus("success");
+                        window.location.reload();
+                      } else setStatus("error");
+                    })
+                  : setStatus("assigned");
+              })
+          : setStatus("invalid");
+      });
+    }
     setSearchLoading(false);
   };
 
@@ -70,7 +77,8 @@ export default function GroupTable({ columns, data }) {
       removeFromGroup({ userArray }).then((response) => {
         if (response.ok) {
           {
-            console.log("removed from group");
+            //alert("removed from group");
+            window.location.reload();
           }
         } else {
           alert("Remove failed");
@@ -95,8 +103,6 @@ export default function GroupTable({ columns, data }) {
     getPaginationRowModel: getPaginationRowModel(),
     debugTable: true,
   });
-
-  const router = useRouter();
 
   return (
     <Box mx={{ base: -4, md: 0 }}>
@@ -160,20 +166,12 @@ export default function GroupTable({ columns, data }) {
             color={"black"}
             _hover={{ bgColor: "#031926", color: "white" }}
             isLoading={searchLoading}
-            onClick={() =>
-              handleSearch(
-                table
-                  .getSelectedRowModel()
-                  .flatRows.map(({ original }) => original.email)
-              )
-            }
+            onClick={() => handleSearch(searchEmail)}
           >
             Search
           </Button>
         </HStack>
-        {status === "error" && (
-          <p>There was an error when searching for member.</p>
-        )}
+        {status === "error" && <p>There was an error while adding member.</p>}
         {status === "invalid" && <p>The member you entered does not exist.</p>}
         {status === "assigned" && (
           <p>The member you entered is already in a group.</p>

@@ -78,12 +78,13 @@ export const leaveGroup = async ({ email }) => {
   return response;
 };
 
-export const renameGroup = async ({ group, newName }) => {
+export const renameGroup = async ({ groupName, newName }) => {
+  console.log("82", groupName);
   const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
     method: "PATCH",
     mode: "same-origin",
     headers: {
-      group,
+      group: groupName,
     },
     body: JSON.stringify({
       newGroup: newName,
@@ -95,12 +96,14 @@ export const renameGroup = async ({ group, newName }) => {
 };
 
 export const deleteGroup = async ({ groupName }) => {
+  console.log(groupName);
   const response = await fetch(getPath.baseUrl + getPath.api.user.delete, {
     method: "DELETE",
     mode: "same-origin",
-    body: JSON.stringify({
+    headers: {
       group: groupName,
-    }),
+    },
+    body: JSON.stringify({}),
   });
   console.log("Update Response:", response.statusText);
 
