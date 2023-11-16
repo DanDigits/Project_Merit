@@ -228,7 +228,7 @@ export async function deleteUser(userId) {
   let i = 0;
   let j = 0;
   let length = userId?.email?.length;
-  let user, users, reports, report;
+  let user, reports, report;
 
   if (length == undefined) {
     return "ERROR";
@@ -245,7 +245,6 @@ export async function deleteUser(userId) {
       ).catch(function (err) {
         console.log("NO REPORTS FOR USER");
       });
-      console.log(reports[0]?.id);
       while (reports[j] != undefined) {
         report = await ReportSchema?.findByIdAndDelete(reports[j].id).catch(
           function (err) {
@@ -335,6 +334,28 @@ export async function passwordLock(userId) {
 // Prevent user from logging in
 export async function suspendUser(userId) {
   await mongoDB();
+  // const verifyAdminCredentials = await getUser(userData?.adminCredentials);
+  //     if (verifyAdminCredentials?.role !== "Admin") {
+  //       userData.role = user?.role;
+  //       userData.verified = user?.verified;
+  //       userData.passwordLocked = true;
+  //       userData.suspended = user?.suspended;
+
+  //       // Check if user is already present in a group; prevent changing group with error return
+  //       // (user group not empty) && (group in request different from user group) && (group request not empty)
+  //       if (
+  //         (user?.group != undefined ||
+  //           user?.group != [] ||
+  //           user?.group != "") &&
+  //         userData?.group != user?.group &&
+  //         (userData?.group != undefined ||
+  //           userData?.group != [] ||
+  //           userData?.group != "")
+  //       ) {
+  //         user.message = "CONFLICT";
+  //         return user;
+  //       }
+  //     }
   let user = await UserSchema.findOne({ email: userId });
   if (user.suspended == true) {
     user = await UserSchema.findOneAndUpdate(
@@ -442,4 +463,28 @@ export async function getGroups() {
 
   console.log(groups);
   return groups;
+}
+
+export async function removeMultipleUsers(users) {
+  await mongoDB();
+  let user,
+    res = [],
+    i = 0;
+  let length = users?.email?.length;
+
+  if (length == undefined) {
+    return "ERROR";
+  } else {
+    while (i < length) {
+      user = await UserSchema?.findOneAndUpdate(
+        { email: users?.email[i] },
+        { group: [] }
+      ).catch(function (err) {
+        return err;
+      });
+      i++;
+    }
+  }
+  res.id = length;
+  return res;
 }

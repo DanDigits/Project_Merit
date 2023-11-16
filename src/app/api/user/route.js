@@ -18,6 +18,7 @@ import {
   renameGroup,
   getSupervisor,
   getGroups,
+  removeMultipleUsers,
 } from "server/mongodb/actions/User";
 import urls from "../../../../utils/getPath";
 import nodemailer from "nodemailer";
@@ -176,7 +177,7 @@ export async function GET(Request) {
         }
       }
       case "9": {
-        // Get given group members/users
+        // Get given groups supervisor information
         const group = requestHeaders?.get("group");
         res = await getSupervisor(group);
         if (res == "ERROR") {
@@ -268,9 +269,9 @@ export async function PATCH(Request) {
   const group = requestHeaders?.get("group");
   const admin = requestHeaders?.get("admin");
 
-  if (user == undefined && admin == undefined) {
+  if (user == undefined && admin == undefined && group != undefined) {
     res = await renameGroup(group, req);
-  } else if (group == undefined && admin == undefined) {
+  } else if (group == undefined && admin == undefined && user != undefined) {
     res = await modifyUser(user, req);
   } else if (admin != undefined) {
     if (user == undefined && group == undefined) {
@@ -280,6 +281,8 @@ export async function PATCH(Request) {
     } else {
       res.message = "TOO MANY REQUESTS";
     }
+  } else if (group == undefined && admin == undefined && user == undefined) {
+    res = await removeMultipleUsers(req);
   } else {
     res.message = "ERROR";
   }
@@ -302,7 +305,7 @@ export async function PATCH(Request) {
 // Delete a user, or a group
 export async function DELETE(Request) {
   let res, req;
-  req = await Request.json();
+  req = await Request?.json();
   const requestHeaders = headers();
   const group = requestHeaders?.get("group");
 
