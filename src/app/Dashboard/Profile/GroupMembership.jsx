@@ -31,13 +31,14 @@ export default function UpdatePassword() {
   const [group, setGroup] = useState("");
   const [hasGroup, setHasGroup] = useState("");
   const [leader, setLeader] = useState("");
-  const [hasLeader, setHasLeader] = useState("");
+  const [hasLeader, setHasLeader] = useState(false);
   const [hasError, setHasError] = useState("");
   const [isLoading, setIsLoading] = useState("");
   const [status, setStatus] = useState(false);
   const [profile, setProfile] = useState("");
   const [hasProfile, setHasProfile] = useState(false);
-  const [membership, setMembership] = useState("");
+  const [leaderInfo, setLeaderInfo] = useState("");
+  const [hasLeaderInfo, setHasLeaderInfo] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -87,7 +88,29 @@ export default function UpdatePassword() {
       });
       setIsLoading(false);
     }
-  }, [hasEmail, hasProfile, email, profile, isLoading, group, hasGroup]);
+
+    if (hasEmail && hasProfile && hasLeader && !isLoading) {
+      setIsLoading();
+      var arr = JSON.parse(JSON.stringify(leader));
+
+      if (arr) {
+        setLeaderInfo(
+          arr.rank + " " + arr.lastName + " " + arr.suffix + " " + arr.email
+        );
+      }
+      setHasLeaderInfo(true);
+      console.log("leaderInfo: ", leaderInfo);
+    }
+  }, [
+    isLoading,
+    email,
+    hasEmail,
+    profile,
+    hasProfile,
+    hasLeader,
+    leaderInfo,
+    hasLeaderInfo,
+  ]);
 
   const handleLeave = () => {
     console.log("Attempting to leave group: " + group);
@@ -161,7 +184,7 @@ export default function UpdatePassword() {
                   <Input
                     isReadOnly
                     type=""
-                    value={leader}
+                    value={leaderInfo}
                     variant="login"
                     borderWidth={"2px"}
                     borderColor={"#70A0AF"}

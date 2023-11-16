@@ -411,7 +411,7 @@ export async function getGroupOrphans() {
 export async function getAllUsers() {
   await mongoDB();
   let filter =
-    "email firstName lastName suffix id role group supervisedGroup totalReports mostRecentReportDate lastLogin suspended";
+    "email rank firstName lastName suffix id role group supervisedGroup totalReports mostRecentReportDate lastLogin suspended";
   const users = await UserSchema?.find({ email: { $exists: true } }, filter)
     .sort({ lastName: 1, firstName: 1 })
     .catch(function (err) {
@@ -422,16 +422,15 @@ export async function getAllUsers() {
 }
 
 export async function getSupervisor(group) {
-  let supervisors,
-    i,
-    currentGroup = await getGroup(group);
+  let groupInfo = await getGroup(group);
+  let supervisor;
 
-  // If current group isnt empty, push supervisor profile to supervisors array
-  while (currentGroup?.[0]?.[i] != undefined) {
-    supervisors.push(group[0][i]);
+  // If current group isnt empty, push supervisor profile to supervisors
+  if (groupInfo != undefined) {
+    supervisor = groupInfo[0][0];
   }
 
-  return supervisors;
+  return supervisor;
 }
 
 export async function getGroups() {
