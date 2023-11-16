@@ -195,6 +195,7 @@ export async function modifyUser(userId, userData) {
 
 // Rename a group by looping through the members, and updating
 export async function renameGroup(group, groupData) {
+  const supervisedGroup = group;
   await mongoDB();
   let index,
     i = 0;
@@ -219,11 +220,10 @@ export async function renameGroup(group, groupData) {
       return err;
     }
   );
-  console.log(group);
+  console.log(supervisedGroup);
   while (supervisor?.[i] != undefined) {
-    index = supervisor[i].supervisedGroup?.indexOf(`${group}`);
-    supervisor[i].supervisedGroup[index] = groupData.newGroup;
-    console.log(supervisor[i].supervisedGroup[index]);
+    supervisor[i].supervisedGroup = groupData.newGroup;
+    console.log(supervisor[i].supervisedGroup);
     await UserSchema?.findOneAndUpdate(
       { email: supervisor[i].email },
       { supervisedGroup: supervisor[i].supervisedGroup }
