@@ -221,7 +221,7 @@ export async function renameGroup(group, groupData) {
   );
   console.log(group);
   while (supervisor?.[i] != undefined) {
-    index = supervisor[i].supervisedGroup?.indexOf(`${supervisedGroup}`);
+    index = supervisor[i].supervisedGroup?.indexOf(`${group}`);
     supervisor[i].supervisedGroup[index] = groupData.newGroup;
     console.log(supervisor[i].supervisedGroup[index]);
     await UserSchema?.findOneAndUpdate(
