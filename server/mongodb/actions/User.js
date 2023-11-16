@@ -204,8 +204,8 @@ export async function renameGroup(group, groupData) {
   console.log(group);
   while (user?.[i] != undefined) {
     index = user[i].group?.indexOf(`${group}`);
-    user[i].group[index] = groupData.newGroup;
-    console.log(user[i].group[index]);
+    user[i].group = groupData.newGroup;
+    console.log(user[i].group);
     await UserSchema?.findOneAndUpdate(
       { email: user[i].email },
       { group: user[i].group }
@@ -288,7 +288,8 @@ export async function deleteGroup(group) {
   });
   while (user?.[i] != undefined) {
     index = user[i].group?.indexOf(`${group}`);
-    user[i].group.splice(index, 1);
+    user[i].group = "";
+    console.log(user[i].group);
     await UserSchema?.findOneAndUpdate(
       { email: user[i].email },
       { group: user[i].group }
@@ -464,10 +465,12 @@ export async function getAllUsers() {
 export async function getSupervisor(group) {
   let groupInfo = await getGroup(group);
   let supervisor;
+  console.log(groupInfo);
 
   // If current group isnt empty, push supervisor profile to supervisors
   if (groupInfo != undefined) {
     supervisor = groupInfo[0][0];
+    console.log(supervisor);
   }
 
   return supervisor;

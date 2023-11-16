@@ -56,6 +56,11 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   );
 }
 
+var mission = 3;
+var leadership = 3;
+var resources = 3;
+var unit = 3;
+
 export default function Page() {
   const router = useRouter();
   const [group, setGroup] = useState("");
@@ -99,7 +104,7 @@ export default function Page() {
     deleteGroup({ groupName }).then((response) => {
       if (response.ok) {
         {
-          window.location.reload;
+          window.location.reload();
         }
       } else {
         console.log("Error: " + response.error);
@@ -108,12 +113,11 @@ export default function Page() {
     });
   };
 
-  const handleRename = (groupName) => {
-    console.log(groupName);
+  const handleRename = () => {
     renameGroup({ groupName, newName }).then((response) => {
       if (response.ok) {
         {
-          window.location.reload;
+          window.location.reload();
         }
       } else {
         console.log("Error: " + response.error);
@@ -146,6 +150,7 @@ export default function Page() {
               .then(setHasProfile(true))
               .then(console.log("Got profile"))
           : setHasError(true);
+        console.log("hasError:", hasError);
       });
       setIsLoading(false);
       if (hasError) {
@@ -153,51 +158,67 @@ export default function Page() {
       }
     }
 
-    if (hasEmail && hasProfile && !isLoading) {
+    if (hasProfile && !hasGroupName && !isLoading) {
       setFetching(true);
       setIsLoading(true);
       setHasError(false);
 
       var arr = JSON.parse(JSON.stringify(profile));
+      //console.log("Arr = ", arr);
       if (arr) {
         setGroupName(arr.supervisedGroup);
-
-        if (!groupName || groupName == "") {
-          setGroupName(arr.supervisedGroup);
-        }
+        setHasGroupName(true);
       }
 
-      setHasGroupName(true);
       setIsLoading(false);
       setFetching(false);
     }
 
-    if (hasEmail && hasProfile && hasGroupName && !hasGroup && !isLoading) {
+    if (hasGroupName && !hasGroup && !isLoading) {
       setIsLoading(true);
       setHasError(false);
       console.log("Searching for group: " + groupName);
-      getGroup({ groupName }).then((response) => {
-        response.ok
-          ? response
-              .json()
-              .then((response) => setGroup(response))
-              .then(setHasGroup(true))
-          : setHasError(true);
-        console.log("hasError:", hasError);
-      });
-      setIsLoading(false);
-    }
-
-    if (hasEmail && hasProfile && hasGroupName && hasGroup) {
-      var arr = JSON.parse(JSON.stringify(group));
-      if (arr) {
-        console.log("Arr = ", arr);
-        setGroupLength(arr["1"].length);
-        setGroupUsers(arr["1"]);
+      if (groupName === "") setHasGroup(true);
+      else {
+        getGroup({ groupName }).then((response) => {
+          response.ok
+            ? response
+                .json()
+                .then((response) => setGroup(response))
+                .then(setHasGroup(true))
+            : setHasError(true);
+          console.log("hasError:", hasError);
+        });
       }
       setIsLoading(false);
     }
-  }, [group, hasGroup, groupName, email, hasEmail, profile, hasProfile]);
+
+    if (hasGroupName && hasGroup) {
+      if (groupName === "") {
+        setGroupLength(0);
+        setGroupUsers([]);
+      } else {
+        var arr = JSON.parse(JSON.stringify(group));
+        if (arr) {
+          //console.log("Arr = ", arr);
+          setGroupLength(arr["1"].length);
+          setGroupUsers(arr["1"]);
+          console.log(groupUsers);
+        }
+      }
+      setIsLoading(false);
+    }
+  }, [
+    email,
+    hasEmail,
+    profile,
+    hasProfile,
+    isLoading,
+    hasGroupName,
+    groupName,
+    hasGroup,
+    group,
+  ]);
 
   const columns = React.useMemo(() => [
     {
@@ -238,24 +259,28 @@ export default function Page() {
       header: "Email",
     },
     {
-      accessorKey: "progress",
       header: "Progress",
-      cell: (info) => {
+      cell: (cell) => {
+        var progress = Math.floor(
+          (cell.row.original.totalReports /
+            (mission + resources + leadership + unit)) *
+            100
+        );
         return (
           <Badge
             px={5}
             alignItems={"center"}
             bg={
-              info.getValue() == 100
+              progress == 100
                 ? "green.500"
-                : info.getValue() > 50
+                : progress > 50
                 ? "yellow"
-                : info.getValue() > 0
+                : progress > 0
                 ? "orange"
                 : "red"
             }
           >
-            {info.getValue()}
+            {progress} %
           </Badge>
         );
       },
@@ -264,21 +289,21 @@ export default function Page() {
       header: "Category Fiscal Totals",
       columns: [
         {
-          accessorKey: "conduct",
-          header: "Conduct",
+          accessorKey: "Mission",
+          header: "Mission",
         },
         {
-          accessorKey: "duties",
-          header: "Duties",
+          accessorKey: "Leadership",
+          header: "Leadership",
         },
 
         {
-          accessorKey: "teamwork",
-          header: "Teamwork",
+          accessorKey: "Resources",
+          header: "Resources",
         },
         {
-          accessorKey: "training",
-          header: "Training",
+          accessorKey: "Unit",
+          header: "Unit",
         },
       ],
     },
@@ -299,7 +324,7 @@ export default function Page() {
             />
           </Center>
         </>
-      ) : groupLength == 0 ? (
+      ) : groupName === "" ? (
         <Card
           p={{ base: 0, md: 2 }}
           mx={{ base: -4, md: 0 }}
@@ -419,6 +444,7 @@ export default function Page() {
                         colorScheme="red"
                         onClick={() => {
                           handleDelete();
+                          onClose();
                         }}
                         ml={3}
                       >
@@ -430,7 +456,7 @@ export default function Page() {
               </AlertDialog>
             </HStack>
           </HStack>
-          <GroupTable columns={columns} data={groupUsers} />
+          <GroupTable group={groupName} columns={columns} data={groupUsers} />
         </>
       )}
     </>

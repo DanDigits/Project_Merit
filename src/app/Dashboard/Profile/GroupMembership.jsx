@@ -29,15 +29,15 @@ export default function UpdatePassword() {
   const [email, setEmail] = useState("");
   const [hasEmail, setHasEmail] = useState("");
   const [group, setGroup] = useState("");
-  const [hasGroup, setHasGroup] = useState("");
+  const [hasGroup, setHasGroup] = useState(false);
   const [leader, setLeader] = useState("");
   const [hasLeader, setHasLeader] = useState(false);
-  const [hasError, setHasError] = useState("");
-  const [isLoading, setIsLoading] = useState("");
+  const [hasError, setHasError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState(false);
-  const [profile, setProfile] = useState("");
+  const [profile, setProfile] = useState(null);
   const [hasProfile, setHasProfile] = useState(false);
-  const [leaderInfo, setLeaderInfo] = useState("");
+  const [leaderInfo, setLeaderInfo] = useState(null);
   const [hasLeaderInfo, setHasLeaderInfo] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
@@ -53,7 +53,7 @@ export default function UpdatePassword() {
       setIsLoading(false);
     }
 
-    if (hasEmail && !hasProfile && !isLoading) {
+    if (hasEmail && !hasProfile) {
       setIsLoading(true);
       setHasError(false);
       getUser({ email }).then((response) => {
@@ -61,20 +61,27 @@ export default function UpdatePassword() {
           ? response
               .json()
               .then((response) => setProfile(response))
-              .then(console.log("Profile: " + profile))
               .then(setHasProfile(true))
           : setHasError(true);
         console.log("hasError:", hasError);
       });
+      setIsLoading(true);
+    }
+
+    if (hasEmail && hasProfile && !hasGroup) {
+      setIsLoading(true);
+      var arr = JSON.parse(JSON.stringify(profile));
+      if (arr) {
+        setGroup(arr.group);
+        console.log("arr", arr);
+        setHasGroup(true);
+      }
+
+      setHasError(false);
       setIsLoading(false);
     }
 
-    if (hasEmail && hasProfile && !isLoading) {
-      var arr = JSON.parse(JSON.stringify(profile));
-      if (arr && arr.group) {
-        setGroup(arr.group);
-      }
-      console.log("Group: " + arr.group);
+    if (hasEmail && hasProfile && hasGroup && !hasLeader) {
       setIsLoading(true);
       setHasError(false);
       getSupervisor({ group }).then((response) => {
@@ -86,20 +93,20 @@ export default function UpdatePassword() {
           : setHasError(true);
         console.log("hasError:", hasError);
       });
-      setIsLoading(false);
+      setIsLoading(true);
     }
 
-    if (hasEmail && hasProfile && hasLeader && !isLoading) {
-      setIsLoading();
+    if (hasEmail && hasProfile && hasGroup && hasLeader) {
+      setIsLoading(true);
       var arr = JSON.parse(JSON.stringify(leader));
-
       if (arr) {
-        setLeaderInfo(
-          arr.rank + " " + arr.lastName + " " + arr.suffix + " " + arr.email
-        );
+        setLeaderInfo(arr.rank + " " + arr.lastName + " " + arr.suffix);
+        console.log("arr", arr);
+        setHasLeaderInfo(true);
       }
-      setHasLeaderInfo(true);
-      console.log("leaderInfo: ", leaderInfo);
+
+      setHasError(false);
+      setIsLoading(false);
     }
   }, [
     isLoading,
@@ -107,9 +114,10 @@ export default function UpdatePassword() {
     hasEmail,
     profile,
     hasProfile,
+    group,
+    hasGroup,
+    leader,
     hasLeader,
-    leaderInfo,
-    hasLeaderInfo,
   ]);
 
   const handleLeave = () => {
