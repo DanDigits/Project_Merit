@@ -68,7 +68,10 @@ export default function UpdatePassword() {
     }
 
     if (hasEmail && hasProfile && !isLoading) {
-      setGroup(profile.group);
+      var arr = JSON.parse(JSON.stringify(profile));
+      if (arr) {
+        setGroup(arr.group[0]);
+      }
       setIsLoading(true);
       setHasError(false);
       getSupervisor({ group }).then((response) => {
@@ -103,93 +106,111 @@ export default function UpdatePassword() {
   return (
     <>
       {GroupDialog(status)}
-      <Card
-        p={2}
-        alignSelf={"center"}
-        size={{ base: "sm", md: "md" }}
-        w={{ md: "lg" }}
-        bgColor={"white"}
-      >
-        <CardHeader mb={-5} fontSize={30} color={"black"}>
-          Group Membership
-        </CardHeader>
-        <CardBody>
-          <div>
-            <FormControl id="membership">
-              <FormLabel mb={1} fontSize={15} color={"black"}>
-                Group Name
-              </FormLabel>
-              <Input
-                isReadOnly
-                type=""
-                value={group}
-                variant="login"
-                borderWidth={"2px"}
-                borderColor={"#70A0AF"}
-                bg="#EDF2F7"
-                mb={3}
-                size={"md"}
-                minLength={8}
-                maxLength={32}
-              />
-            </FormControl>
-            <FormControl id="membership">
-              <FormLabel mb={1} fontSize={15} color={"black"}>
-                Group Leader
-              </FormLabel>
-              <Input
-                isReadOnly
-                type=""
-                value={leader}
-                variant="login"
-                borderWidth={"2px"}
-                borderColor={"#70A0AF"}
-                bg="#EDF2F7"
-                mb={3}
-                size={"md"}
-                minLength={8}
-                maxLength={32}
-              />
-            </FormControl>
-          </div>
-        </CardBody>
-        <CardFooter>
-          <ButtonGroup>
-            <Button
-              bgColor={"#70A0AF"}
-              color={"white"}
-              _hover={{ bgColor: "#706993", color: "white" }}
-              form="report-form"
-              type="submit"
-              onClick={onOpen}
-            >
-              Leave Group
-            </Button>
-            <AlertDialog isOpen={isOpen} onClose={onClose}>
-              <AlertDialogOverlay>
-                <AlertDialogContent>
-                  <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                    Leave Group
-                  </AlertDialogHeader>
-                  <AlertDialogBody>Are you sure?</AlertDialogBody>
-                  <AlertDialogFooter>
-                    <Button onClick={onClose}>Cancel</Button>
-                    <Button
-                      colorScheme="red"
-                      onClick={() => {
-                        handleLeave();
-                      }}
-                      ml={3}
-                    >
-                      Delete
-                    </Button>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialogOverlay>
-            </AlertDialog>
-          </ButtonGroup>
-        </CardFooter>
-      </Card>
+      {group === "" ? (
+        <Card
+          p={{ base: 0, md: 2 }}
+          mx={{ base: -4, md: 0 }}
+          size={{ base: "sm", md: "lg" }}
+          align={"center"}
+          bgColor={"white"}
+          minW={"md"}
+        >
+          <CardHeader mb={-5} fontSize={30} color={"black"}>
+            Group Membership
+          </CardHeader>
+          <CardBody>You are currently not assigned to a group</CardBody>
+        </Card>
+      ) : (
+        <>
+          <Card
+            p={2}
+            alignSelf={"center"}
+            size={{ base: "sm", md: "md" }}
+            w={{ md: "lg" }}
+            bgColor={"white"}
+          >
+            <CardHeader mb={-5} fontSize={30} color={"black"}>
+              Group Membership
+            </CardHeader>
+            <CardBody>
+              <div>
+                <FormControl id="membership">
+                  <FormLabel mb={1} fontSize={15} color={"black"}>
+                    Group Name
+                  </FormLabel>
+                  <Input
+                    isReadOnly
+                    type=""
+                    value={group}
+                    variant="login"
+                    borderWidth={"2px"}
+                    borderColor={"#70A0AF"}
+                    bg="#EDF2F7"
+                    mb={3}
+                    size={"md"}
+                    minLength={8}
+                    maxLength={32}
+                  />
+                </FormControl>
+                <FormControl id="membership">
+                  <FormLabel mb={1} fontSize={15} color={"black"}>
+                    Group Leader
+                  </FormLabel>
+                  <Input
+                    isReadOnly
+                    type=""
+                    value={leader}
+                    variant="login"
+                    borderWidth={"2px"}
+                    borderColor={"#70A0AF"}
+                    bg="#EDF2F7"
+                    mb={3}
+                    size={"md"}
+                    minLength={8}
+                    maxLength={32}
+                  />
+                </FormControl>
+              </div>
+            </CardBody>
+            <CardFooter>
+              <ButtonGroup>
+                <Button
+                  bgColor={"#70A0AF"}
+                  color={"white"}
+                  _hover={{ bgColor: "#706993", color: "white" }}
+                  form="report-form"
+                  type="submit"
+                  onClick={onOpen}
+                >
+                  Leave Group
+                </Button>
+                <AlertDialog isOpen={isOpen} onClose={onClose}>
+                  <AlertDialogOverlay>
+                    <AlertDialogContent>
+                      <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                        Leave Group
+                      </AlertDialogHeader>
+                      <AlertDialogBody>Are you sure?</AlertDialogBody>
+                      <AlertDialogFooter>
+                        <Button onClick={onClose}>Cancel</Button>
+                        <Button
+                          colorScheme="red"
+                          onClick={() => {
+                            handleLeave();
+                          }}
+                          ml={3}
+                        >
+                          Delete
+                        </Button>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialogOverlay>
+                </AlertDialog>
+              </ButtonGroup>
+            </CardFooter>
+          </Card>
+        </>
+      )}
     </>
   );
 }
