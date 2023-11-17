@@ -195,15 +195,12 @@ export async function modifyUser(userId, userData) {
 
 // Rename a group by looping through the members, and updating
 export async function renameGroup(group, groupData) {
-  const supervisedGroup = group;
   await mongoDB();
-  let index,
-    i = 0;
+  let i = 0;
   const user = await UserSchema?.find({ group }).catch(function (err) {
     return err;
   });
   while (user?.[i] != undefined) {
-    //index = user[i].group?.indexOf(`${group}`);
     user[i].group = groupData.newGroup;
     await UserSchema?.findOneAndUpdate(
       { email: user[i].email },
@@ -219,9 +216,8 @@ export async function renameGroup(group, groupData) {
     }
   );
   while (supervisor?.[i] != undefined) {
-    console.log(supervisor[i].supervisedGroup);
-    console.log(group);
-    //index = supervisor[i].supervisedGroup?.indexOf(`${group}`);
+    //console.log(supervisor[i].supervisedGroup);
+    //console.log(group);
     supervisor[i].supervisedGroup = groupData.newGroup;
     await UserSchema?.findOneAndUpdate(
       { email: supervisor[i].email },
@@ -280,18 +276,32 @@ export async function deleteUser(userId) {
 // Delete a group by looping through the members, and removing
 export async function deleteGroup(group) {
   await mongoDB();
-  let index,
-    i = 0;
+  let i = 0;
   const user = await UserSchema?.find({ group }).catch(function (err) {
     return err;
   });
   while (user?.[i] != undefined) {
-    index = user[i].group?.indexOf(`${group}`);
     user[i].group = "";
     console.log(user[i].group);
     await UserSchema?.findOneAndUpdate(
       { email: user[i].email },
       { group: user[i].group }
+    );
+    i++;
+  }
+
+  i = 0;
+  const supervisor = await UserSchema?.find({ supervisedGroup: group }).catch(
+    function (err) {
+      return err;
+    }
+  );
+  while (supervisor?.[i] != undefined) {
+    supervisor[i].supervisedGroup = "";
+    //console.log(supervisor[i].supervisedGroup);
+    await UserSchema?.findOneAndUpdate(
+      { email: supervisor[i].email },
+      { supervisedGroup: supervisor[i].supervisedGroup }
     );
     i++;
   }
