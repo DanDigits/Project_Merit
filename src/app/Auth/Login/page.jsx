@@ -41,6 +41,8 @@ const statusMessages = {
   missingReg: "All fields except suffix are required.",
   missingUpd: "Both New Password and New Password Confirmation are required.",
   sent: "Request sent, please check your email. This link is only valid for 15 minutes. ",
+  suspended:
+    "This account has been locked. Please contact the system administrator.",
   verified: "Account successfully verified.",
 };
 
@@ -241,6 +243,8 @@ export default function Page() {
               setStatus(statusMessages.credentials);
             } else if (response.error === "Unverified account") {
               setMode("Verification Needed");
+            } else if (response.error === "Suspended account") {
+              setStatus(statusMessages.suspended);
             }
           } else {
             getSession().then((session) => setRole(session.user.role));
