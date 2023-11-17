@@ -37,10 +37,11 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 export default function Page() {
   const router = useRouter();
   const [groups, setGroups] = useState("");
+  const [data, setData] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [hasGroups, setHasGroups] = useState(false);
-  const [index, setIndex] = useState("0");
 
   const handleSubmitInfo = useCallback(
     (groupName) => {
@@ -55,21 +56,33 @@ export default function Page() {
       console.log("!hasgroups", hasGroups);
       setIsLoading(true);
       setHasError(false);
-      //getAllGroups({ index }).then((response) => {
       getAllGroups().then((response) => {
         response.ok
           ? response
               .json()
               .then((response) => setGroups(response))
               .then(setHasGroups(true))
+              .then(() => console.log(groups))
           : setHasError(true);
       });
-    }
-    if (hasGroups) {
-      console.log("hasgroups", hasGroups);
       setIsLoading(false);
     }
-  }, [hasGroups, index]);
+    if (hasGroups && !isLoading) {
+      console.log("hasgroups", hasGroups);
+      var arr = JSON.parse(JSON.stringify(groups));
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i][1] == null) {
+          arr[i][1] = {};
+        }
+        arr[i][1].group = arr[i][0];
+        arr[i].splice(0, 1);
+        arr[i] = arr[i][0];
+      }
+      console.log(arr);
+      setData(arr);
+      setIsLoading(false);
+    }
+  }, [hasGroups, groups]);
 
   const columns = React.useMemo(
     () => [
@@ -122,16 +135,17 @@ export default function Page() {
         header: "Group Name",
       },
       {
-        accessorKey: "supervisor",
+        accessorFn: (row) =>
+          row.lastName
+            ? `${row.lastName}` +
+              (row.suffix ? ` ${row.suffix}` : ``) +
+              `, ${row.firstName}`
+            : "",
         header: "Supervisor",
       },
       {
         accessorKey: "email",
         header: "Email",
-      },
-      {
-        accessorKey: "total",
-        header: "Total Members",
       },
     ],
 
@@ -156,7 +170,7 @@ export default function Page() {
       ) : (
         <>
           <Heading mb={10}>Manage Groups</Heading>
-          <GroupTable columns={columns} data={groups} />
+          <GroupTable columns={columns} data={data} />
         </>
       )}
     </>

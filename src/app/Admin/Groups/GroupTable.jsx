@@ -110,7 +110,7 @@ export default function GroupTable({ columns, data }) {
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  Delete Report
+                  Delete Group
                 </AlertDialogHeader>
                 <AlertDialogBody>Are you sure?</AlertDialogBody>
                 <AlertDialogFooter>
@@ -121,7 +121,7 @@ export default function GroupTable({ columns, data }) {
                       handleDelete(
                         table
                           .getSelectedRowModel()
-                          .flatRows.map(({ original }) => original._id)
+                          .flatRows.map(({ original }) => original.group)
                       )
                     }
                     ml={3}
