@@ -199,37 +199,51 @@ export async function modifyUser(userId, userData) {
 // Rename a group by looping through the members, and updating
 export async function renameGroup(group, groupData) {
   await mongoDB();
-  let i = 0;
-  const user = await UserSchema?.find({ group }).catch(function (err) {
+  let user,
+    i = 0;
+
+  // Check if group already exists
+  const exists = await UserSchema?.find({
+    group: groupData.newGroup,
+    supervisedGroup: groupData.newGroup,
+  }).catch(function (err) {
     return err;
   });
-  while (user?.[i] != undefined) {
-    user[i].group = groupData.newGroup;
-    await UserSchema?.findOneAndUpdate(
-      { email: user[i].email },
-      { group: user[i].group }
-    );
-    i++;
-  }
 
-  i = 0;
-  const supervisor = await UserSchema?.find({ supervisedGroup: group }).catch(
-    function (err) {
+  if (exists == undefined) {
+    user = await UserSchema?.find({ group }).catch(function (err) {
       return err;
+    });
+    while (user?.[i] != undefined) {
+      user[i].group = groupData.newGroup;
+      await UserSchema?.findOneAndUpdate(
+        { email: user[i].email },
+        { group: user[i].group }
+      );
+      i++;
     }
-  );
-  while (supervisor?.[i] != undefined) {
-    //console.log(supervisor[i].supervisedGroup);
-    //console.log(group);
-    supervisor[i].supervisedGroup = groupData.newGroup;
-    await UserSchema?.findOneAndUpdate(
-      { email: supervisor[i].email },
-      { supervisedGroup: supervisor[i].supervisedGroup }
-    );
-    i++;
-  }
 
-  user.id = "OK";
+    i = 0;
+    const supervisor = await UserSchema?.find({ supervisedGroup: group }).catch(
+      function (err) {
+        return err;
+      }
+    );
+    while (supervisor?.[i] != undefined) {
+      //console.log(supervisor[i].supervisedGroup);
+      //console.log(group);
+      supervisor[i].supervisedGroup = groupData.newGroup;
+      await UserSchema?.findOneAndUpdate(
+        { email: supervisor[i].email },
+        { supervisedGroup: supervisor[i].supervisedGroup }
+      );
+      i++;
+    }
+    user.id = "OK";
+  } else {
+    exists.message = "EXISTS";
+    return exists;
+  }
   return user;
 }
 

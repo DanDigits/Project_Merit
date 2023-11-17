@@ -222,7 +222,8 @@ export async function GET(Request) {
 
 // Register new user with signup data
 export async function POST(Request) {
-  let req = await Request.json();
+  let res,
+    req = await Request.json();
   const requestHeaders = headers();
   let admin = requestHeaders?.get("admin");
   let registrar = await getUser(admin);
@@ -231,14 +232,21 @@ export async function POST(Request) {
   if (registrar?.role == "Admin") {
     req.verified = true;
     admin = true;
+    // Check to see if user already exists for supervisor creation
+    let exists = await getGroup(req.supervisedGroup);
+    if (exists[0][0] != undefined) {
+      exists[0][0].name = "ERROR";
+      exists[0][0].message = "GROUP EXISTS";
+      res = exists[0][0];
+    } else {
+      res = await signUp(req);
+    }
   } else {
     req.verified = false;
     req.role = "User";
     admin = false;
+    res = await signUp(req);
   }
-
-  // Create user
-  let res = await signUp(req);
 
   // HTTP Responses
   if (res.name) {
@@ -288,15 +296,15 @@ export async function PATCH(Request) {
   }
 
   // HTTP Response
-  if (res.name == "ValidationError" /*|| res.message == "INCORRECT"*/) {
+  if (res?.name == "ValidationError" /*|| res.message == "INCORRECT"*/) {
     // if (res.name) {
     //   res.message = res;
     // }
-    return new Response(res.message, { status: 422 }); // res.message may not be proper response object
-  } else if (res.message) {
-    return new Response(res.message, { status: 400 });
-  } else if (res.id) {
-    return new Response(res.id, { status: 200 });
+    return new Response(res?.message, { status: 422 }); // res.message may not be proper response object
+  } else if (res?.message) {
+    return new Response(res?.message, { status: 400 });
+  } else if (res?.id) {
+    return new Response(res?.id, { status: 200 });
   } else {
     return new Response("ERROR", { status: 400 });
   }
