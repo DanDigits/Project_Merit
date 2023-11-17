@@ -10,6 +10,8 @@ import {
   Card,
   Link,
 } from "@chakra-ui/react";
+import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 import InfoBox from "./InfoBox";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
@@ -228,6 +230,16 @@ const infoWordChoice3 = {
 };
 
 export default function Page() {
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (session) {
+      if (session?.user.role === "Admin") {
+        window.location.replace("/Admin/Users");
+      }
+    }
+  }, [session]);
+
   return (
     <div>
       <Card

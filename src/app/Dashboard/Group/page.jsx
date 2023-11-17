@@ -7,7 +7,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import { createColumnHelper } from "@tanstack/react-table";
 import {
   AlertDialog,
@@ -63,6 +63,7 @@ var unit = 3;
 
 export default function Page() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [group, setGroup] = useState("");
   const [groupLength, setGroupLength] = useState("");
   const [groupName, setGroupName] = useState("");
@@ -127,6 +128,12 @@ export default function Page() {
   };
 
   useEffect(() => {
+    if (session) {
+      if (session?.user.role === "Admin") {
+        window.location.replace("/Admin/Groups");
+      }
+    }
+
     if (!hasEmail && !isLoading) {
       setIsLoading(true);
       setHasError(false);

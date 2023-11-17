@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import {
   AbsoluteCenter,
   FormControl,
@@ -26,6 +26,7 @@ import Thesaurus from "./thesaurus";
 
 export default function Report(report_mode) {
   const router = useRouter();
+  const { data: session } = useSession();
   const [dialogStatus, setDialogStatus] = useState(false);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
@@ -51,6 +52,12 @@ export default function Report(report_mode) {
 
   useEffect(() => {
     getSession().then((session) => setEmail(session.user.email));
+
+    if (session) {
+      if (session?.user.role === "Admin") {
+        window.location.replace("/Admin/Users");
+      }
+    }
 
     if (report_mode === "View") {
       if (reportId !== "" && reportId !== null) {
@@ -115,6 +122,7 @@ export default function Report(report_mode) {
     report_mode,
     router,
     longCategory,
+    session,
   ]);
 
   const handleSubmitInfo = (e) => {

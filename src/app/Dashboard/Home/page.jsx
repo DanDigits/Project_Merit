@@ -14,11 +14,12 @@ import {
 } from "@chakra-ui/react";
 import { Stack, Heading } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import { getUser } from "./../../actions/User.js";
 import StatusBox from "./statusBox";
 
 export default function Page() {
+  const { data: session } = useSession();
   const [hasEmail, setHasEmail] = useState(false);
   const [hasProfile, setHasProfile] = useState(false);
   const [profile, setProfile] = useState("");
@@ -63,6 +64,12 @@ export default function Page() {
   });
 
   useEffect(() => {
+    if (session) {
+      if (session?.user.role === "Admin") {
+        window.location.replace("/Admin/Users");
+      }
+    }
+
     if (!hasEmail && !isLoading) {
       setIsLoading(true);
       setHasError(false);
@@ -147,7 +154,7 @@ export default function Page() {
 
   return (
     <>
-      {isLoading ? (
+      {isLoading && (
         <>
           <AbsoluteCenter>
             <Spinner
@@ -159,7 +166,8 @@ export default function Page() {
             />
           </AbsoluteCenter>
         </>
-      ) : (
+      )}
+      {session?.user.role !== "Admin" && (
         <Card
           p={{ base: 0, md: 2 }}
           mx={{ base: -4, md: 0 }}

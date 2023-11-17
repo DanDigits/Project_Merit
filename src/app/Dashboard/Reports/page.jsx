@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Center, Spinner, Text, Button, Icon } from "@chakra-ui/react";
 import ReportTable from "./ReportTable";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import { getUserReports } from "./../../actions/Report.js";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
@@ -30,6 +30,7 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 
 export default function Page() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [email, setEmail] = useState("");
   const [reports, setReports] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -47,6 +48,12 @@ export default function Page() {
   );
 
   useEffect(() => {
+    if (session) {
+      if (session?.user.role === "Admin") {
+        window.location.replace("/Admin/Users");
+      }
+    }
+
     if (!hasEmail) {
       //console.log("!hasemail");
       setIsLoading(true);
@@ -72,7 +79,7 @@ export default function Page() {
       console.log("hasEmail && hasreport", email, hasReport);
       setIsLoading(false);
     }
-  }, [hasEmail, hasReport, email, index]);
+  }, [hasEmail, hasReport, email, index, session]);
 
   const columns = React.useMemo(
     () => [
@@ -172,7 +179,7 @@ export default function Page() {
   return (
     <>
       {hasError && <Text>SOMETHING WENT WRONG</Text>}
-      {isLoading ? (
+      {isLoading && (
         <>
           <Center>
             <Spinner
@@ -184,7 +191,8 @@ export default function Page() {
             />
           </Center>
         </>
-      ) : (
+      )}
+      {session?.user.role !== "Admin" && (
         <>
           {console.log(reports)}
           <ReportTable columns={columns} data={reports} />
