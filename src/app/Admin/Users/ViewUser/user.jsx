@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useRef, useState, useMemo } from "react";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import {
   AbsoluteCenter,
   Box,
@@ -35,6 +35,7 @@ const statusMessages = {
 
 export default function User(user_mode) {
   const router = useRouter();
+  const { data: session } = useSession();
   const [dialogStatus, setDialogStatus] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -152,6 +153,12 @@ export default function User(user_mode) {
   };
 
   useEffect(() => {
+    if (session) {
+      if (session?.user.role !== "Admin") {
+        window.location.replace("/Dashboard/Home");
+      }
+    }
+
     if (user_mode === "View") {
       if (email !== "" && email !== null) {
         setHasEmail(true);
@@ -225,447 +232,465 @@ export default function User(user_mode) {
           </AbsoluteCenter>
         </>
       )}
-      <Box alignContent="left" w={"100%"}>
-        <form
-          className="flex"
-          id="user-form"
-          onSubmit={(e) => handleSubmitInfo(e)}
-        >
-          <HStack>
-            <FormControl id="firstName" isRequired>
-              <FormLabel mb={1} fontSize={15} color={"black"}>
-                First Name
-              </FormLabel>
-              <Input
-                isReadOnly={state}
-                type=""
-                value={firstName}
-                maxLength={64}
-                variant="login"
-                borderWidth={"2px"}
-                borderColor={"#70A0AF"}
-                bg="#F7FAFC"
-                mb={3}
-                size={"md"}
-                onChange={(e) => setFirstName(e.target.value)}
-              />
-              <FormErrorMessage>First Name is required.</FormErrorMessage>
-            </FormControl>
-            <FormControl id="lastName" isRequired>
-              <FormLabel mb={1} fontSize={15} color={"black"}>
-                Last Name
-              </FormLabel>
-              <Input
-                isReadOnly={state}
-                type=""
-                value={lastName}
-                maxLength={64}
-                variant="login"
-                borderWidth={"2px"}
-                borderColor={"#70A0AF"}
-                bg="#F7FAFC"
-                mb={3}
-                size={"md"}
-                onChange={(e) => setLastName(e.target.value)}
-              />
-              <FormErrorMessage>Last Name is required.</FormErrorMessage>
-            </FormControl>
-          </HStack>
-          <HStack>
-            <FormControl id="suffix">
-              <FormLabel mb={1} fontSize={15} color={"black"}>
-                Suffix
-              </FormLabel>
-              <Input
-                isReadOnly={state}
-                type=""
-                value={suffix}
-                maxLength={6}
-                variant="login"
-                borderWidth={"2px"}
-                borderColor={"#70A0AF"}
-                bg="#F7FAFC"
-                mb={3}
-                size={"md"}
-                onChange={(e) => setSuffix(e.target.value)}
-              />
-            </FormControl>
-            {state ? (
-              <>
+      {session?.user.role == "Admin" && (
+        <Box alignContent="left" w={"100%"}>
+          <form
+            className="flex"
+            id="user-form"
+            onSubmit={(e) => handleSubmitInfo(e)}
+          >
+            <HStack>
+              <FormControl id="firstName" isRequired>
+                <FormLabel mb={1} fontSize={15} color={"black"}>
+                  First Name
+                </FormLabel>
+                <Input
+                  isReadOnly={state}
+                  type=""
+                  value={firstName}
+                  maxLength={64}
+                  variant="login"
+                  borderWidth={"2px"}
+                  borderColor={"#70A0AF"}
+                  bg="#F7FAFC"
+                  mb={3}
+                  size={"md"}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+                <FormErrorMessage>First Name is required.</FormErrorMessage>
+              </FormControl>
+              <FormControl id="lastName" isRequired>
+                <FormLabel mb={1} fontSize={15} color={"black"}>
+                  Last Name
+                </FormLabel>
+                <Input
+                  isReadOnly={state}
+                  type=""
+                  value={lastName}
+                  maxLength={64}
+                  variant="login"
+                  borderWidth={"2px"}
+                  borderColor={"#70A0AF"}
+                  bg="#F7FAFC"
+                  mb={3}
+                  size={"md"}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+                <FormErrorMessage>Last Name is required.</FormErrorMessage>
+              </FormControl>
+            </HStack>
+            <HStack>
+              <FormControl id="suffix">
+                <FormLabel mb={1} fontSize={15} color={"black"}>
+                  Suffix
+                </FormLabel>
+                <Input
+                  isReadOnly={state}
+                  type=""
+                  value={suffix}
+                  maxLength={6}
+                  variant="login"
+                  borderWidth={"2px"}
+                  borderColor={"#70A0AF"}
+                  bg="#F7FAFC"
+                  mb={3}
+                  size={"md"}
+                  onChange={(e) => setSuffix(e.target.value)}
+                />
+              </FormControl>
+              {state ? (
+                <>
+                  <FormControl id="rank">
+                    <FormLabel mb={1} fontSize={15} color={"black"}>
+                      Rank
+                    </FormLabel>
+                    <Input
+                      isReadOnly={state}
+                      alpha={"1.0"}
+                      variant="trim"
+                      borderWidth={"2px"}
+                      borderColor={"#70A0AF"}
+                      bg="#F7FAFC"
+                      mb={3}
+                      size={"md"}
+                      value={rank}
+                    />
+                  </FormControl>
+                </>
+              ) : (
                 <FormControl id="rank">
                   <FormLabel mb={1} fontSize={15} color={"black"}>
                     Rank
                   </FormLabel>
-                  <Input
+                  <Select
                     isReadOnly={state}
-                    alpha={"1.0"}
-                    variant="trim"
-                    borderWidth={"2px"}
-                    borderColor={"#70A0AF"}
-                    bg="#F7FAFC"
-                    mb={3}
-                    size={"md"}
+                    placeholder="Select Rank"
                     value={rank}
-                  />
+                    variant="trim"
+                    borderWidth={"2px"}
+                    borderColor={"#70A0AF"}
+                    bg="#F7FAFC"
+                    mb={3}
+                    size={"md"}
+                    onChange={(e) => setRank(e.target.value)}
+                  >
+                    <option value={"AB"}>Airman Basic (AB)</option>
+                    <option value={"Amn"}>Airman (Amn)</option>
+                    <option value={"A1C"}>Airman First Class (A1C)</option>
+                    <option value={"SrA"}>
+                      Senior Airman or Sergeant (SrA)
+                    </option>
+                    <option value={"SSgt"}>Staff Sergeant (SSgt)</option>
+                    <option value={"TSgt"}>Technical Sergeant (TSgt)</option>
+                    <option value={"MSgt"}>Master Sergeant (MSgt)</option>
+                    <option value={"SMSgt"}>
+                      Senior Master Sergeant (SMSgt)
+                    </option>
+                    <option value={"CMSgt"}>
+                      Chief Master Sergeant (CMSgt)
+                    </option>
+                    <option value={"CCM"}>
+                      Command Chief Master Sergeant (CCM)
+                    </option>
+                    <option value={"CMSAF"}>
+                      Chief Master Sergeant of the Air Force (CMSAF)
+                    </option>
+                    <option value={"1st Lt"}>First Lieutenant (1st Lt)</option>
+                    <option value={"Capt"}>Captain (Capt)</option>
+                    <option value={"Maj"}>Major (Maj)</option>
+                    <option value={"Lt Col"}>
+                      Lieutenant Colonel (Lt Col)
+                    </option>
+                    <option value={"Col"}>Colonel (Col)</option>
+                    <option value={"Brig Gen"}>
+                      Brigadier General (Brig Gen)
+                    </option>
+                    <option value={"Maj Gen"}>Major General (Maj Gen)</option>
+                    <option value={"Lt Gen"}>
+                      Lieutenant General (Lt Gen)
+                    </option>
+                    <option value={"Gen"}>
+                      General Air Force Chief of Staff (Gen)
+                    </option>
+                    <option value={"GOAF"}>
+                      General of the Air Force (GOAF)
+                    </option>
+                  </Select>
                 </FormControl>
-              </>
-            ) : (
-              <FormControl id="rank">
-                <FormLabel mb={1} fontSize={15} color={"black"}>
-                  Rank
-                </FormLabel>
-                <Select
-                  isReadOnly={state}
-                  placeholder="Select Rank"
-                  value={rank}
-                  variant="trim"
-                  borderWidth={"2px"}
-                  borderColor={"#70A0AF"}
-                  bg="#F7FAFC"
-                  mb={3}
-                  size={"md"}
-                  onChange={(e) => setRank(e.target.value)}
-                >
-                  <option value={"AB"}>Airman Basic (AB)</option>
-                  <option value={"Amn"}>Airman (Amn)</option>
-                  <option value={"A1C"}>Airman First Class (A1C)</option>
-                  <option value={"SrA"}>Senior Airman or Sergeant (SrA)</option>
-                  <option value={"SSgt"}>Staff Sergeant (SSgt)</option>
-                  <option value={"TSgt"}>Technical Sergeant (TSgt)</option>
-                  <option value={"MSgt"}>Master Sergeant (MSgt)</option>
-                  <option value={"SMSgt"}>
-                    Senior Master Sergeant (SMSgt)
-                  </option>
-                  <option value={"CMSgt"}>Chief Master Sergeant (CMSgt)</option>
-                  <option value={"CCM"}>
-                    Command Chief Master Sergeant (CCM)
-                  </option>
-                  <option value={"CMSAF"}>
-                    Chief Master Sergeant of the Air Force (CMSAF)
-                  </option>
-                  <option value={"1st Lt"}>First Lieutenant (1st Lt)</option>
-                  <option value={"Capt"}>Captain (Capt)</option>
-                  <option value={"Maj"}>Major (Maj)</option>
-                  <option value={"Lt Col"}>Lieutenant Colonel (Lt Col)</option>
-                  <option value={"Col"}>Colonel (Col)</option>
-                  <option value={"Brig Gen"}>
-                    Brigadier General (Brig Gen)
-                  </option>
-                  <option value={"Maj Gen"}>Major General (Maj Gen)</option>
-                  <option value={"Lt Gen"}>Lieutenant General (Lt Gen)</option>
-                  <option value={"Gen"}>
-                    General Air Force Chief of Staff (Gen)
-                  </option>
-                  <option value={"GOAF"}>
-                    General of the Air Force (GOAF)
-                  </option>
-                </Select>
-              </FormControl>
-            )}
-          </HStack>
-          {user_mode != "Edit" && (
-            <FormControl id="email" isRequired>
-              <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-                Email
-              </FormLabel>
-              <Input
-                isReadOnly={state}
-                type=""
-                value={email == "null" ? "" : email}
-                maxLength={64}
-                variant="login"
-                borderWidth={"2px"}
-                borderColor={"#70A0AF"}
-                bg="#F7FAFC"
-                mb={3}
-                size={"md"}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </FormControl>
-          )}
-          {user_mode === "New" && (
-            <HStack>
-              <FormControl id="password" isRequired>
-                <FormLabel mb={1} fontSize={15} color={"black"}>
-                  Temporary Password
-                </FormLabel>
-                <Input
-                  type="password"
-                  value={password}
-                  variant="login"
-                  borderWidth={"2px"}
-                  borderColor={"#70A0AF"}
-                  bg="#F7FAFC"
-                  mb={3}
-                  size={"md"}
-                  minLength={8}
-                  maxLength={32}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <FormErrorMessage>Password is required.</FormErrorMessage>
-              </FormControl>
-              <FormControl id="confirmPassword" isRequired>
-                <FormLabel mb={1} fontSize={15} color={"black"}>
-                  Confirm Password
-                </FormLabel>
-                <Input
-                  type="password"
-                  value={password2}
-                  variant="login"
-                  borderWidth={"2px"}
-                  borderColor={"#70A0AF"}
-                  bg="#F7FAFC"
-                  mb={3}
-                  size={"md"}
-                  minLength={8}
-                  maxLength={32}
-                  onChange={(e) => setPassword2(e.target.value)}
-                />
-                <FormErrorMessage>
-                  Password confirmation is required.
-                </FormErrorMessage>
-              </FormControl>
+              )}
             </HStack>
-          )}
-          <HStack>
-            {state ? (
-              <>
-                <FormControl id="role" isRequired>
-                  <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-                    Role
-                  </FormLabel>
-                  <Select
-                    isReadOnly={state}
-                    alpha={"1.0"}
-                    variant="trim"
-                    borderWidth={"2px"}
-                    borderColor={"#70A0AF"}
-                    bg="#F7FAFC"
-                    mb={6}
-                    size={"md"}
-                    value={role}
-                  >
-                    <option value={"User"} disabled>
-                      User
-                    </option>
-                    <option value={"Supervisor"} disabled>
-                      Supervisor
-                    </option>
-                    <option value={"Admin"} disabled>
-                      Admin
-                    </option>
-                  </Select>
-                </FormControl>
-              </>
-            ) : (
-              <>
-                <FormControl id="role" isRequired>
-                  <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-                    Role
-                  </FormLabel>
-                  <Select
-                    isReadOnly={state}
-                    placeholder="Select Role"
-                    variant="trim"
-                    borderWidth={"2px"}
-                    borderColor={"#70A0AF"}
-                    bg="#F7FAFC"
-                    mb={6}
-                    size={"md"}
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                  >
-                    <option value={"User"}>User</option>
-                    <option value={"Supervisor"}>Supervisor</option>
-                    <option value={"Admin"}>Admin</option>
-                  </Select>
-                </FormControl>
-              </>
-            )}
-            {user_mode === "Edit" && (
-              <FormControl id="status" isRequired>
+            {user_mode != "Edit" && (
+              <FormControl id="email" isRequired>
                 <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-                  Status
+                  Email
                 </FormLabel>
-                <Select
+                <Input
                   isReadOnly={state}
-                  placeholder="Select Status"
-                  variant="trim"
+                  type=""
+                  value={email == "null" ? "" : email}
+                  maxLength={64}
+                  variant="login"
                   borderWidth={"2px"}
                   borderColor={"#70A0AF"}
                   bg="#F7FAFC"
-                  mb={6}
+                  mb={3}
                   size={"md"}
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                >
-                  <option value={"Active"}>Active</option>
-                  <option value={"Suspended"}>Suspended</option>
-                </Select>
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </FormControl>
             )}
-            {user_mode === "Edit" && (
-              <FormControl id="verified" isRequired>
-                <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-                  Verified
-                </FormLabel>
-                <Select
-                  isReadOnly={state}
-                  placeholder="Select Verified Status"
-                  variant="trim"
-                  borderWidth={"2px"}
-                  borderColor={"#70A0AF"}
-                  bg="#F7FAFC"
-                  mb={6}
-                  size={"md"}
-                  value={verified}
-                  onChange={(e) => setVerified(e.target.value)}
-                >
-                  <option value={true}>Verified</option>
-                  <option value={false}>Not Verified</option>
-                </Select>
-              </FormControl>
-            )}
-          </HStack>
-
-          <Box display={!role || role === null ? "none" : "initial"}>
-            <FormControl id="group">
-              <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-                {user_mode === "New"
-                  ? "Assign Membership Group"
-                  : "Membership Group"}
-              </FormLabel>
-              <Input
-                isReadOnly={state}
-                type=""
-                value={group}
-                maxLength={64}
-                variant="login"
-                borderWidth={"2px"}
-                borderColor={"#70A0AF"}
-                bg="#F7FAFC"
-                mb={3}
-                size={"md"}
-                onChange={(e) => setGroup(e.target.value)}
-              />
-            </FormControl>
-            <Button mb={6} display={user_mode === "View" ? "initial" : "none"}>
-              View Group
-            </Button>
-            {membershipNotFound && (
-              <Text mb={3} color={"gray.600"}>
-                This group does not exist. Try again or create group.
-              </Text>
-            )}
-          </Box>
-          <Box display={role === "Supervisor" ? "initial" : "none"}>
-            <FormControl id="supervisedGroup">
-              <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-                {user_mode === "New" ? "Assign Managed Group" : "Managed Group"}
-              </FormLabel>
-              <Input
-                isReadOnly={state}
-                type=""
-                value={supervisedGroup}
-                maxLength={64}
-                variant="login"
-                borderWidth={"2px"}
-                borderColor={"#70A0AF"}
-                bg="#F7FAFC"
-                mb={3}
-                size={"md"}
-                onChange={(e) => setSupervisedGroup(e.target.value)}
-              />
-            </FormControl>
-            <Button mb={6} display={user_mode === "View" ? "initial" : "none"}>
-              View Group
-            </Button>
-            {subNotFound && (
-              <Text mb={3} color={"gray.600"}>
-                This group does not exist. Try again or create group.
-              </Text>
-            )}
-          </Box>
-
-          {state && (
-            <>
+            {user_mode === "New" && (
               <HStack>
-                <FormControl id="totalReports">
+                <FormControl id="password" isRequired>
                   <FormLabel mb={1} fontSize={15} color={"black"}>
-                    Fiscal Total Reports
+                    Temporary Password
                   </FormLabel>
                   <Input
-                    isReadOnly={state}
-                    type=""
-                    value={totalReports}
-                    maxLength={64}
+                    type="password"
+                    value={password}
                     variant="login"
                     borderWidth={"2px"}
                     borderColor={"#70A0AF"}
                     bg="#F7FAFC"
                     mb={3}
                     size={"md"}
+                    minLength={8}
+                    maxLength={32}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
+                  <FormErrorMessage>Password is required.</FormErrorMessage>
                 </FormControl>
-                <FormControl id="lastReport">
+                <FormControl id="confirmPassword" isRequired>
                   <FormLabel mb={1} fontSize={15} color={"black"}>
-                    Last Report
+                    Confirm Password
                   </FormLabel>
                   <Input
-                    isReadOnly={state}
-                    type=""
-                    value={lastReport}
-                    maxLength={64}
+                    type="password"
+                    value={password2}
                     variant="login"
                     borderWidth={"2px"}
                     borderColor={"#70A0AF"}
                     bg="#F7FAFC"
                     mb={3}
                     size={"md"}
+                    minLength={8}
+                    maxLength={32}
+                    onChange={(e) => setPassword2(e.target.value)}
                   />
+                  <FormErrorMessage>
+                    Password confirmation is required.
+                  </FormErrorMessage>
                 </FormControl>
               </HStack>
-              <HStack>
-                <FormControl id="lastLogin">
-                  <FormLabel mb={1} fontSize={15} color={"black"}>
-                    Last Sign-In
-                  </FormLabel>
-                  <Input
-                    isReadOnly={state}
-                    type=""
-                    value={lastLogin}
-                    maxLength={64}
-                    variant="login"
-                    borderWidth={"2px"}
-                    borderColor={"#70A0AF"}
-                    bg="#F7FAFC"
-                    mb={3}
-                    size={"md"}
-                  />
-                </FormControl>
-                <FormControl id="status">
-                  <FormLabel mb={1} fontSize={15} color={"black"}>
+            )}
+            <HStack>
+              {state ? (
+                <>
+                  <FormControl id="role" isRequired>
+                    <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                      Role
+                    </FormLabel>
+                    <Select
+                      isReadOnly={state}
+                      alpha={"1.0"}
+                      variant="trim"
+                      borderWidth={"2px"}
+                      borderColor={"#70A0AF"}
+                      bg="#F7FAFC"
+                      mb={6}
+                      size={"md"}
+                      value={role}
+                    >
+                      <option value={"User"} disabled>
+                        User
+                      </option>
+                      <option value={"Supervisor"} disabled>
+                        Supervisor
+                      </option>
+                      <option value={"Admin"} disabled>
+                        Admin
+                      </option>
+                    </Select>
+                  </FormControl>
+                </>
+              ) : (
+                <>
+                  <FormControl id="role" isRequired>
+                    <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                      Role
+                    </FormLabel>
+                    <Select
+                      isReadOnly={state}
+                      placeholder="Select Role"
+                      variant="trim"
+                      borderWidth={"2px"}
+                      borderColor={"#70A0AF"}
+                      bg="#F7FAFC"
+                      mb={6}
+                      size={"md"}
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
+                    >
+                      <option value={"User"}>User</option>
+                      <option value={"Supervisor"}>Supervisor</option>
+                      <option value={"Admin"}>Admin</option>
+                    </Select>
+                  </FormControl>
+                </>
+              )}
+              {user_mode === "Edit" && (
+                <FormControl id="status" isRequired>
+                  <FormLabel mb={1} fontSize={15} color={"#331E38"}>
                     Status
                   </FormLabel>
-                  <Input
+                  <Select
                     isReadOnly={state}
-                    type=""
-                    value={status}
-                    maxLength={64}
-                    variant="login"
+                    placeholder="Select Status"
+                    variant="trim"
                     borderWidth={"2px"}
                     borderColor={"#70A0AF"}
                     bg="#F7FAFC"
-                    mb={3}
+                    mb={6}
                     size={"md"}
-                  />
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                  >
+                    <option value={"Active"}>Active</option>
+                    <option value={"Suspended"}>Suspended</option>
+                  </Select>
                 </FormControl>
-              </HStack>
-            </>
-          )}
-        </form>
-        {msg}
-      </Box>
+              )}
+              {user_mode === "Edit" && (
+                <FormControl id="verified" isRequired>
+                  <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                    Verified
+                  </FormLabel>
+                  <Select
+                    isReadOnly={state}
+                    placeholder="Select Verified Status"
+                    variant="trim"
+                    borderWidth={"2px"}
+                    borderColor={"#70A0AF"}
+                    bg="#F7FAFC"
+                    mb={6}
+                    size={"md"}
+                    value={verified}
+                    onChange={(e) => setVerified(e.target.value)}
+                  >
+                    <option value={true}>Verified</option>
+                    <option value={false}>Not Verified</option>
+                  </Select>
+                </FormControl>
+              )}
+            </HStack>
+
+            <Box display={!role || role === null ? "none" : "initial"}>
+              <FormControl id="group">
+                <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                  {user_mode === "New"
+                    ? "Assign Membership Group"
+                    : "Membership Group"}
+                </FormLabel>
+                <Input
+                  isReadOnly={state}
+                  type=""
+                  value={group}
+                  maxLength={64}
+                  variant="login"
+                  borderWidth={"2px"}
+                  borderColor={"#70A0AF"}
+                  bg="#F7FAFC"
+                  mb={3}
+                  size={"md"}
+                  onChange={(e) => setGroup(e.target.value)}
+                />
+              </FormControl>
+              <Button
+                mb={6}
+                display={user_mode === "View" ? "initial" : "none"}
+              >
+                View Group
+              </Button>
+              {membershipNotFound && (
+                <Text mb={3} color={"gray.600"}>
+                  This group does not exist. Try again or create group.
+                </Text>
+              )}
+            </Box>
+            <Box display={role === "Supervisor" ? "initial" : "none"}>
+              <FormControl id="supervisedGroup">
+                <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                  {user_mode === "New"
+                    ? "Assign Managed Group"
+                    : "Managed Group"}
+                </FormLabel>
+                <Input
+                  isReadOnly={state}
+                  type=""
+                  value={supervisedGroup}
+                  maxLength={64}
+                  variant="login"
+                  borderWidth={"2px"}
+                  borderColor={"#70A0AF"}
+                  bg="#F7FAFC"
+                  mb={3}
+                  size={"md"}
+                  onChange={(e) => setSupervisedGroup(e.target.value)}
+                />
+              </FormControl>
+              <Button
+                mb={6}
+                display={user_mode === "View" ? "initial" : "none"}
+              >
+                View Group
+              </Button>
+              {subNotFound && (
+                <Text mb={3} color={"gray.600"}>
+                  This group does not exist. Try again or create group.
+                </Text>
+              )}
+            </Box>
+
+            {state && (
+              <>
+                <HStack>
+                  <FormControl id="totalReports">
+                    <FormLabel mb={1} fontSize={15} color={"black"}>
+                      Fiscal Total Reports
+                    </FormLabel>
+                    <Input
+                      isReadOnly={state}
+                      type=""
+                      value={totalReports}
+                      maxLength={64}
+                      variant="login"
+                      borderWidth={"2px"}
+                      borderColor={"#70A0AF"}
+                      bg="#F7FAFC"
+                      mb={3}
+                      size={"md"}
+                    />
+                  </FormControl>
+                  <FormControl id="lastReport">
+                    <FormLabel mb={1} fontSize={15} color={"black"}>
+                      Last Report
+                    </FormLabel>
+                    <Input
+                      isReadOnly={state}
+                      type=""
+                      value={lastReport}
+                      maxLength={64}
+                      variant="login"
+                      borderWidth={"2px"}
+                      borderColor={"#70A0AF"}
+                      bg="#F7FAFC"
+                      mb={3}
+                      size={"md"}
+                    />
+                  </FormControl>
+                </HStack>
+                <HStack>
+                  <FormControl id="lastLogin">
+                    <FormLabel mb={1} fontSize={15} color={"black"}>
+                      Last Sign-In
+                    </FormLabel>
+                    <Input
+                      isReadOnly={state}
+                      type=""
+                      value={lastLogin}
+                      maxLength={64}
+                      variant="login"
+                      borderWidth={"2px"}
+                      borderColor={"#70A0AF"}
+                      bg="#F7FAFC"
+                      mb={3}
+                      size={"md"}
+                    />
+                  </FormControl>
+                  <FormControl id="status">
+                    <FormLabel mb={1} fontSize={15} color={"black"}>
+                      Status
+                    </FormLabel>
+                    <Input
+                      isReadOnly={state}
+                      type=""
+                      value={status}
+                      maxLength={64}
+                      variant="login"
+                      borderWidth={"2px"}
+                      borderColor={"#70A0AF"}
+                      bg="#F7FAFC"
+                      mb={3}
+                      size={"md"}
+                    />
+                  </FormControl>
+                </HStack>
+              </>
+            )}
+          </form>
+          {msg}
+        </Box>
+      )}
       {Dialog(dialogStatus)}
     </>
   );

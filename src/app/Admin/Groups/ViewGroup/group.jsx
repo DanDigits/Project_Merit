@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { useSession } from "next-auth/react";
 import {
   AbsoluteCenter,
   Box,
@@ -41,6 +42,7 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 
 export default function Group(group_mode) {
   const router = useRouter();
+  const { data: session } = useSession();
   const [dialogStatus, setDialogStatus] = useState(false);
   const [supervisor, setSupervisor] = useState("");
   const [supEmail, setSupEmail] = useState("");
@@ -73,6 +75,7 @@ export default function Group(group_mode) {
   const handleSubmitInfo = (e) => {
     e.preventDefault();
     if (group_mode === "New") {
+      setGroupName("");
       /*createGroup({ groupName, supEmail }).then(
         (response) => {
           if (response.ok) {
@@ -100,6 +103,12 @@ export default function Group(group_mode) {
   };
 
   useEffect(() => {
+    if (session) {
+      if (session?.user.role !== "Admin") {
+        window.location.replace("/Dashboard/Home");
+      }
+    }
+
     if (group_mode === "View") {
       if (groupName !== "" && groupName !== null) {
         setHasGroupName(true);
@@ -245,104 +254,106 @@ export default function Group(group_mode) {
           </AbsoluteCenter>
         </>
       )}
-      <Box alignContent="left" w={"100%"}>
-        <form
-          className="flex"
-          id="group-form"
-          onSubmit={(e) => handleSubmitInfo(e)}
-        >
-          <FormControl id="groupName" isRequired>
-            <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-              Group Name:
-            </FormLabel>
-            <Input
-              isReadOnly={state}
-              type=""
-              value={groupName}
-              maxLength={64}
-              variant="login"
-              borderWidth={"2px"}
-              borderColor={"#70A0AF"}
-              bg="#F7FAFC"
-              mb={3}
-              size={"md"}
-              onChange={(e) => setGroupName(e.target.value)}
-            />
-          </FormControl>
-          <FormControl
-            display={group_mode === "View" ? "initial" : "none"}
-            id="supervisor"
+      {session?.user.role == "Admin" && (
+        <Box alignContent="left" w={"100%"}>
+          <form
+            className="flex"
+            id="group-form"
+            onSubmit={(e) => handleSubmitInfo(e)}
           >
-            <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-              Supervisor:
-            </FormLabel>
-            <Input
-              isReadOnly={state}
-              type=""
-              value={supervisor}
-              maxLength={64}
-              variant="login"
-              borderWidth={"2px"}
-              borderColor={"#70A0AF"}
-              bg="#F7FAFC"
-              mb={3}
-              size={"md"}
-              onChange={(e) => setSupervisor(e.target.value)}
-            />
-          </FormControl>
-          <FormControl id="supEmail">
-            <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-              Supervisor Email:
-            </FormLabel>
-            <Input
-              isReadOnly={state}
-              type=""
-              value={supEmail}
-              maxLength={64}
-              variant="login"
-              borderWidth={"2px"}
-              borderColor={"#70A0AF"}
-              bg="#F7FAFC"
-              mb={3}
-              size={"md"}
-              onChange={(e) => setSupEmail(e.target.value)}
-            />
-          </FormControl>
-          <>
-            {group_mode === "View" && (
-              <>
-                <FormControl id="total">
-                  <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-                    Total Members:
-                  </FormLabel>
-                  <Input
-                    isReadOnly={state}
-                    type=""
-                    value={total}
-                    maxLength={64}
-                    variant="login"
-                    borderWidth={"2px"}
-                    borderColor={"#70A0AF"}
-                    bg="#F7FAFC"
-                    mb={3}
-                    size={"md"}
-                  />
-                </FormControl>
-              </>
-            )}
-          </>
-          <>
-            {group_mode != "New" && (
-              <>
-                <Text fontWeight={"semibold"} fontSize={15} color={"#331E38"}>
-                  Group Members:
-                </Text>
-                <GroupUsers mode={group_mode} columns={columns} data={data} />
-              </>
-            )}
-          </>
-        </form>
-      </Box>
+            <FormControl id="groupName" isRequired>
+              <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                Group Name:
+              </FormLabel>
+              <Input
+                isReadOnly={state}
+                type=""
+                value={groupName}
+                maxLength={64}
+                variant="login"
+                borderWidth={"2px"}
+                borderColor={"#70A0AF"}
+                bg="#F7FAFC"
+                mb={3}
+                size={"md"}
+                onChange={(e) => setGroupName(e.target.value)}
+              />
+            </FormControl>
+            <FormControl
+              display={group_mode === "View" ? "initial" : "none"}
+              id="supervisor"
+            >
+              <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                Supervisor:
+              </FormLabel>
+              <Input
+                isReadOnly={state}
+                type=""
+                value={supervisor}
+                maxLength={64}
+                variant="login"
+                borderWidth={"2px"}
+                borderColor={"#70A0AF"}
+                bg="#F7FAFC"
+                mb={3}
+                size={"md"}
+                onChange={(e) => setSupervisor(e.target.value)}
+              />
+            </FormControl>
+            <FormControl id="supEmail">
+              <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                Supervisor Email:
+              </FormLabel>
+              <Input
+                isReadOnly={state}
+                type=""
+                value={supEmail}
+                maxLength={64}
+                variant="login"
+                borderWidth={"2px"}
+                borderColor={"#70A0AF"}
+                bg="#F7FAFC"
+                mb={3}
+                size={"md"}
+                onChange={(e) => setSupEmail(e.target.value)}
+              />
+            </FormControl>
+            <>
+              {group_mode === "View" && (
+                <>
+                  <FormControl id="total">
+                    <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                      Total Members:
+                    </FormLabel>
+                    <Input
+                      isReadOnly={state}
+                      type=""
+                      value={total}
+                      maxLength={64}
+                      variant="login"
+                      borderWidth={"2px"}
+                      borderColor={"#70A0AF"}
+                      bg="#F7FAFC"
+                      mb={3}
+                      size={"md"}
+                    />
+                  </FormControl>
+                </>
+              )}
+            </>
+            <>
+              {group_mode != "New" && (
+                <>
+                  <Text fontWeight={"semibold"} fontSize={15} color={"#331E38"}>
+                    Group Members:
+                  </Text>
+                  <GroupUsers mode={group_mode} columns={columns} data={data} />
+                </>
+              )}
+            </>
+          </form>
+        </Box>
+      )}
       {Dialog(dialogStatus)}
     </>
   );

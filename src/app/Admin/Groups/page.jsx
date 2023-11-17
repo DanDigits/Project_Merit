@@ -1,16 +1,10 @@
 "use client";
 /* eslint-disable no-unused-vars */
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Center, Spinner, Text, Button, Icon, Heading } from "@chakra-ui/react";
 import { PiEyeBold } from "react-icons/pi";
 import GroupTable from "./GroupTable";
-import { getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
 import { getAllGroups } from "./../../actions/Group.js";
@@ -36,6 +30,7 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 
 export default function Page() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [groups, setGroups] = useState("");
   const [data, setData] = useState("");
 
@@ -52,6 +47,12 @@ export default function Page() {
   );
 
   useEffect(() => {
+    if (session) {
+      if (session?.user.role !== "Admin") {
+        window.location.replace("/Dashboard/Home");
+      }
+    }
+
     if (!hasGroups) {
       console.log("!hasgroups", hasGroups);
       setIsLoading(true);
@@ -155,7 +156,7 @@ export default function Page() {
   return (
     <>
       {hasError && <Text>SOMETHING WENT WRONG</Text>}
-      {isLoading ? (
+      {isLoading && (
         <>
           <Center>
             <Spinner
@@ -167,7 +168,8 @@ export default function Page() {
             />
           </Center>
         </>
-      ) : (
+      )}
+      {session?.user.role == "Admin" && (
         <>
           <Heading mb={10}>Manage Groups</Heading>
           <GroupTable columns={columns} data={data} />

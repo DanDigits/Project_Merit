@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable no-unused-vars */
-import { React, useState } from "react";
-import { redirect } from "next/navigation";
+import { React, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -10,9 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Card,
-  HStack,
   Heading,
-  Input,
   Button,
   ButtonGroup,
   Link,
@@ -24,6 +22,8 @@ import secureLocalStorage from "react-secure-storage";
 import { deleteUser } from "./../../../actions/User.js";
 
 export default function Page() {
+  const { data: session } = useSession();
+  const [role, setRole] = useState("");
   const [mode, setMode] = useState("View");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [email, setEmail] = useState(
