@@ -1,6 +1,7 @@
 "use client";
 import { ChakraProvider } from "@chakra-ui/react";
 import { customTheme } from "../styles/customTheme";
+import React from "react";
 import { useEffect, useState } from "react";
 import { getSession, useSession } from "next-auth/react";
 import {
@@ -14,6 +15,7 @@ import {
   useColorModeValue,
   Drawer,
   DrawerContent,
+  Text,
   useDisclosure,
   Menu,
   MenuButton,
@@ -21,7 +23,7 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
-import { FaUser, FaUsers } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
 import {
   AiOutlineFileProtect,
   AiFillHome,
@@ -72,16 +74,7 @@ export default function SidebarWithHeader({ children }) {
 }
 
 const SidebarContent = ({ onClose, ...rest }) => {
-  const [role, setRole] = useState("User");
-  const { update } = useSession();
-
-  useEffect(() => {
-    getSession().then((session) => {
-      //setRole("Supervisor");
-      setRole(session.user.role);
-    });
-  }, [update]);
-
+  //const router = useRouter();
   return (
     <Box
       boxShadow={"md"}
@@ -107,59 +100,28 @@ const SidebarContent = ({ onClose, ...rest }) => {
         />
       </Flex>
       <VStack mt="50px" ml={10} spacing={14} alignItems="left" w="100%">
-        <NextLink href="/Dashboard/Home" passHref>
+        <NextLink href="/Admin/Users">
           <Button
             variant="ghost"
             onClick={onClose}
             fontSize={{ base: "2xl", md: "xl" }}
             textColor={"#031926"}
             _hover={{ bg: "#1c303c", color: "white" }}
-            leftIcon={<AiFillHome />}
           >
-            Home
+            Users
           </Button>
         </NextLink>
-
-        <NextLink href={"/Dashboard/Reports"} passHref>
+        <NextLink href={"/Admin/Groups"} passHref>
           <Button
             variant="ghost"
             onClick={onClose}
             fontSize={{ base: "2xl", md: "xl" }}
             textColor={"#031926"}
             _hover={{ bg: "#1c303c", color: "white" }}
-            leftIcon={<AiFillFolder />}
           >
-            Reports
+            Groups
           </Button>
         </NextLink>
-
-        <NextLink href={"/Dashboard/Guidelines"} passHref>
-          <Button
-            variant="ghost"
-            onClick={onClose}
-            fontSize={{ base: "2xl", md: "xl" }}
-            textColor={"#031926"}
-            _hover={{ bg: "#1c303c", color: "white" }}
-            leftIcon={<AiFillFile />}
-          >
-            Guidelines
-          </Button>
-        </NextLink>
-
-        {role === "Supervisor" && (
-          <NextLink href={"/Dashboard/Group"} passHref>
-            <Button
-              variant="ghost"
-              onClick={onClose}
-              fontSize={{ base: "2xl", md: "xl" }}
-              textColor={"#031926"}
-              _hover={{ bg: "#1c303c", color: "white" }}
-              leftIcon={<FaUsers />}
-            >
-              Group
-            </Button>
-          </NextLink>
-        )}
       </VStack>
     </Box>
   );
@@ -173,6 +135,19 @@ const MobileNav = ({ onOpen, ...rest }) => {
     e.preventDefault();
     signOut({ callbackUrl: "/Auth/Logout" });
   };
+
+  const [rank, setRank] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [suffix, setSuffix] = useState("");
+  const { update } = useSession();
+
+  useEffect(() => {
+    getSession().then((session) => {
+      setRank(session.user.rank);
+      setLastName(session.user.lastName);
+      setSuffix(session.user.suffix);
+    });
+  }, [update]);
 
   return (
     <Flex
@@ -194,18 +169,6 @@ const MobileNav = ({ onOpen, ...rest }) => {
         icon={<FiMenu />}
       />
       <Box justifyContent={{ base: "space-between", md: "flex-end" }}>
-        <Button
-          variant="ghost"
-          onClick={() => router.push("/Dashboard/NewReport")}
-          fontSize={20}
-          textColor={"white"}
-          _hover={{ bg: "white", color: "#031926" }}
-          textOverflow={"inherit"}
-          leftIcon={<AiOutlineFileAdd />}
-        >
-          New Report
-        </Button>
-
         <Menu>
           <MenuButton
             as={Button}
@@ -218,7 +181,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
           <MenuList>
             <MenuItem
               textColor={"#331E38"}
-              onClick={() => router.push("/Dashboard/Profile")}
+              onClick={() => router.push("/Admin/Profile")}
             >
               Profile
             </MenuItem>

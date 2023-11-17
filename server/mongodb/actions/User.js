@@ -201,17 +201,32 @@ export async function renameGroup(group, groupData) {
   const user = await UserSchema?.find({ group }).catch(function (err) {
     return err;
   });
-  console.log(group);
   while (user?.[i] != undefined) {
     index = user[i].group?.indexOf(`${group}`);
-    user[i].group[index] = groupData.newGroup;
-    console.log(user[i].group[index]);
+    user[i].group = groupData.newGroup;
     await UserSchema?.findOneAndUpdate(
       { email: user[i].email },
       { group: user[i].group }
     );
     i++;
   }
+
+  i = 0;
+  const supervisor = await UserSchema?.find({ supervisedGroup: group }).catch(
+    function (err) {
+      return err;
+    }
+  );
+  while (supervisor?.[i] != undefined) {
+    index = supervisor[i].supervisedGroup?.indexOf(`${group}`);
+    supervisor[i].supervisedGroup[index] = groupData.newGroup;
+    await UserSchema?.findOneAndUpdate(
+      { email: supervisor[i].email },
+      { supervisedGroup: supervisor[i].supervisedGroup }
+    );
+    i++;
+  }
+
   user.id = "OK";
   return user;
 }
@@ -269,7 +284,8 @@ export async function deleteGroup(group) {
   });
   while (user?.[i] != undefined) {
     index = user[i].group?.indexOf(`${group}`);
-    user[i].group.splice(index, 1);
+    user[i].group = "";
+    console.log(user[i].group);
     await UserSchema?.findOneAndUpdate(
       { email: user[i].email },
       { group: user[i].group }
@@ -432,7 +448,7 @@ export async function getGroupOrphans() {
 export async function getAllUsers() {
   await mongoDB();
   let filter =
-    "email firstName lastName suffix id role group supervisedGroup totalReports mostRecentReportDate lastLogin suspended";
+    "email rank firstName lastName suffix id role group supervisedGroup totalReports mostRecentReportDate lastLogin suspended";
   const users = await UserSchema?.find({ email: { $exists: true } }, filter)
     .sort({ lastName: 1, firstName: 1 })
     .catch(function (err) {

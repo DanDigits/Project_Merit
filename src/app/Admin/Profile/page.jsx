@@ -2,7 +2,6 @@
 import { useState } from "react";
 import UpdateProfile from "./UpdateProfile";
 import UpdatePassword from "./UpdatePassword";
-import GroupMembership from "./GroupMembership";
 import { signOut } from "next-auth/react";
 import { Button, ButtonGroup, VStack } from "@chakra-ui/react";
 
@@ -37,14 +36,6 @@ export default function Page() {
             Password
           </Button>
           <Button
-            bgColor={"#6abbc4"}
-            color={"white"}
-            _hover={{ bgColor: "#031926", color: "white" }}
-            onClick={() => setMode("Group")}
-          >
-            Group
-          </Button>
-          <Button
             size={{ base: "sm", md: "md" }}
             bgColor={"#6abbc4"}
             color={"white"}
@@ -62,11 +53,6 @@ export default function Page() {
         {mode === "UpdatePassword" && (
           <>
             <UpdatePassword />
-          </>
-        )}
-        {mode === "Group" && (
-          <>
-            <GroupMembership />
           </>
         )}
       </VStack>

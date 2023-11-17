@@ -115,6 +115,8 @@ export const updateUser = async ({
   role,
   group,
   supervisedGroup,
+  suspended,
+  verified,
 }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
     method: "PATCH",
@@ -131,6 +133,8 @@ export const updateUser = async ({
       role,
       group,
       supervisedGroup,
+      suspended,
+      verified,
     }),
   });
   console.log("Update Response:", response.statusText);
@@ -156,13 +160,11 @@ export const updatePassword = async ({ email, password, newPassword }) => {
   return response;
 };
 
-export const deleteUser = async ({ email }) => {
+export const deleteUser = async ({ userArray }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.delete, {
     method: "DELETE",
     mode: "same-origin",
-    headers: {
-      user: email,
-    },
+    body: JSON.stringify({ email: userArray }),
   });
   console.log(response.statusText);
 
