@@ -202,7 +202,7 @@ export async function renameGroup(group, groupData) {
     return err;
   });
   while (user?.[i] != undefined) {
-    index = user[i].group?.indexOf(`${group}`);
+    //index = user[i].group?.indexOf(`${group}`);
     user[i].group = groupData.newGroup;
     await UserSchema?.findOneAndUpdate(
       { email: user[i].email },
@@ -218,8 +218,10 @@ export async function renameGroup(group, groupData) {
     }
   );
   while (supervisor?.[i] != undefined) {
-    index = supervisor[i].supervisedGroup?.indexOf(`${group}`);
-    supervisor[i].supervisedGroup[index] = groupData.newGroup;
+    console.log(supervisor[i].supervisedGroup);
+    console.log(group);
+    //index = supervisor[i].supervisedGroup?.indexOf(`${group}`);
+    supervisor[i].supervisedGroup = groupData.newGroup;
     await UserSchema?.findOneAndUpdate(
       { email: supervisor[i].email },
       { supervisedGroup: supervisor[i].supervisedGroup }
