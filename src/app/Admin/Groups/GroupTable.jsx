@@ -34,7 +34,7 @@ import {
   Stack,
   useDisclosure,
 } from "@chakra-ui/react";
-//import { deleteGroup } from "";
+import { deleteGroup } from "src/app/actions/Group";
 import { useRouter } from "next/navigation";
 
 export default function GroupTable({ columns, data }) {
@@ -67,14 +67,13 @@ export default function GroupTable({ columns, data }) {
       deleteGroup({ groupArray }).then((response) => {
         if (response.ok) {
           {
-            setDeleteLoading(false);
             window.location.reload();
           }
         } else {
-          setDeleteLoading(false);
           alert("Delete failed");
         }
       });
+      setDeleteLoading(false);
     }
   };
 

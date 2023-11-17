@@ -45,6 +45,7 @@ export default function Page() {
 
   const handleSubmitInfo = useCallback(
     (groupName) => {
+      console.log(groupName);
       secureLocalStorage.setItem("groupName", groupName);
       router.push("/Admin/Groups/ViewGroup");
     },
@@ -123,7 +124,7 @@ export default function Page() {
               borderColor={"#354751"}
               borderWidth={"thin"}
               _hover={{ color: "black", bg: "white", opacity: 1 }}
-              onClick={() => handleSubmitInfo(cell.row.original.groupName)}
+              onClick={() => handleSubmitInfo(cell.row.original.group)}
             >
               <Icon as={PiEyeBold} />
             </Button>
@@ -141,6 +142,7 @@ export default function Page() {
               (row.suffix ? ` ${row.suffix}` : ``) +
               `, ${row.firstName}`
             : "",
+        id: "supervisor",
         header: "Supervisor",
       },
       {

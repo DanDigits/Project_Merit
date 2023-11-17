@@ -170,7 +170,7 @@ export default function User(user_mode) {
         console.log("hasEmail && !hasEntry", email, hasEntry);
         setIsLoading(true);
         setHasError(false);
-        if (email == "null") {
+        if (email === "null") {
           router.push("/Admin/Users");
         } else {
           getUser({ email }).then((response) => {
