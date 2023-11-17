@@ -25,6 +25,9 @@ export async function login({ email, password }) {
   if (user.verified == false) {
     throw new Error("Unverified account");
   }
+  if (user.suspended == true) {
+    throw new Error("Suspended account");
+  }
 
   //Update last signed in date
   modifyUser(email, { lastLogin: date.toISOString().substring(0, 10) });
