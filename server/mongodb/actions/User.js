@@ -521,7 +521,7 @@ export async function removeMultipleUsers(users) {
     while (i < length) {
       user = await UserSchema?.findOneAndUpdate(
         { email: users?.email[i] },
-        { group: [] }
+        { group: "" }
       ).catch(function (err) {
         return err;
       });

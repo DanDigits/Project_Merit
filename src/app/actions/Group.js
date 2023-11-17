@@ -49,11 +49,8 @@ export const removeFromGroup = async ({ userArray }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
     method: "PATCH",
     mode: "same-origin",
-    headers: {
-      user: email,
-    },
     body: JSON.stringify({
-      userArray,
+      email: userArray,
     }),
   });
   console.log("Update Response:", response.statusText);
