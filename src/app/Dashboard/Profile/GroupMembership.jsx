@@ -217,6 +217,7 @@ export default function UpdatePassword() {
                   _hover={{ bgColor: "#706993", color: "white" }}
                   form="report-form"
                   type="submit"
+                  isLoading={leaveLoading}
                   onClick={onOpen}
                 >
                   Leave Group

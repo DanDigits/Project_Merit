@@ -63,7 +63,6 @@ export default function Page() {
               .json()
               .then((response) => setGroups(response))
               .then(setHasGroups(true))
-              .then(() => console.log(groups))
           : setHasError(true);
       });
       setIsLoading(false);
@@ -79,7 +78,7 @@ export default function Page() {
         arr[i].splice(0, 1);
         arr[i] = arr[i][0];
       }
-      console.log(arr);
+      //console.log(arr);
       setData(arr);
       setIsLoading(false);
     }

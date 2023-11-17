@@ -100,8 +100,10 @@ export default function Page() {
   };
 
   const handleDelete = () => {
-    console.log("Attempting to delete group: " + groupName);
-    deleteGroup({ groupName }).then((response) => {
+    var groupArray = [];
+    groupArray.push(groupName);
+    console.log("Attempting to delete group: " + groupArray);
+    deleteGroup({ groupArray }).then((response) => {
       if (response.ok) {
         {
           window.location.reload();

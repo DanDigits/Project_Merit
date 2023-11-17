@@ -506,17 +506,29 @@ export async function getGroups() {
   await mongoDB();
   let i = 0;
   let array = [];
+  let uniques;
   let groups = await UserSchema?.find().distinct("group");
+  let supervisedGroups = await UserSchema?.find().distinct("supervisedGroup");
 
   // Filter out empty strings
   groups = groups.filter((group) => group !== "" && group != null);
+  supervisedGroups = supervisedGroups.filter(
+    (supervisedGroup) => supervisedGroup !== "" && supervisedGroup != null
+  );
 
-  while (i < groups?.length) {
+  // Create array with unique values from both results
+  function uniqueFilter(value, index, self) {
+    return self.indexOf(value) === index;
+  }
+  groups = groups.concat(supervisedGroups);
+  uniques = groups.filter(uniqueFilter);
+
+  while (i < uniques?.length) {
     let supervisor = await UserSchema?.find(
-      { supervisedGroup: groups[i] },
+      { supervisedGroup: uniques[i] },
       "firstName lastName rank suffix email"
     );
-    array.push([groups[i], supervisor[0]]);
+    array.push([uniques[i], supervisor[0]]);
     i++;
   }
   return array;
