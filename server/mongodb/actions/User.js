@@ -202,11 +202,9 @@ export async function renameGroup(group, groupData) {
   const user = await UserSchema?.find({ group }).catch(function (err) {
     return err;
   });
-  console.log(group);
   while (user?.[i] != undefined) {
-    index = user[i].group?.indexOf(`${group}`);
+    //index = user[i].group?.indexOf(`${group}`);
     user[i].group = groupData.newGroup;
-    console.log(user[i].group);
     await UserSchema?.findOneAndUpdate(
       { email: user[i].email },
       { group: user[i].group }
@@ -215,15 +213,16 @@ export async function renameGroup(group, groupData) {
   }
 
   i = 0;
-  const supervisor = await UserSchema?.find({ supervisedGroup }).catch(
+  const supervisor = await UserSchema?.find({ supervisedGroup: group }).catch(
     function (err) {
       return err;
     }
   );
-  console.log(supervisedGroup);
   while (supervisor?.[i] != undefined) {
-    supervisor[i].supervisedGroup = groupData.newGroup;
     console.log(supervisor[i].supervisedGroup);
+    console.log(group);
+    //index = supervisor[i].supervisedGroup?.indexOf(`${group}`);
+    supervisor[i].supervisedGroup = groupData.newGroup;
     await UserSchema?.findOneAndUpdate(
       { email: supervisor[i].email },
       { supervisedGroup: supervisor[i].supervisedGroup }
@@ -402,7 +401,7 @@ export async function getGroup(group) {
   await mongoDB();
   let members = [];
   let categories = "Mission Leadership Resources Unit";
-  let supervisorFilter = "firstName lastName rank suffix";
+  let supervisorFilter = "firstName lastName rank suffix email";
   let filter =
     "email firstName lastName rank suffix mostRecentReportDate totalReports currentQuarter quarterReports" +
     " " +
@@ -463,28 +462,37 @@ export async function getAllUsers() {
 }
 
 export async function getSupervisor(group) {
-  let groupInfo = await getGroup(group);
-  let supervisor;
-  console.log(groupInfo);
+  let supervisors = [],
+    i = 0,
+    currentGroup = await getGroup(group);
 
-  // If current group isnt empty, push supervisor profile to supervisors
-  if (groupInfo != undefined) {
-    supervisor = groupInfo[0][0];
-    console.log(supervisor);
+  // If current group isnt empty, push supervisor profile to supervisors array
+  while (currentGroup?.[0]?.[i] != undefined) {
+    supervisors.push(currentGroup[0][i]);
+    i++;
   }
 
-  return supervisor;
+  return supervisors;
 }
 
 export async function getGroups() {
   await mongoDB();
+  let i = 0;
+  let array = [];
   let groups = await UserSchema?.find().distinct("group");
 
   // Filter out empty strings
-  groups = groups.filter((group) => group !== "" && group !== null);
+  groups = groups.filter((group) => group !== "" && group != null);
 
-  console.log(groups);
-  return groups;
+  while (i < groups?.length) {
+    let supervisor = await UserSchema?.find(
+      { supervisedGroup: groups[i] },
+      "firstName lastName rank suffix email"
+    );
+    array.push([groups[i], supervisor[0]]);
+    i++;
+  }
+  return array;
 }
 
 export async function removeMultipleUsers(users) {

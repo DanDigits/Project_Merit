@@ -797,35 +797,30 @@ PDFNameTree - represents a name tree object
               0x206c /* INHIBIT ARABIC FORM SHAPING */, 0x206d,
               0x206d /* ACTIVATE ARABIC FORM SHAPING */, 0x206e,
               0x206e /* NATIONAL DIGIT SHAPES */, 0x206f,
-              0x206f /* NOMINAL DIGIT SHAPES */
-              /**
+              0x206f /* NOMINAL DIGIT SHAPES */, /**
                * C.7 Inappropriate for canonical representation
                * @link https://tools.ietf.org/html/rfc3454#appendix-C.7
-               */, 0x2ff0, 0x2ffb /* [IDEOGRAPHIC DESCRIPTION CHARACTERS] */
-              /**
+               */ 0x2ff0, 0x2ffb /* [IDEOGRAPHIC DESCRIPTION CHARACTERS] */, /**
                * C.5 Surrogate codes
                * @link https://tools.ietf.org/html/rfc3454#appendix-C.5
-               */, 0xd800, 0xdfff, /**
+               */ 0xd800, 0xdfff, /**
                * C.3 Private use
                * @link https://tools.ietf.org/html/rfc3454#appendix-C.3
-               */ 0xe000, 0xf8ff /* [PRIVATE USE, PLANE 0] */
-              /**
+               */ 0xe000, 0xf8ff /* [PRIVATE USE, PLANE 0] */, /**
                * C.6 Inappropriate for plain text
                * @link https://tools.ietf.org/html/rfc3454#appendix-C.6
-               */, 0xfff9, 0xfff9 /* INTERLINEAR ANNOTATION ANCHOR */, 0xfffa,
+               */ 0xfff9, 0xfff9 /* INTERLINEAR ANNOTATION ANCHOR */, 0xfffa,
               0xfffa /* INTERLINEAR ANNOTATION SEPARATOR */, 0xfffb,
               0xfffb /* INTERLINEAR ANNOTATION TERMINATOR */, 0xfffc,
               0xfffc /* OBJECT REPLACEMENT CHARACTER */, 0xfffd,
-              0xfffd /* REPLACEMENT CHARACTER */
-              /**
+              0xfffd /* REPLACEMENT CHARACTER */, /**
                * C.9 Tagging characters
                * @link https://tools.ietf.org/html/rfc3454#appendix-C.9
-               */, 0xe0001, 0xe0001 /* LANGUAGE TAG */, 0xe0020,
-              0xe007f /* [TAGGING CHARACTERS] */
-              /**
+               */ 0xe0001, 0xe0001 /* LANGUAGE TAG */, 0xe0020,
+              0xe007f /* [TAGGING CHARACTERS] */, /**
                * C.3 Private use
                * @link https://tools.ietf.org/html/rfc3454#appendix-C.3
-               */, 0xf0000, 0xffffd /* [PRIVATE USE, PLANE 15] */, 0x100000,
+               */ 0xf0000, 0xffffd /* [PRIVATE USE, PLANE 15] */, 0x100000,
               0x10fffd,
               /* [PRIVATE USE, PLANE 16] */
             ]; // prettier-ignore-end
