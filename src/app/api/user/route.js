@@ -232,12 +232,17 @@ export async function POST(Request) {
   if (registrar?.role == "Admin") {
     req.verified = true;
     admin = true;
-    // Check to see if user already exists for supervisor creation
-    let exists = await getGroup(req.supervisedGroup);
-    if (exists[0][0] != undefined) {
-      exists[0][0].name = "ERROR";
-      exists[0][0].message = "GROUP EXISTS";
-      res = exists[0][0];
+    // Check to see if group already exists for supervisor creation
+    if (req.role == "Supervisor") {
+      let exists = await getGroup(req.supervisedGroup);
+      if (exists[0][0] != undefined) {
+        // Setting HTTP responses, never create user due to error
+        exists[0][0].name = "ERROR";
+        exists[0][0].message = "GROUP EXISTS";
+        res = exists[0][0];
+      } else {
+        res = await signUp(req);
+      }
     } else {
       res = await signUp(req);
     }
@@ -318,7 +323,7 @@ export async function DELETE(Request) {
   const group = requestHeaders?.get("group");
 
   if (group != undefined) {
-    res = await deleteGroup(group);
+    res = await deleteGroup(req);
   } else {
     res = await deleteUser(req);
   }
