@@ -77,7 +77,6 @@ export default function GroupTable({ group, columns, data }) {
       removeFromGroup({ userArray }).then((response) => {
         if (response.ok) {
           {
-            //alert("removed from group");
             window.location.reload();
           }
         } else {

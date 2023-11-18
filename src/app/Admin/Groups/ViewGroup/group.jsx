@@ -10,14 +10,35 @@ import {
   Spinner,
   Button,
   Text,
+  useDisclosure,
+  Table,
+  Tbody,
+  Thead,
+  Th,
+  Tr,
+  Td,
+  HStack,
+  ButtonGroup,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import { PiEyeDuotone } from "react-icons/pi";
 import { useRouter } from "next/navigation";
 import Dialog from "../NewGroup/dialog";
-//import { createGroup,  updateGroup } from "";
+import { removeFromGroup, getGroup } from "src/app/actions/Group";
+import { getUser, updateUser } from "src/app/actions/User";
 
-import GroupUsers from "./groupusers";
-import { getGroup } from "src/app/actions/Group";
 import secureLocalStorage from "react-secure-storage";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
@@ -41,11 +62,21 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 
 export default function Group(group_mode) {
   const router = useRouter();
+  const [rowSelection, setRowSelection] = useState({});
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [openSearch, setOpenSearch] = useState(false);
+  const [searchEmail, setSearchEmail] = useState("");
+  const [status, setStatus] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [removeLoading, setRemoveLoading] = useState(false);
+  const [refresh, setRefresh] = useState(0);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [dialogStatus, setDialogStatus] = useState(false);
   const [supervisor, setSupervisor] = useState("");
   const [supEmail, setSupEmail] = useState("");
   const [total, setTotal] = useState(0);
-  const [members, setMembers] = useState("");
+  const [data, setData] = useState("");
 
   const [entry, setEntry] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -70,6 +101,58 @@ export default function Group(group_mode) {
     },
     [router]
   );
+
+  const handleChange = (e) => {
+    setSearchEmail(e);
+    setStatus("");
+  };
+
+  const handleSearch = (email) => {
+    setSearchLoading(true);
+    if (email != "") {
+      console.log("searching email:", email);
+      getUser({ email }).then((response) => {
+        response.ok
+          ? response
+              .json()
+              .then((response) => JSON.parse(JSON.stringify(response)).group)
+              .then((response) => {
+                response === ""
+                  ? updateUser({ email, group: groupName }).then((response) => {
+                      if (response.ok) {
+                        setStatus("success");
+                        setRefresh(refresh + 1);
+                        setEntry(null);
+                        setHasEntry(false);
+                      } else setStatus("error");
+                      console.log("update user:", email);
+                    })
+                  : setStatus("assigned");
+              })
+          : setStatus("invalid");
+        console.log("got user:", email);
+      });
+    }
+    setSearchLoading(false);
+  };
+
+  const handleRemove = (userArray) => {
+    if (userArray && userArray.length != 0) {
+      setRemoveLoading(true);
+      removeFromGroup({ userArray }).then((response) => {
+        if (response.ok) {
+          {
+            setRefresh(refresh + 1);
+            setEntry(null);
+            setHasEntry(false);
+          }
+        } else {
+          alert("Remove failed");
+        }
+      });
+      setRemoveLoading(false);
+    }
+  };
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
@@ -101,7 +184,8 @@ export default function Group(group_mode) {
   };
 
   useEffect(() => {
-    if (group_mode === "View") {
+    console.log("refresh", refresh);
+    if (group_mode === "View" || refresh > 0) {
       if (groupName !== "" && groupName !== null) {
         setHasGroupName(true);
         console.log("hasGroupName:", groupName);
@@ -142,12 +226,12 @@ export default function Group(group_mode) {
               .join(" ")
           );
           setTotal(arr[1].length);
-          setMembers(arr[1]);
+          setData(arr[1]);
           setIsLoading(false);
         }
       }
     }
-  }, [hasEntry, hasGroupName, groupName, entry, group_mode, router]);
+  }, [hasEntry, hasGroupName, groupName, entry, group_mode, router, refresh]);
 
   const columns = useMemo(
     () => [
@@ -218,23 +302,21 @@ export default function Group(group_mode) {
     ],
     []
   );
-  const data = useMemo(
-    () => [
-      {
-        firstName: "user1",
-        email: "user1@gmail.com",
-      },
-      {
-        firstName: "user2",
-        email: "user2@gmail.com",
-      },
-      {
-        firstName: "user3",
-        email: "user3@gmail.com",
-      },
-    ],
-    []
-  );
+  const table = useReactTable({
+    data,
+    columns,
+    state: {
+      rowSelection,
+      globalFilter: globalFilter,
+    },
+    onGlobalFilterChange: setGlobalFilter,
+    enableRowSelection: true, //enable row selection for all rows
+    onRowSelectionChange: setRowSelection,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    debugTable: true,
+  });
 
   return (
     <>
@@ -293,6 +375,7 @@ export default function Group(group_mode) {
               bg="#F7FAFC"
               mb={3}
               size={"md"}
+              onChange={(e) => setSupervisor(e.target.value)}
             />
           </FormControl>
           <FormControl id="supEmail" isRequired>
@@ -339,14 +422,155 @@ export default function Group(group_mode) {
           <>
             {group_mode != "New" && (
               <>
-                <Text fontWeight={"semibold"} fontSize={15} color={"#331E38"}>
-                  Group Members:
-                </Text>
-                <GroupUsers
-                  mode={group_mode}
-                  columns={columns}
-                  data={members}
-                />
+                <Box mx={{ base: -4, md: 0 }}>
+                  <HStack my={2} justify={"space-between"}>
+                    <Input
+                      size={{ base: "sm", md: "md" }}
+                      w={{ base: "50%", md: "xs" }}
+                      variant="login"
+                      borderWidth={"1px"}
+                      borderColor={"#70A0AF"}
+                      bg="#ECECEC"
+                      value={globalFilter}
+                      onChange={(e) => setGlobalFilter(e.target.value)}
+                      placeholder="Search group"
+                    />
+
+                    <ButtonGroup
+                      display={group_mode === "View" ? "none" : "initial"}
+                    >
+                      <Button
+                        size={{ base: "sm", md: "md" }}
+                        bgColor={"#DF2935"}
+                        color={"white"}
+                        _hover={{ bgColor: "#031926", color: "white" }}
+                        isLoading={removeLoading}
+                        onClick={onOpen}
+                      >
+                        Remove
+                      </Button>
+                      <AlertDialog isOpen={isOpen} onClose={onClose}>
+                        <AlertDialogOverlay>
+                          <AlertDialogContent>
+                            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                              Remove Users
+                            </AlertDialogHeader>
+                            <AlertDialogBody>Are you sure?</AlertDialogBody>
+                            <AlertDialogFooter>
+                              <Button onClick={onClose}>Cancel</Button>
+                              <Button
+                                colorScheme="red"
+                                onClick={() => {
+                                  onClose();
+                                  handleRemove(
+                                    table
+                                      .getSelectedRowModel()
+                                      .flatRows.map(
+                                        ({ original }) => original.email
+                                      )
+                                  );
+                                }}
+                                ml={3}
+                              >
+                                Remove
+                              </Button>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialogOverlay>
+                      </AlertDialog>
+
+                      <Button
+                        size={{ base: "sm", md: "md" }}
+                        bgColor={"#7eb67d"}
+                        color={"black"}
+                        _hover={{ bgColor: "#031926", color: "white" }}
+                        onClick={() => setOpenSearch(!openSearch)}
+                      >
+                        Add Member
+                      </Button>
+                    </ButtonGroup>
+                  </HStack>
+                  <Box
+                    p={2}
+                    display={
+                      openSearch && group_mode === "Edit" ? "initial" : "none"
+                    }
+                  >
+                    <Text>Enter member email:</Text>
+                    <HStack justify={"flex-start"}>
+                      <Input
+                        value={searchEmail}
+                        size={{ base: "sm", md: "md" }}
+                        w={{ base: "50%", md: "xs" }}
+                        variant="login"
+                        borderWidth={"1px"}
+                        borderColor={"#70A0AF"}
+                        bg="#ECECEC"
+                        onChange={(e) => handleChange(e.target.value)}
+                      />
+                      <Button
+                        size={{ base: "sm", md: "md" }}
+                        bgColor={"#6abbc4"}
+                        color={"black"}
+                        _hover={{ bgColor: "#031926", color: "white" }}
+                        isLoading={searchLoading}
+                        onClick={() => handleSearch(searchEmail)}
+                      >
+                        Search
+                      </Button>
+                    </HStack>
+                    {status === "error" && (
+                      <p>There was an error when searching for member.</p>
+                    )}
+                    {status === "invalid" && (
+                      <p>The member you entered does not exist.</p>
+                    )}
+                    {status === "assigned" && (
+                      <p>The member you entered is already in a group.</p>
+                    )}
+                    {status === "success" && <p>Member successfully added.</p>}
+                  </Box>
+
+                  <Box overflowX={"auto"}>
+                    <Table variant={"mytable"} color={"black"}>
+                      <Thead>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                          <Tr key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => (
+                              <Th key={header.id}>
+                                {header.isPlaceholder
+                                  ? null
+                                  : flexRender(
+                                      header.column.columnDef.header,
+                                      header.getContext()
+                                    )}
+                              </Th>
+                            ))}
+                          </Tr>
+                        ))}
+                      </Thead>
+                      <Tbody>
+                        {table.getRowModel().rows.map((row) => (
+                          <Tr key={row.id}>
+                            {row.getVisibleCells().map((cell) => (
+                              <Td key={cell.id}>
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </Td>
+                            ))}
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </Box>
+                  <div>
+                    {Object.keys(rowSelection).length} of{" "}
+                    {table.getPreFilteredRowModel().rows.length} Total Rows
+                    Selected
+                  </div>
+                </Box>
               </>
             )}
           </>
