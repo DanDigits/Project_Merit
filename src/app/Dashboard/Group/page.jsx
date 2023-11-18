@@ -207,11 +207,11 @@ export default function Page() {
         setGroupLength(0);
         setGroupUsers([]);
       } else {
-        var arr = JSON.parse(JSON.stringify(group));
-        if (arr) {
-          //console.log("Arr = ", arr);
-          setGroupLength(arr["1"].length);
-          setGroupUsers(arr["1"]);
+        var arr2 = JSON.parse(JSON.stringify(group));
+        if (arr2) {
+          //console.log("Arr2 = ", arr2);
+          setGroupLength(arr2["1"].length);
+          setGroupUsers(arr2["1"]);
           console.log(groupUsers);
         }
       }

@@ -4,7 +4,8 @@ import { Select } from "@chakra-ui/react";
 
 const options = ["Supervisor", "User"];
 
-const RoleFilter = ({ columnFilters, setColumnFilters }) => {
+//const RoleFilter = ({ columnFilters, setColumnFilters }) => {
+const RoleFilter = ({ setColumnFilters }) => {
   const onChange = (id, value) => {
     setColumnFilters((prev) => {
       return prev.concat({

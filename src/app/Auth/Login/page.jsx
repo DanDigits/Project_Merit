@@ -20,7 +20,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useSearchParams } from "next/navigation";
-import { signIn, getSession, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import {
   signUp,
   requestReset,

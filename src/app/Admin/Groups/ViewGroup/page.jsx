@@ -19,6 +19,7 @@ import {
 import Group from "./group";
 import secureLocalStorage from "react-secure-storage";
 import { useSession } from "next-auth/react";
+import { deleteGroup } from "./../../../actions/Group.js";
 
 export default function Page() {
   const { data: session } = useSession();

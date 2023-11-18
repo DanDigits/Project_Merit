@@ -33,11 +33,10 @@ export default function UpdatePassword() {
   const [hasLeader, setHasLeader] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState(false);
+  const [status] = useState(false);
   const [profile, setProfile] = useState(null);
   const [hasProfile, setHasProfile] = useState(false);
   const [leaderInfo, setLeaderInfo] = useState(null);
-  const [hasLeaderInfo, setHasLeaderInfo] = useState(false);
   const [leaveLoading, setLeaveLoading] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -75,7 +74,6 @@ export default function UpdatePassword() {
         console.log("arr", arr);
         setHasGroup(true);
       }
-
       setHasError(false);
       setIsLoading(false);
     }
@@ -97,13 +95,15 @@ export default function UpdatePassword() {
 
     if (hasEmail && hasProfile && hasGroup && hasLeader) {
       setIsLoading(true);
-      var arr = JSON.parse(JSON.stringify(leader));
-      if (arr) {
+      var arr2 = JSON.parse(JSON.stringify(leader));
+      if (arr2) {
         setLeaderInfo(
-          [arr.rank, arr.lastName, arr.suffix].filter(Boolean).join(" ")
+          [arr2.rank, arr2.lastName, arr2.suffix, arr2.email]
+            .filter(Boolean)
+            .join(" ")
         );
-        console.log("arr", arr);
-        setHasLeaderInfo(true);
+        console.log("arr2", arr2);
+        console.log("leaderInfo: " + leaderInfo);
       }
 
       setHasError(false);
@@ -119,6 +119,7 @@ export default function UpdatePassword() {
     hasGroup,
     leader,
     hasLeader,
+    leaderInfo,
   ]);
 
   var userArray = [];

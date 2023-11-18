@@ -9,7 +9,6 @@ import { Button, ButtonGroup, VStack } from "@chakra-ui/react";
 export default function Page() {
   const [mode, setMode] = useState("View");
   const { data: session } = useSession();
-  const [role, setRole] = useState("");
 
   const handleLogout = (e) => {
     e.preventDefault();
