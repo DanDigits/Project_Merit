@@ -51,7 +51,7 @@ export default function Report(report_mode) {
   } else state = false;
 
   useEffect(() => {
-    getSession().then((session) => setEmail(session.user.email));
+    setEmail(session?.user.email);
 
     if (session) {
       if (session?.user.role === "Admin") {

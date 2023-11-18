@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { Stack, Heading } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
-import { getSession, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { getUser } from "./../../actions/User.js";
 import StatusBox from "./statusBox";
 
@@ -74,9 +74,10 @@ export default function Page() {
       setIsLoading(true);
       setHasError(false);
       console.log("Fetching email...");
-      getSession()
-        .then((session) => setEmail(session.user.email))
-        .then(() => setHasEmail(true));
+      setEmail(session?.user.email);
+      if (email && email != "") {
+        setHasEmail(true);
+      }
       console.log("Got email");
       setIsLoading(false);
     }
@@ -103,7 +104,7 @@ export default function Page() {
     if (hasEmail && hasProfile) {
       setDashboard();
     }
-  }, [hasEmail, hasProfile, profile]);
+  }, [hasEmail, hasProfile, profile, session]);
 
   function setDashboard() {
     console.log("Setting Dashboard");
