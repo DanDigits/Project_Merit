@@ -141,13 +141,14 @@ export default function UserTable({ columns, data }) {
                   <Button onClick={onClose}>Cancel</Button>
                   <Button
                     colorScheme="red"
-                    onClick={() =>
+                    onClick={() => {
+                      onClose();
                       handleDelete(
                         table
                           .getSelectedRowModel()
                           .flatRows.map(({ original }) => original.email)
-                      )
-                    }
+                      );
+                    }}
                     ml={3}
                   >
                     Delete
