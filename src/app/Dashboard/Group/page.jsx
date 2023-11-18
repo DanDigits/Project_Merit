@@ -33,9 +33,13 @@ import {
 } from "@chakra-ui/react";
 import GroupTable from "./GroupTable";
 import { useRouter } from "next/navigation";
-import { getUser } from "./../../actions/User.js";
-import { getGroup } from "./../../actions/Group.js";
-import { renameGroup, deleteGroup } from "./../../actions/Group.js";
+import { getUser, updateUser } from "./../../actions/User.js";
+import {
+  renameGroup,
+  deleteGroup,
+  getGroup,
+  getAllGroups,
+} from "./../../actions/Group.js";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   const ref = useRef(null);
@@ -75,14 +79,16 @@ export default function Page() {
   const [hasGroup, setHasGroup] = useState(false);
   const [hasProfile, setHasProfile] = useState(false);
   const [hasGroupName, setHasGroupName] = useState(false);
-  const [index, setIndex] = useState("0");
 
+  const [hasAllGroups, setHasAllGroups] = useState(false);
+  const [allGroups, setAllGroups] = useState("");
   const [openCreate, setOpenCreate] = useState(false);
   const [searchGroup, setSearchGroup] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
   const [status, setStatus] = useState("");
   const [newName, setNewName] = useState("");
   const [email, setEmail] = useState("");
+  const [existingGroups, setExistingGroups] = useState("");
 
   const [fetching, setFetching] = useState(true);
   const [rename, setRename] = useState(false);
@@ -90,8 +96,27 @@ export default function Page() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleCreate = () => {
-    setStatus("invalid");
-    if (status === "success") window.location.reload;
+    if (searchGroup != "" && existingGroups != "") {
+      setSearchLoading(true);
+      var tempStatus = "success";
+      console.log("Comparing " + searchGroup + " against existing groups..");
+      for (var i = 0; i < existingGroups.length; i++) {
+        if (searchGroup === existingGroups[i]) {
+          tempStatus = "invalid";
+        }
+      }
+      console.log(tempStatus);
+      if (tempStatus != "invalid") {
+        updateUser({ email, supervisedGroup: searchGroup }).then((response) => {
+          if (response.ok) {
+            tempStatus = "success";
+            window.location.reload();
+          } else tempStatus = "error";
+        });
+      }
+      setStatus(tempStatus);
+      setSearchLoading(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -210,6 +235,29 @@ export default function Page() {
       }
       setIsLoading(false);
     }
+
+    if (hasGroupName && groupName === "" && !hasAllGroups) {
+      console.log("no group");
+      getAllGroups().then((response) => {
+        response.ok
+          ? response
+              .json()
+              .then((response) => setAllGroups(response))
+              .then(setHasAllGroups(true))
+          : setHasError(true);
+      });
+    }
+    if (hasGroupName && groupName === "" && hasAllGroups) {
+      console.log("no group; arr");
+      var temp = [];
+      var arr = JSON.parse(JSON.stringify(allGroups));
+      if (arr) {
+        for (var i = 0; i < arr.length; i++) {
+          temp.push(arr[i][0]);
+        }
+        setExistingGroups(temp);
+      }
+    }
   }, [
     email,
     hasEmail,
@@ -220,6 +268,8 @@ export default function Page() {
     groupName,
     hasGroup,
     group,
+    hasAllGroups,
+    allGroups,
   ]);
 
   const columns = React.useMemo(() => [
@@ -362,7 +412,7 @@ export default function Page() {
                     color={"black"}
                     _hover={{ bgColor: "#031926", color: "white" }}
                     isLoading={searchLoading}
-                    onClick={() => handleCreate(searchGroup)}
+                    onClick={() => handleCreate()}
                   >
                     Create
                   </Button>
