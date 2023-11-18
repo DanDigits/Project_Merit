@@ -37,7 +37,12 @@ import {
 import { PiEyeDuotone } from "react-icons/pi";
 import { useRouter } from "next/navigation";
 import Dialog from "../NewGroup/dialog";
-import { removeFromGroup, getGroup } from "src/app/actions/Group";
+import {
+  removeFromGroup,
+  getGroup,
+  getAllGroups,
+  renameGroup,
+} from "src/app/actions/Group";
 import { getUser, updateUser } from "src/app/actions/User";
 
 import secureLocalStorage from "react-secure-storage";
@@ -85,11 +90,23 @@ export default function Group(group_mode) {
   const [hasError, setHasError] = useState(false);
   const [hasEntry, setHasEntry] = useState(false);
 
+  const [hasAllGroups, setHasAllGroups] = useState(false);
+  const [allGroups, setAllGroups] = useState("");
+  const [existingGroups, setExistingGroups] = useState([]);
+  const [existingSupervisors, setExistingSupervisors] = useState([]);
+  const [nameStatus, setNameStatus] = useState("");
+  const [emailStatus, setEmailStatus] = useState("");
+  const [oldSupEmail, setOldSupEmail] = useState("");
+
   const [hasGroupName, setHasGroupName] = useState(false);
   const [groupName, setGroupName] = useState(
     String(secureLocalStorage.getItem("groupName"))
   );
+  const [oldGroupName, setOldGroupName] = useState(
+    String(secureLocalStorage.getItem("groupName"))
+  );
 
+  var tempStatus = "success";
   var state;
 
   if (group_mode === "View") {
@@ -156,33 +173,148 @@ export default function Group(group_mode) {
     }
   };
 
+  const handleSupChange = () => {
+    if (supEmail != "") {
+      if (existingSupervisors != []) {
+        console.log("Comparing " + supEmail + " against existing sups..");
+        for (var i = 0; i < existingSupervisors.length; i++) {
+          if (supEmail === existingSupervisors[i]) {
+            setEmailStatus("exist");
+            tempStatus = "exist";
+          }
+        }
+        if (supEmail === oldSupEmail) {
+          setEmailStatus("success");
+          tempStatus = "success";
+        }
+      }
+      if (tempStatus != "exist") {
+        getUser({ email: supEmail }).then((response) => {
+          response.ok
+            ? response
+                .json()
+                .then((response) => JSON.parse(JSON.stringify(response)).role)
+                .then((response) => {
+                  response === "Supervisor"
+                    ? updateUser({
+                        email: supEmail,
+                        supervisedGroup: oldGroupName,
+                      }).then((response) => {
+                        if (response.ok) {
+                          updateUser({
+                            email: oldSupEmail,
+                            supervisedGroup: "",
+                          }).then((response) => {
+                            if (response.ok) {
+                              router.push("/Admin/Groups");
+                            } else {
+                              alert(
+                                "There was an error while updating supervisor."
+                              );
+                              setEmailStatus("error");
+                            }
+                          });
+                        } else {
+                          alert(
+                            "There was an error while updating supervisor."
+                          );
+                          setEmailStatus("error");
+                        }
+                      })
+                    : setEmailStatus("user");
+                })
+            : setEmailStatus("invalid");
+          console.log("got user:", supEmail);
+        });
+      }
+    }
+  };
+
+  const handleRename = () => {
+    if (groupName != "") {
+      if (existingGroups != []) {
+        console.log("Comparing " + groupName + " against existing groups..");
+        for (var i = 0; i < existingGroups.length; i++) {
+          if (groupName === existingGroups[i]) {
+            setNameStatus("exist");
+            tempStatus = "exist";
+          }
+        }
+        if (groupName === oldGroupName) {
+          setNameStatus("success");
+          tempStatus = "success";
+        }
+      }
+      if (tempStatus != "exist") {
+        renameGroup({ groupName: oldGroupName, newName: groupName }).then(
+          (response) => {
+            if (response.ok) {
+              {
+                router.push("/Admin/Groups");
+              }
+            } else {
+              setGroupName(oldGroupName);
+              console.log("Error: " + response.error);
+              alert("Rename failed");
+            }
+          }
+        );
+      }
+    }
+  };
+
   const handleSubmitInfo = (e) => {
     e.preventDefault();
+    tempStatus = "success";
+
     if (group_mode === "New") {
-      setGroupName("");
-      /*createGroup({ groupName, supEmail }).then(
-        (response) => {
-          if (response.ok) {
-            {
-              setDialogStatus("New");
-            }
-          } else {
-            alert("Group could not be created. Please try again.");
+      console.log(existingGroups, existingSupervisors);
+      if (groupName != "" && existingGroups != []) {
+        console.log("Comparing " + groupName + " against existing groups..");
+        for (var i = 0; i < existingGroups.length; i++) {
+          if (groupName === existingGroups[i]) {
+            tempStatus = "exist";
+            setNameStatus("exist");
           }
         }
-      );*/
-    } else if (group_mode === "Edit") {
-      /*updateGroup({ groupName, supEmail }).then(
-        (response) => {
-          if (response.ok) {
-            {
-              setDialogStatus("Edit");
-            }
-          } else {
-            alert("Group could not be updated. Please try again.");
+      }
+      if (supEmail != "" && existingSupervisors != []) {
+        console.log("Comparing " + supEmail + " against existing sups..");
+        for (var i = 0; i < existingSupervisors.length; i++) {
+          if (supEmail === existingSupervisors[i]) {
+            tempStatus = "exist";
+            setEmailStatus("exist");
           }
         }
-      );*/
+      }
+
+      if (tempStatus != "exist") {
+        getUser({ email: supEmail }).then((response) => {
+          response.ok
+            ? response
+                .json()
+                .then((response) => JSON.parse(JSON.stringify(response)).role)
+                .then((response) => {
+                  response === "Supervisor"
+                    ? updateUser({
+                        email: supEmail,
+                        supervisedGroup: groupName,
+                      }).then((response) => {
+                        if (response.ok) {
+                          router.push("/Admin/Groups");
+                        } else {
+                          alert(
+                            "Group could not be created. Please try again."
+                          );
+                          setEmailStatus("error");
+                        }
+                      })
+                    : setEmailStatus("user");
+                })
+            : setEmailStatus("invalid");
+          console.log("got user:", supEmail);
+        });
+      }
     }
   };
 
@@ -194,6 +326,46 @@ export default function Group(group_mode) {
     }
 
     console.log("refresh", refresh);
+    if (hasGroupName && hasEntry) {
+      console.log("hasReportId && hasEntry", groupName, hasEntry);
+      var arr = JSON.parse(JSON.stringify(entry));
+      if (arr) {
+        console.log("arr", arr);
+        setSupEmail(arr[0][0].email);
+        setOldSupEmail(arr[0][0].email);
+        setSupervisor(
+          [arr[0][0].firstName, arr[0][0].lastName, arr[0][0].suffix]
+            .filter(Boolean)
+            .join(" ")
+        );
+        setTotal(arr[1].length);
+        setData(arr[1]);
+        setIsLoading(false);
+      }
+    }
+    if (!hasAllGroups) {
+      getAllGroups().then((response) => {
+        response.ok
+          ? response
+              .json()
+              .then((response) => setAllGroups(response))
+              .then(setHasAllGroups(true))
+          : setHasError(true);
+      });
+    }
+    if (hasAllGroups) {
+      var tempGroupNames = [];
+      var tempSupervisors = [];
+      var groupArr = JSON.parse(JSON.stringify(allGroups));
+      if (groupArr) {
+        for (var i = 0; i < groupArr.length; i++) {
+          tempGroupNames.push(groupArr[i][0]);
+          tempSupervisors.push(groupArr[i][1]["email"]);
+        }
+        setExistingGroups(tempGroupNames);
+        setExistingSupervisors(tempSupervisors);
+      }
+    }
     if (group_mode === "View" || refresh > 0) {
       if (groupName !== "" && groupName !== null) {
         setHasGroupName(true);
@@ -240,7 +412,17 @@ export default function Group(group_mode) {
         }
       }
     }
-  }, [hasEntry, hasGroupName, groupName, entry, group_mode, router, refresh]);
+  }, [
+    hasEntry,
+    hasGroupName,
+    groupName,
+    entry,
+    group_mode,
+    router,
+    refresh,
+    hasAllGroups,
+    allGroups,
+  ]);
 
   const columns = useMemo(
     () => [
@@ -353,20 +535,39 @@ export default function Group(group_mode) {
               <FormLabel mb={1} fontSize={15} color={"#331E38"}>
                 Group Name:
               </FormLabel>
-              <Input
-                isReadOnly={state}
-                type=""
-                value={groupName == "null" ? "" : groupName}
-                maxLength={64}
-                variant="login"
-                borderWidth={"2px"}
-                borderColor={"#70A0AF"}
-                bg="#F7FAFC"
-                mb={3}
-                size={"md"}
-                onChange={(e) => setGroupName(e.target.value)}
-              />
+              <HStack>
+                <Input
+                  isReadOnly={state}
+                  type=""
+                  value={groupName == "null" ? "" : groupName}
+                  maxLength={64}
+                  variant="login"
+                  borderWidth={"2px"}
+                  borderColor={"#70A0AF"}
+                  bg="#F7FAFC"
+                  mb={3}
+                  size={"md"}
+                  onChange={(e) => {
+                    setNameStatus("");
+                    setGroupName(e.target.value);
+                  }}
+                />
+                {group_mode === "Edit" && (
+                  <Button
+                    mb={3}
+                    bgColor={"#6abbc4"}
+                    color={"black"}
+                    _hover={{ bgColor: "#031926", color: "white" }}
+                    onClick={() => handleRename()}
+                  >
+                    Rename
+                  </Button>
+                )}
+              </HStack>
             </FormControl>
+            {nameStatus === "exist" && (
+              <p>The group name you entered already exist.</p>
+            )}
             <FormControl
               display={group_mode === "View" ? "initial" : "none"}
               id="supervisor"
@@ -388,24 +589,54 @@ export default function Group(group_mode) {
                 onChange={(e) => setSupervisor(e.target.value)}
               />
             </FormControl>
+
             <FormControl id="supEmail" isRequired>
-              <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+              <FormLabel mt={1} mb={1} fontSize={15} color={"#331E38"}>
                 Supervisor Email:
               </FormLabel>
-              <Input
-                isReadOnly={state}
-                type=""
-                value={supEmail}
-                maxLength={64}
-                variant="login"
-                borderWidth={"2px"}
-                borderColor={"#70A0AF"}
-                bg="#F7FAFC"
-                mb={3}
-                size={"md"}
-                onChange={(e) => setSupEmail(e.target.value)}
-              />
+              <HStack>
+                <Input
+                  isReadOnly={state}
+                  type=""
+                  value={supEmail}
+                  maxLength={64}
+                  variant="login"
+                  borderWidth={"2px"}
+                  borderColor={"#70A0AF"}
+                  bg="#F7FAFC"
+                  mb={3}
+                  size={"md"}
+                  onChange={(e) => {
+                    setEmailStatus("");
+                    setSupEmail(e.target.value);
+                  }}
+                />
+                {group_mode === "Edit" && (
+                  <Button
+                    mb={3}
+                    bgColor={"#6abbc4"}
+                    color={"black"}
+                    _hover={{ bgColor: "#031926", color: "white" }}
+                    onClick={() => handleSupChange()}
+                  >
+                    Change
+                  </Button>
+                )}
+              </HStack>
             </FormControl>
+
+            {emailStatus === "invalid" && (
+              <p>The user you entered does not exist.</p>
+            )}
+            {emailStatus === "user" && (
+              <p>The user you entered is not a supervisor.</p>
+            )}
+            {emailStatus === "exist" && (
+              <p>The supervisor you entered already has a group.</p>
+            )}
+            {emailStatus === "error" && (
+              <p>There was an error in assigning supervisor.</p>
+            )}
             <>
               {group_mode === "View" && (
                 <>

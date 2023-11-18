@@ -35,7 +35,7 @@ export default function Page() {
     deleteGroup({ groupArray }).then((response) => {
       if (response.ok) {
         {
-          window.location.replace("/Admin/Group");
+          window.location.replace("/Admin/Groups");
         }
       } else {
         alert("Delete failed");
@@ -122,15 +122,6 @@ export default function Page() {
                     onClick={() => setMode("View")}
                   >
                     Cancel
-                  </Button>
-                  <Button
-                    bgColor={"#6abbc4"}
-                    color={"black"}
-                    _hover={{ bgColor: "#031926", color: "white" }}
-                    form="group-form"
-                    type="submit"
-                  >
-                    Update
                   </Button>
                 </ButtonGroup>
               </>

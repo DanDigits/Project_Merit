@@ -207,10 +207,10 @@ export default function User(user_mode) {
     }
     if (hasAllGroups) {
       var temp = [];
-      var arr = JSON.parse(JSON.stringify(allGroups));
-      if (arr) {
-        for (var i = 0; i < arr.length; i++) {
-          temp.push(arr[i][0]);
+      var groupArr = JSON.parse(JSON.stringify(allGroups));
+      if (groupArr) {
+        for (var i = 0; i < groupArr.length; i++) {
+          temp.push(groupArr[i][0]);
         }
         setExistingGroups(temp);
       }
@@ -305,6 +305,9 @@ export default function User(user_mode) {
             id="user-form"
             onSubmit={(e) => handleSubmitInfo(e)}
           >
+            <Text mb={2} fontSize={"lg"} fontWeight={"bold"}>
+              Personal Information
+            </Text>
             <HStack>
               <FormControl id="firstName" isRequired>
                 <FormLabel mb={1} fontSize={15} color={"black"}>
@@ -445,6 +448,9 @@ export default function User(user_mode) {
                 </FormControl>
               )}
             </HStack>
+            <Text mb={2} fontSize={"lg"} fontWeight={"bold"}>
+              Account Information
+            </Text>
             {user_mode != "Edit" && (
               <FormControl id="email" isRequired>
                 <FormLabel mb={1} fontSize={15} color={"#331E38"}>
@@ -589,7 +595,7 @@ export default function User(user_mode) {
               {user_mode === "Edit" && (
                 <FormControl id="verified" isRequired>
                   <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-                    Verified
+                    Verification
                   </FormLabel>
                   <Select
                     isReadOnly={state}
@@ -657,12 +663,6 @@ export default function User(user_mode) {
                   </Select>
                 </FormControl>
               )}
-              <Button
-                mb={6}
-                display={user_mode === "View" ? "initial" : "none"}
-              >
-                View Group
-              </Button>
             </Box>
             <Box display={role === "Supervisor" ? "initial" : "none"}>
               <FormControl id="supervisedGroup">
@@ -688,16 +688,13 @@ export default function User(user_mode) {
                   }}
                 />
               </FormControl>
-              <Button
-                mb={6}
-                display={user_mode === "View" ? "initial" : "none"}
-              >
-                View Group
-              </Button>
             </Box>
 
             {state && (
               <>
+                <Text mb={2} fontSize={"lg"} fontWeight={"bold"}>
+                  Administrative Information
+                </Text>
                 <HStack>
                   <FormControl id="totalReports">
                     <FormLabel mb={1} fontSize={15} color={"black"}>
@@ -770,6 +767,24 @@ export default function User(user_mode) {
                     />
                   </FormControl>
                 </HStack>
+                <FormControl id="verified">
+                  <FormLabel mb={1} fontSize={15} color={"black"}>
+                    Verification
+                  </FormLabel>
+                  <Input
+                    isReadOnly={state}
+                    type=""
+                    value={verified == true ? "Verified" : "Not Verified"}
+                    maxLength={64}
+                    variant="login"
+                    borderWidth={"2px"}
+                    borderColor={"#70A0AF"}
+                    bg="#F7FAFC"
+                    mb={3}
+                    w={"50%"}
+                    size={"md"}
+                  />
+                </FormControl>
               </>
             )}
           </form>
