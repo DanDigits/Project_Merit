@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { useSession } from "next-auth/react";
 import {
   AbsoluteCenter,
   Box,
@@ -72,6 +73,7 @@ export default function Group(group_mode) {
   const [refresh, setRefresh] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const { data: session } = useSession();
   const [dialogStatus, setDialogStatus] = useState(false);
   const [supervisor, setSupervisor] = useState("");
   const [supEmail, setSupEmail] = useState("");
@@ -157,6 +159,7 @@ export default function Group(group_mode) {
   const handleSubmitInfo = (e) => {
     e.preventDefault();
     if (group_mode === "New") {
+      setGroupName("");
       /*createGroup({ groupName, supEmail }).then(
         (response) => {
           if (response.ok) {
@@ -184,6 +187,12 @@ export default function Group(group_mode) {
   };
 
   useEffect(() => {
+    if (session) {
+      if (session?.user.role !== "Admin") {
+        window.location.replace("/Dashboard/Home");
+      }
+    }
+
     console.log("refresh", refresh);
     if (group_mode === "View" || refresh > 0) {
       if (groupName !== "" && groupName !== null) {
@@ -333,249 +342,256 @@ export default function Group(group_mode) {
           </AbsoluteCenter>
         </>
       )}
-      <Box alignContent="left" w={"100%"}>
-        <form
-          className="flex"
-          id="group-form"
-          onSubmit={(e) => handleSubmitInfo(e)}
-        >
-          <FormControl id="groupName" isRequired>
-            <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-              Group Name:
-            </FormLabel>
-            <Input
-              isReadOnly={state}
-              type=""
-              value={groupName == "null" ? "" : groupName}
-              maxLength={64}
-              variant="login"
-              borderWidth={"2px"}
-              borderColor={"#70A0AF"}
-              bg="#F7FAFC"
-              mb={3}
-              size={"md"}
-              onChange={(e) => setGroupName(e.target.value)}
-            />
-          </FormControl>
-          <FormControl
-            display={group_mode === "View" ? "initial" : "none"}
-            id="supervisor"
+      {session?.user.role == "Admin" && (
+        <Box alignContent="left" w={"100%"}>
+          <form
+            className="flex"
+            id="group-form"
+            onSubmit={(e) => handleSubmitInfo(e)}
           >
-            <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-              Supervisor:
-            </FormLabel>
-            <Input
-              isReadOnly={state}
-              type=""
-              value={supervisor}
-              maxLength={64}
-              variant="login"
-              borderWidth={"2px"}
-              borderColor={"#70A0AF"}
-              bg="#F7FAFC"
-              mb={3}
-              size={"md"}
-              onChange={(e) => setSupervisor(e.target.value)}
-            />
-          </FormControl>
-          <FormControl id="supEmail" isRequired>
-            <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-              Supervisor Email:
-            </FormLabel>
-            <Input
-              isReadOnly={state}
-              type=""
-              value={supEmail}
-              maxLength={64}
-              variant="login"
-              borderWidth={"2px"}
-              borderColor={"#70A0AF"}
-              bg="#F7FAFC"
-              mb={3}
-              size={"md"}
-              onChange={(e) => setSupEmail(e.target.value)}
-            />
-          </FormControl>
-          <>
-            {group_mode === "View" && (
-              <>
-                <FormControl id="total">
-                  <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-                    Total Members:
-                  </FormLabel>
-                  <Input
-                    isReadOnly={state}
-                    type=""
-                    value={total}
-                    maxLength={64}
-                    variant="login"
-                    borderWidth={"2px"}
-                    borderColor={"#70A0AF"}
-                    bg="#F7FAFC"
-                    mb={3}
-                    size={"md"}
-                  />
-                </FormControl>
-              </>
-            )}
-          </>
-          <>
-            {group_mode != "New" && (
-              <>
-                <Box mx={{ base: -4, md: 0 }}>
-                  <HStack my={2} justify={"space-between"}>
+            <FormControl id="groupName" isRequired>
+              <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                Group Name:
+              </FormLabel>
+              <Input
+                isReadOnly={state}
+                type=""
+                value={groupName == "null" ? "" : groupName}
+                maxLength={64}
+                variant="login"
+                borderWidth={"2px"}
+                borderColor={"#70A0AF"}
+                bg="#F7FAFC"
+                mb={3}
+                size={"md"}
+                onChange={(e) => setGroupName(e.target.value)}
+              />
+            </FormControl>
+            <FormControl
+              display={group_mode === "View" ? "initial" : "none"}
+              id="supervisor"
+            >
+              <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                Supervisor:
+              </FormLabel>
+              <Input
+                isReadOnly={state}
+                type=""
+                value={supervisor}
+                maxLength={64}
+                variant="login"
+                borderWidth={"2px"}
+                borderColor={"#70A0AF"}
+                bg="#F7FAFC"
+                mb={3}
+                size={"md"}
+                onChange={(e) => setSupervisor(e.target.value)}
+              />
+            </FormControl>
+            <FormControl id="supEmail" isRequired>
+              <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                Supervisor Email:
+              </FormLabel>
+              <Input
+                isReadOnly={state}
+                type=""
+                value={supEmail}
+                maxLength={64}
+                variant="login"
+                borderWidth={"2px"}
+                borderColor={"#70A0AF"}
+                bg="#F7FAFC"
+                mb={3}
+                size={"md"}
+                onChange={(e) => setSupEmail(e.target.value)}
+              />
+            </FormControl>
+            <>
+              {group_mode === "View" && (
+                <>
+                  <FormControl id="total">
+                    <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                      Total Members:
+                    </FormLabel>
                     <Input
-                      size={{ base: "sm", md: "md" }}
-                      w={{ base: "50%", md: "xs" }}
+                      isReadOnly={state}
+                      type=""
+                      value={total}
+                      maxLength={64}
                       variant="login"
-                      borderWidth={"1px"}
+                      borderWidth={"2px"}
                       borderColor={"#70A0AF"}
-                      bg="#ECECEC"
-                      value={globalFilter}
-                      onChange={(e) => setGlobalFilter(e.target.value)}
-                      placeholder="Search group"
+                      bg="#F7FAFC"
+                      mb={3}
+                      size={"md"}
                     />
-
-                    <ButtonGroup
-                      display={group_mode === "View" ? "none" : "initial"}
-                    >
-                      <Button
-                        size={{ base: "sm", md: "md" }}
-                        bgColor={"#DF2935"}
-                        color={"white"}
-                        _hover={{ bgColor: "#031926", color: "white" }}
-                        isLoading={removeLoading}
-                        onClick={onOpen}
-                      >
-                        Remove
-                      </Button>
-                      <AlertDialog isOpen={isOpen} onClose={onClose}>
-                        <AlertDialogOverlay>
-                          <AlertDialogContent>
-                            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                              Remove Users
-                            </AlertDialogHeader>
-                            <AlertDialogBody>Are you sure?</AlertDialogBody>
-                            <AlertDialogFooter>
-                              <Button onClick={onClose}>Cancel</Button>
-                              <Button
-                                colorScheme="red"
-                                onClick={() => {
-                                  onClose();
-                                  handleRemove(
-                                    table
-                                      .getSelectedRowModel()
-                                      .flatRows.map(
-                                        ({ original }) => original.email
-                                      )
-                                  );
-                                }}
-                                ml={3}
-                              >
-                                Remove
-                              </Button>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialogOverlay>
-                      </AlertDialog>
-
-                      <Button
-                        size={{ base: "sm", md: "md" }}
-                        bgColor={"#7eb67d"}
-                        color={"black"}
-                        _hover={{ bgColor: "#031926", color: "white" }}
-                        onClick={() => setOpenSearch(!openSearch)}
-                      >
-                        Add Member
-                      </Button>
-                    </ButtonGroup>
-                  </HStack>
-                  <Box
-                    p={2}
-                    display={
-                      openSearch && group_mode === "Edit" ? "initial" : "none"
-                    }
-                  >
-                    <Text>Enter member email:</Text>
-                    <HStack justify={"flex-start"}>
+                  </FormControl>
+                </>
+              )}
+            </>
+            <>
+              {group_mode != "New" && (
+                <>
+                  <Box mx={{ base: -4, md: 0 }}>
+                    <HStack my={2} justify={"space-between"}>
                       <Input
-                        value={searchEmail}
                         size={{ base: "sm", md: "md" }}
                         w={{ base: "50%", md: "xs" }}
                         variant="login"
                         borderWidth={"1px"}
                         borderColor={"#70A0AF"}
                         bg="#ECECEC"
-                        onChange={(e) => handleChange(e.target.value)}
+                        value={globalFilter}
+                        onChange={(e) => setGlobalFilter(e.target.value)}
+                        placeholder="Search group"
                       />
-                      <Button
-                        size={{ base: "sm", md: "md" }}
-                        bgColor={"#6abbc4"}
-                        color={"black"}
-                        _hover={{ bgColor: "#031926", color: "white" }}
-                        isLoading={searchLoading}
-                        onClick={() => handleSearch(searchEmail)}
-                      >
-                        Search
-                      </Button>
-                    </HStack>
-                    {status === "error" && (
-                      <p>There was an error when searching for member.</p>
-                    )}
-                    {status === "invalid" && (
-                      <p>The member you entered does not exist.</p>
-                    )}
-                    {status === "assigned" && (
-                      <p>The member you entered is already in a group.</p>
-                    )}
-                    {status === "success" && <p>Member successfully added.</p>}
-                  </Box>
 
-                  <Box overflowX={"auto"}>
-                    <Table variant={"mytable"} color={"black"}>
-                      <Thead>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                          <Tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => (
-                              <Th key={header.id}>
-                                {header.isPlaceholder
-                                  ? null
-                                  : flexRender(
-                                      header.column.columnDef.header,
-                                      header.getContext()
-                                    )}
-                              </Th>
-                            ))}
-                          </Tr>
-                        ))}
-                      </Thead>
-                      <Tbody>
-                        {table.getRowModel().rows.map((row) => (
-                          <Tr key={row.id}>
-                            {row.getVisibleCells().map((cell) => (
-                              <Td key={cell.id}>
-                                {flexRender(
-                                  cell.column.columnDef.cell,
-                                  cell.getContext()
-                                )}
-                              </Td>
-                            ))}
-                          </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
+                      <ButtonGroup
+                        display={group_mode === "View" ? "none" : "initial"}
+                      >
+                        <Button
+                          size={{ base: "sm", md: "md" }}
+                          bgColor={"#DF2935"}
+                          color={"white"}
+                          _hover={{ bgColor: "#031926", color: "white" }}
+                          isLoading={removeLoading}
+                          onClick={onOpen}
+                        >
+                          Remove
+                        </Button>
+                        <AlertDialog isOpen={isOpen} onClose={onClose}>
+                          <AlertDialogOverlay>
+                            <AlertDialogContent>
+                              <AlertDialogHeader
+                                fontSize="lg"
+                                fontWeight="bold"
+                              >
+                                Remove Users
+                              </AlertDialogHeader>
+                              <AlertDialogBody>Are you sure?</AlertDialogBody>
+                              <AlertDialogFooter>
+                                <Button onClick={onClose}>Cancel</Button>
+                                <Button
+                                  colorScheme="red"
+                                  onClick={() => {
+                                    onClose();
+                                    handleRemove(
+                                      table
+                                        .getSelectedRowModel()
+                                        .flatRows.map(
+                                          ({ original }) => original.email
+                                        )
+                                    );
+                                  }}
+                                  ml={3}
+                                >
+                                  Remove
+                                </Button>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialogOverlay>
+                        </AlertDialog>
+
+                        <Button
+                          size={{ base: "sm", md: "md" }}
+                          bgColor={"#7eb67d"}
+                          color={"black"}
+                          _hover={{ bgColor: "#031926", color: "white" }}
+                          onClick={() => setOpenSearch(!openSearch)}
+                        >
+                          Add Member
+                        </Button>
+                      </ButtonGroup>
+                    </HStack>
+                    <Box
+                      p={2}
+                      display={
+                        openSearch && group_mode === "Edit" ? "initial" : "none"
+                      }
+                    >
+                      <Text>Enter member email:</Text>
+                      <HStack justify={"flex-start"}>
+                        <Input
+                          value={searchEmail}
+                          size={{ base: "sm", md: "md" }}
+                          w={{ base: "50%", md: "xs" }}
+                          variant="login"
+                          borderWidth={"1px"}
+                          borderColor={"#70A0AF"}
+                          bg="#ECECEC"
+                          onChange={(e) => handleChange(e.target.value)}
+                        />
+                        <Button
+                          size={{ base: "sm", md: "md" }}
+                          bgColor={"#6abbc4"}
+                          color={"black"}
+                          _hover={{ bgColor: "#031926", color: "white" }}
+                          isLoading={searchLoading}
+                          onClick={() => handleSearch(searchEmail)}
+                        >
+                          Search
+                        </Button>
+                      </HStack>
+                      {status === "error" && (
+                        <p>There was an error when searching for member.</p>
+                      )}
+                      {status === "invalid" && (
+                        <p>The member you entered does not exist.</p>
+                      )}
+                      {status === "assigned" && (
+                        <p>The member you entered is already in a group.</p>
+                      )}
+                      {status === "success" && (
+                        <p>Member successfully added.</p>
+                      )}
+                    </Box>
+
+                    <Box overflowX={"auto"}>
+                      <Table variant={"mytable"} color={"black"}>
+                        <Thead>
+                          {table.getHeaderGroups().map((headerGroup) => (
+                            <Tr key={headerGroup.id}>
+                              {headerGroup.headers.map((header) => (
+                                <Th key={header.id}>
+                                  {header.isPlaceholder
+                                    ? null
+                                    : flexRender(
+                                        header.column.columnDef.header,
+                                        header.getContext()
+                                      )}
+                                </Th>
+                              ))}
+                            </Tr>
+                          ))}
+                        </Thead>
+                        <Tbody>
+                          {table.getRowModel().rows.map((row) => (
+                            <Tr key={row.id}>
+                              {row.getVisibleCells().map((cell) => (
+                                <Td key={cell.id}>
+                                  {flexRender(
+                                    cell.column.columnDef.cell,
+                                    cell.getContext()
+                                  )}
+                                </Td>
+                              ))}
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      </Table>
+                    </Box>
+                    <div>
+                      {Object.keys(rowSelection).length} of{" "}
+                      {table.getPreFilteredRowModel().rows.length} Total Rows
+                      Selected
+                    </div>
                   </Box>
-                  <div>
-                    {Object.keys(rowSelection).length} of{" "}
-                    {table.getPreFilteredRowModel().rows.length} Total Rows
-                    Selected
-                  </div>
-                </Box>
-              </>
-            )}
-          </>
-        </form>
-      </Box>
+                </>
+              )}
+            </>
+          </form>
+        </Box>
+      )}
       {Dialog(dialogStatus)}
     </>
   );

@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import React from "react";
-import { Box, Text, Stack, VStack, SimpleGrid } from "@chakra-ui/react";
+import { Box, Text, VStack, SimpleGrid } from "@chakra-ui/react";
 import RoleFilter from "./RoleFilter";
 import GroupFilter from "./GroupFilter";
 

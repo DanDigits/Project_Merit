@@ -86,7 +86,6 @@ export default function UpdateProfile() {
     if (rank === "" || firstName === "" || lastName === "") {
       setMsg("missing");
     } else {
-      var role = "Admin";
       updateUser({ email, rank, firstName, lastName }).then((response) => {
         if (response.ok) {
           {

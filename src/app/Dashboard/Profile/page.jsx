@@ -1,18 +1,28 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UpdateProfile from "./UpdateProfile";
 import UpdatePassword from "./UpdatePassword";
 import GroupMembership from "./GroupMembership";
 import { signOut } from "next-auth/react";
 import { Button, ButtonGroup, VStack } from "@chakra-ui/react";
+import { useSession } from "next-auth/react";
 
 export default function Page() {
   const [mode, setMode] = useState("View");
+  const { data: session } = useSession();
 
   const handleLogout = (e) => {
     e.preventDefault();
     signOut({ callbackUrl: "/Auth/Logout" });
   };
+
+  useEffect(() => {
+    if (session) {
+      if (session?.user.role === "Admin") {
+        window.location.replace("/Admin/Profile");
+      }
+    }
+  }, [session]);
 
   return (
     <>

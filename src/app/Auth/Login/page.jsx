@@ -20,7 +20,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useSearchParams } from "next/navigation";
-import { signIn, getSession, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import {
   signUp,
   requestReset,
@@ -58,6 +58,7 @@ export default function Page() {
    * num is part of the verification link use for password reset (passed by url param)
    * params is the paramaters pulled from the url in the case of verification links and password reset links
    */
+  const { data: session } = useSession();
   const [mode, setMode] = useState("Login");
   const [status, setStatus] = useState("");
   const [expired, setExpired] = useState("");
@@ -115,6 +116,15 @@ export default function Page() {
    * Status is cleared every time a mode changes.
    */
   useEffect(() => {
+    if (session) {
+      setRole(session?.user.role);
+      if (role != "" && role === "Admin") {
+        window.location.replace("/Admin/Users");
+      } else {
+        window.location.replace("/Dashboard/Home");
+      }
+    }
+
     console.log("urlVerified: " + urlVerified);
     if (urlNum && mode !== "Verification Needed" && !updated) {
       setNum(urlNum);
@@ -140,7 +150,7 @@ export default function Page() {
     console.log("mode: " + mode);
 
     setStatus("");
-  }, [mode]);
+  }, [mode, role, session]);
 
   /**
    * This section handles all form submissions sorted by mode.
@@ -246,15 +256,6 @@ export default function Page() {
             } else if (response.error === "Suspended account") {
               setStatus(statusMessages.suspended);
             }
-          } else {
-            getSession().then((session) => setRole(session.user.role));
-            console.log("Role:" + role);
-            window.location.replace("/Dashboard/Home");
-            /*if (role == "Admin"){
-              window.location.replace("/Admin/Users")
-            } else {
-              window.location.replace("/Dashboard/Home");
-            }*/
           }
         });
       }

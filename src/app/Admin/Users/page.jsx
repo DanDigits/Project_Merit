@@ -1,15 +1,9 @@
 "use client";
 /* eslint-disable no-unused-vars */
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Center, Spinner, Text, Button, Icon, Heading } from "@chakra-ui/react";
 import UserTable from "./UserTable.jsx";
-import { getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
 import { PiEyeBold } from "react-icons/pi";
@@ -36,11 +30,12 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 
 export default function Page() {
   const router = useRouter();
+  const [role, setRole] = useState("");
   const [users, setUsers] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [hasUsers, setHasUsers] = useState(false);
-  const [index, setIndex] = useState("0");
+  const { data: session } = useSession();
 
   const handleSubmitInfo = useCallback(
     (email) => {
@@ -51,6 +46,12 @@ export default function Page() {
   );
 
   useEffect(() => {
+    if (session) {
+      if (session?.user.role !== "Admin") {
+        window.location.replace("/Dashboard/Home");
+      }
+    }
+
     if (!hasUsers) {
       console.log("!hasusers", hasUsers);
       setIsLoading(true);
@@ -68,7 +69,7 @@ export default function Page() {
       console.log("hasusers", hasUsers);
       setIsLoading(false);
     }
-  }, [hasUsers]);
+  }, [hasUsers, session, role]);
 
   const columns = React.useMemo(
     () => [
@@ -181,46 +182,10 @@ export default function Page() {
     [handleSubmitInfo]
   );
 
-  const data = useMemo(
-    () => [
-      {
-        membership: "group1",
-        managed: "",
-        name: "user1",
-        email: "user1@gmail.com",
-        role: "User",
-      },
-      {
-        membership: "group2",
-        managed: "group1",
-        name: "sup1",
-        email: "sup1@gmail.com",
-        role: "Supervisor",
-      },
-      {
-        membership: "unassigned",
-        managed: "",
-        firstName: "user2",
-        lastName: "last",
-        suffix: "jr.",
-        email: "user2@gmail.com",
-        role: "User",
-      },
-      {
-        membership: "group3",
-        managed: "",
-        name: "sup2",
-        email: "sup2@gmail.com",
-        role: "Supervisor",
-      },
-    ],
-    []
-  );
-
   return (
     <>
       {hasError && <Text>SOMETHING WENT WRONG</Text>}
-      {isLoading ? (
+      {isLoading && (
         <>
           <Center>
             <Spinner
@@ -232,7 +197,8 @@ export default function Page() {
             />
           </Center>
         </>
-      ) : (
+      )}
+      {session?.user.role == "Admin" && (
         <>
           <Heading mb={10}>Manage Users</Heading>
           <UserTable columns={columns} data={users} />

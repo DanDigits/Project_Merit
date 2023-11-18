@@ -45,39 +45,29 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, trigger, user, session }) {
+    async jwt({ token, user, session }) {
       console.log("jwt callback", { token, user, session });
 
       // pass in id, email, rank, lastName, and suffix to token
       if (user) {
-        return {
-          ...token,
-          email: user.email,
-          rank: user.rank,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          suffix: user.suffix,
-          role: user.role,
-        };
+        token.email = user.email;
+        token.rank = user.rank;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
+        token.suffix = user.suffix;
+        token.role = user.role;
       }
-      return { ...token, ...user };
+      return token;
     },
     async session({ session, token, user }) {
       console.log("session callback", { token, user, session });
+      session.user.rank = token.rank;
+      session.user.firstName = token.firstName;
+      session.user.lastName = token.lastName;
+      session.user.suffix = token.suffix;
+      session.user.role = token.role;
 
-      // pass in email, rank, lastName, and suffix to session
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.is,
-          rank: token.rank,
-          firstName: token.firstName,
-          lastName: token.lastName,
-          suffix: token.suffix,
-          role: token.role,
-        },
-      };
+      return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
@@ -88,6 +78,7 @@ const handler = NextAuth({
   adapter: MongoDBAdapter(clientPromise),
   debug: true,
   session: {
+    jwt: true,
     strategy: "jwt",
   },
   pages: {
