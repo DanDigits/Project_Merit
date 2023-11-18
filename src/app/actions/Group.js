@@ -92,15 +92,15 @@ export const renameGroup = async ({ groupName, newName }) => {
   return response;
 };
 
-export const deleteGroup = async ({ groupName }) => {
-  console.log(groupName);
+export const deleteGroup = async ({ groupArray }) => {
+  console.log(groupArray);
   const response = await fetch(getPath.baseUrl + getPath.api.user.delete, {
     method: "DELETE",
     mode: "same-origin",
     headers: {
-      group: groupName,
+      group: groupArray,
     },
-    body: JSON.stringify({}),
+    body: JSON.stringify({ group: groupArray }),
   });
   console.log("Update Response:", response.statusText);
 

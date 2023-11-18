@@ -19,6 +19,8 @@ import {
   FormLabel,
   Input,
   useDisclosure,
+  Center,
+  Spinner,
 } from "@chakra-ui/react";
 import GroupDialog from "./GroupDialog.jsx";
 import { getUser } from "src/app/actions/User";
@@ -36,7 +38,8 @@ export default function UpdatePassword() {
   const [status] = useState(false);
   const [profile, setProfile] = useState(null);
   const [hasProfile, setHasProfile] = useState(false);
-  const [leaderInfo, setLeaderInfo] = useState(null);
+  const [leaderInfo, setLeaderInfo] = useState("");
+  const [hasLeaderInfo, setHasLeaderInfo] = useState(false);
   const [leaveLoading, setLeaveLoading] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -98,7 +101,13 @@ export default function UpdatePassword() {
       var arr2 = JSON.parse(JSON.stringify(leader));
       if (arr2) {
         setLeaderInfo(
-          [arr2.rank, arr2.lastName, arr2.suffix, arr2.email]
+          [
+            arr2[0].rank,
+            arr2[0].firstName,
+            arr2[0].lastName,
+            arr2[0].suffix,
+            arr2[0].email,
+          ]
             .filter(Boolean)
             .join(" ")
         );
@@ -144,7 +153,19 @@ export default function UpdatePassword() {
 
   return (
     <>
-      {group === "" ? (
+      {isLoading ? (
+        <>
+          <Center>
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="#70A0Af"
+              size="xl"
+            />
+          </Center>
+        </>
+      ) : group === "" ? (
         <Card
           p={{ base: 0, md: 2 }}
           mx={{ base: -4, md: 0 }}

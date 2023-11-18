@@ -21,6 +21,7 @@ import { createUser } from "src/app/actions/Admin.js";
 
 import secureLocalStorage from "react-secure-storage";
 import { getUser, updateUser } from "src/app/actions/User.js";
+import { getAllGroups } from "src/app/actions/Group";
 
 const statusMessages = {
   account: "Account not found.",
@@ -31,6 +32,7 @@ const statusMessages = {
   length: "Password must be a minimum of 8 characters.",
   missingReg: "All fields except suffix and groups are required.",
   missingUpd: "Both New Password and New Password Confirmation are required.",
+  invalid: "The entered group name already exist.",
 };
 
 export default function User(user_mode) {
@@ -47,6 +49,7 @@ export default function User(user_mode) {
 
   const [group, setGroup] = useState("");
   const [supervisedGroup, setSupervisedGroup] = useState("");
+  const [oldSupervisedGroup, setOldSupervisedGroup] = useState("");
   const [role, setRole] = useState("");
 
   const [totalReports, setTotalReports] = useState("");
@@ -64,8 +67,10 @@ export default function User(user_mode) {
     String(secureLocalStorage.getItem("email"))
   );
 
-  const [membershipNotFound, setMembershipNotFound] = useState(null);
-  const [subNotFound, setSubNotFound] = useState(null);
+  const [hasAllGroups, setHasAllGroups] = useState(false);
+  const [allGroups, setAllGroups] = useState("");
+  const [existingGroups, setExistingGroups] = useState([]);
+
   const [msg, setMsg] = useState("");
 
   var state;
@@ -76,9 +81,21 @@ export default function User(user_mode) {
 
   const handleSubmitInfo = (e) => {
     e.preventDefault();
+    var tempStatus = "success";
 
     if (user_mode === "New") {
       let emailRegex = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/;
+
+      if (supervisedGroup != "" && existingGroups != []) {
+        console.log(
+          "Comparing " + supervisedGroup + " against existing groups.."
+        );
+        for (var i = 0; i < existingGroups.length; i++) {
+          if (supervisedGroup === existingGroups[i]) {
+            tempStatus = "invalid";
+          }
+        }
+      }
 
       if (
         password === "" ||
@@ -96,6 +113,8 @@ export default function User(user_mode) {
         setMsg(statusMessages.confirm);
       } else if (!emailRegex.test(email)) {
         setMsg(statusMessages.email);
+      } else if (tempStatus === "invalid") {
+        setMsg(statusMessages.invalid);
       } else {
         createUser({
           email,
@@ -105,8 +124,8 @@ export default function User(user_mode) {
           lastName,
           suffix,
           role,
-          group,
-          supervisedGroup,
+          group: role === "Admin" ? "" : group,
+          supervisedGroup: role === "Supervisor" ? supervisedGroup : "",
         }).then((response) => {
           if (!response.ok) {
             response.json().then((data) => {
@@ -121,8 +140,25 @@ export default function User(user_mode) {
       }
     } else if (user_mode === "Edit") {
       console.log("Updating user profile");
+
+      if (supervisedGroup != "" && existingGroups != []) {
+        console.log(
+          "Comparing " + supervisedGroup + " against existing groups.."
+        );
+        for (var i = 0; i < existingGroups.length; i++) {
+          if (supervisedGroup === existingGroups[i]) {
+            tempStatus = "invalid";
+          }
+        }
+        if (supervisedGroup === oldSupervisedGroup) {
+          tempStatus = "success";
+        }
+      }
+
       if (rank === "" || firstName === "" || lastName === "" || role === "") {
         setMsg("missing");
+      } else if (tempStatus === "invalid") {
+        setMsg(statusMessages.invalid);
       } else {
         var suspended;
         if (status === "Suspended") suspended = true;
@@ -134,8 +170,8 @@ export default function User(user_mode) {
           lastName,
           suffix,
           role,
-          group,
-          supervisedGroup,
+          group: role === "Admin" ? "" : group,
+          supervisedGroup: role === "Supervisor" ? supervisedGroup : "",
           suspended,
           verified,
         }).then((response) => {
@@ -159,6 +195,26 @@ export default function User(user_mode) {
       }
     }
 
+    if (!hasAllGroups) {
+      getAllGroups().then((response) => {
+        response.ok
+          ? response
+              .json()
+              .then((response) => setAllGroups(response))
+              .then(setHasAllGroups(true))
+          : setHasError(true);
+      });
+    }
+    if (hasAllGroups) {
+      var temp = [];
+      var arr = JSON.parse(JSON.stringify(allGroups));
+      if (arr) {
+        for (var i = 0; i < arr.length; i++) {
+          temp.push(arr[i][0]);
+        }
+        setExistingGroups(temp);
+      }
+    }
     if (user_mode === "View") {
       if (email !== "" && email !== null) {
         setHasEmail(true);
@@ -201,6 +257,7 @@ export default function User(user_mode) {
           setRole(arr.role);
           setGroup(arr.group);
           setSupervisedGroup(arr.supervisedGroup);
+          setOldSupervisedGroup(arr.supervisedGroup);
           setTotalReports(arr.totalReports);
           setLastReport(arr.mostRecentReportDate);
           setLastLogin(arr.lastLogin);
@@ -215,7 +272,16 @@ export default function User(user_mode) {
         }
       }
     }
-  }, [hasEntry, hasEmail, email, entry, user_mode, router]);
+  }, [
+    hasEntry,
+    hasEmail,
+    email,
+    entry,
+    hasAllGroups,
+    allGroups,
+    user_mode,
+    router,
+  ]);
 
   return (
     <>
@@ -544,38 +610,59 @@ export default function User(user_mode) {
               )}
             </HStack>
 
-            <Box display={!role || role === null ? "none" : "initial"}>
-              <FormControl id="group">
-                <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-                  {user_mode === "New"
-                    ? "Assign Membership Group"
-                    : "Membership Group"}
-                </FormLabel>
-                <Input
-                  isReadOnly={state}
-                  type=""
-                  value={group}
-                  maxLength={64}
-                  variant="login"
-                  borderWidth={"2px"}
-                  borderColor={"#70A0AF"}
-                  bg="#F7FAFC"
-                  mb={3}
-                  size={"md"}
-                  onChange={(e) => setGroup(e.target.value)}
-                />
-              </FormControl>
+            <Box display={role === "" || role === "Admin" ? "none" : "initial"}>
+              {state ? (
+                <>
+                  <FormControl id="group">
+                    <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                      Membership Group
+                    </FormLabel>
+                    <Input
+                      isReadOnly={state}
+                      alpha={"1.0"}
+                      variant="trim"
+                      borderWidth={"2px"}
+                      borderColor={"#70A0AF"}
+                      bg="#F7FAFC"
+                      mb={6}
+                      size={"md"}
+                      value={group}
+                    />
+                  </FormControl>
+                </>
+              ) : (
+                <FormControl id="group">
+                  <FormLabel mb={1} fontSize={15} color={"#331E38"}>
+                    {user_mode === "New"
+                      ? "Assign Membership Group"
+                      : "Membership Group"}
+                  </FormLabel>
+                  <Select
+                    isReadOnly={state}
+                    placeholder="Select Group"
+                    variant="trim"
+                    borderWidth={"2px"}
+                    borderColor={"#70A0AF"}
+                    bg="#F7FAFC"
+                    mb={6}
+                    size={"md"}
+                    value={group}
+                    onChange={(e) => setGroup(e.target.value)}
+                  >
+                    {existingGroups.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
               <Button
                 mb={6}
                 display={user_mode === "View" ? "initial" : "none"}
               >
                 View Group
               </Button>
-              {membershipNotFound && (
-                <Text mb={3} color={"gray.600"}>
-                  This group does not exist. Try again or create group.
-                </Text>
-              )}
             </Box>
             <Box display={role === "Supervisor" ? "initial" : "none"}>
               <FormControl id="supervisedGroup">
@@ -595,7 +682,10 @@ export default function User(user_mode) {
                   bg="#F7FAFC"
                   mb={3}
                   size={"md"}
-                  onChange={(e) => setSupervisedGroup(e.target.value)}
+                  onChange={(e) => {
+                    setSupervisedGroup(e.target.value);
+                    setMsg("");
+                  }}
                 />
               </FormControl>
               <Button
@@ -604,11 +694,6 @@ export default function User(user_mode) {
               >
                 View Group
               </Button>
-              {subNotFound && (
-                <Text mb={3} color={"gray.600"}>
-                  This group does not exist. Try again or create group.
-                </Text>
-              )}
             </Box>
 
             {state && (

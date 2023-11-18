@@ -291,39 +291,47 @@ export async function deleteUser(userId) {
 }
 
 // Delete a group by looping through the members, and removing
-export async function deleteGroup(group) {
+export async function deleteGroup(groups) {
   await mongoDB();
-  let i = 0;
-  const user = await UserSchema?.find({ group }).catch(function (err) {
-    return err;
-  });
-  while (user?.[i] != undefined) {
-    user[i].group = "";
-    console.log(user[i].group);
-    await UserSchema?.findOneAndUpdate(
-      { email: user[i].email },
-      { group: user[i].group }
-    );
-    i++;
-  }
+  let i = 0,
+    j = 0;
+  let length = groups?.group?.length;
 
-  i = 0;
-  const supervisor = await UserSchema?.find({ supervisedGroup: group }).catch(
-    function (err) {
-      return err;
-    }
-  );
-  while (supervisor?.[i] != undefined) {
-    supervisor[i].supervisedGroup = "";
-    //console.log(supervisor[i].supervisedGroup);
-    await UserSchema?.findOneAndUpdate(
-      { email: supervisor[i].email },
-      { supervisedGroup: supervisor[i].supervisedGroup }
+  // Depending on the number of groups provided, while loop through members and supervisor
+  while (i < length) {
+    const user = await UserSchema?.find({ group: groups?.group[i] }).catch(
+      function (err) {
+        return err;
+      }
     );
+    while (user?.[j] != undefined) {
+      console.log(user[j].email);
+      await UserSchema?.findOneAndUpdate(
+        { email: user[j].email },
+        { group: "" }
+      );
+      j++;
+    }
+    j = 0;
+
+    const supervisor = await UserSchema?.find({
+      supervisedGroup: groups?.group[i],
+    }).catch(function (err) {
+      return err;
+    });
+    while (supervisor?.[j] != undefined) {
+      console.log(supervisor[j].email);
+      await UserSchema?.findOneAndUpdate(
+        { email: supervisor[j].email },
+        { supervisedGroup: "" }
+      );
+      j++;
+    }
+    j = 0;
+
     i++;
   }
-  user.id = "OK";
-  return user;
+  return length;
 }
 
 // Verify a user from a 2FA email code
