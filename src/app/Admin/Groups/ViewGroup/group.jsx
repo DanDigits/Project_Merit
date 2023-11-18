@@ -15,10 +15,10 @@ import {
 import { PiEyeDuotone } from "react-icons/pi";
 import { useRouter } from "next/navigation";
 import Dialog from "../NewGroup/dialog";
-//import { createGroup, getGroup, updateGroup } from "";
+//import { createGroup,  updateGroup } from "";
 
 import GroupUsers from "./groupusers";
-//import { getGroup, updateGroup } from "";
+import { getGroup } from "src/app/actions/Group";
 import secureLocalStorage from "react-secure-storage";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
@@ -47,6 +47,7 @@ export default function Group(group_mode) {
   const [supervisor, setSupervisor] = useState("");
   const [supEmail, setSupEmail] = useState("");
   const [total, setTotal] = useState(0);
+  const [members, setMembers] = useState("");
 
   const [entry, setEntry] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -125,7 +126,7 @@ export default function Group(group_mode) {
         console.log("hasgroupname && !hasEntry", groupName, hasEntry);
         setIsLoading(true);
         setHasError(false);
-        if (groupName == "null") {
+        if (groupName === "null") {
           router.push("/Admin/Groups");
         } else {
           getGroup({ groupName }).then((response) => {
@@ -142,10 +143,15 @@ export default function Group(group_mode) {
         console.log("hasReportId && hasEntry", groupName, hasEntry);
         var arr = JSON.parse(JSON.stringify(entry));
         if (arr) {
-          setGroupName(arr.groupName);
-          setSupEmail(arr.supEmail);
-          setSupervisor(arr.supervisor);
-          setTotal(arr.total);
+          console.log("arr", arr);
+          setSupEmail(arr[0][0].email);
+          setSupervisor(
+            [arr[0][0].firstName, arr[0][0].lastName, arr[0][0].suffix]
+              .filter(Boolean)
+              .join(" ")
+          );
+          setTotal(arr[1].length);
+          setMembers(arr[1]);
           setIsLoading(false);
         }
       }
@@ -268,7 +274,7 @@ export default function Group(group_mode) {
               <Input
                 isReadOnly={state}
                 type=""
-                value={groupName}
+                value={groupName == "null" ? "" : groupName}
                 maxLength={64}
                 variant="login"
                 borderWidth={"2px"}
@@ -297,10 +303,9 @@ export default function Group(group_mode) {
                 bg="#F7FAFC"
                 mb={3}
                 size={"md"}
-                onChange={(e) => setSupervisor(e.target.value)}
               />
             </FormControl>
-            <FormControl id="supEmail">
+            <FormControl id="supEmail" isRequired>
               <FormLabel mb={1} fontSize={15} color={"#331E38"}>
                 Supervisor Email:
               </FormLabel>
@@ -347,7 +352,11 @@ export default function Group(group_mode) {
                   <Text fontWeight={"semibold"} fontSize={15} color={"#331E38"}>
                     Group Members:
                   </Text>
-                  <GroupUsers mode={group_mode} columns={columns} data={data} />
+                  <GroupUsers
+                    mode={group_mode}
+                    columns={columns}
+                    data={members}
+                  />
                 </>
               )}
             </>

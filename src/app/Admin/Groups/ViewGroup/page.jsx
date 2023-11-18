@@ -29,7 +29,9 @@ export default function Page() {
   );
 
   const handleDelete = () => {
-    deleteGroup({ groupName }).then((response) => {
+    var groupArray = [];
+    groupArray.push(groupName);
+    deleteGroup({ groupArray }).then((response) => {
       if (response.ok) {
         {
           window.location.replace("/Admin/Group");

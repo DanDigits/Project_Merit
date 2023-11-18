@@ -21,9 +21,8 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import GroupDialog from "./GroupDialog.jsx";
-//import { getGroup } from "src/app/actions/Group";
 import { getUser } from "src/app/actions/User";
-import { getSupervisor, leaveGroup } from "./../../actions/Group.js";
+import { getSupervisor, removeFromGroup } from "./../../actions/Group.js";
 
 export default function UpdatePassword() {
   const [email, setEmail] = useState("");
@@ -39,7 +38,7 @@ export default function UpdatePassword() {
   const [hasProfile, setHasProfile] = useState(false);
   const [leaderInfo, setLeaderInfo] = useState(null);
   const [hasLeaderInfo, setHasLeaderInfo] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [leaveLoading, setLeaveLoading] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -100,7 +99,9 @@ export default function UpdatePassword() {
       setIsLoading(true);
       var arr = JSON.parse(JSON.stringify(leader));
       if (arr) {
-        setLeaderInfo(arr.rank + " " + arr.lastName + " " + arr.suffix);
+        setLeaderInfo(
+          [arr.rank, arr.lastName, arr.suffix].filter(Boolean).join(" ")
+        );
         console.log("arr", arr);
         setHasLeaderInfo(true);
       }
@@ -120,25 +121,28 @@ export default function UpdatePassword() {
     hasLeader,
   ]);
 
+  var userArray = [];
   const handleLeave = () => {
+    setLeaveLoading(true);
+    userArray.push(email);
     console.log("Attempting to leave group: " + group);
-    leaveGroup({ email }).then((response) => {
-      if (response.ok) {
-        {
-          setDeleteLoading(false);
-          window.location.reload;
+    if (email != "" && userArray.length != 0) {
+      removeFromGroup({ userArray }).then((response) => {
+        if (response.ok) {
+          {
+            window.location.reload();
+          }
+        } else {
+          console.log("Error: " + response.error);
+          alert("Delete failed");
         }
-      } else {
-        setDeleteLoading(false);
-        console.log("Error: " + response.error);
-        alert("Delete failed");
-      }
-    });
+      });
+    }
+    setLeaveLoading(false);
   };
 
   return (
     <>
-      {GroupDialog(status)}
       {group === "" ? (
         <Card
           p={{ base: 0, md: 2 }}
@@ -213,6 +217,7 @@ export default function UpdatePassword() {
                   _hover={{ bgColor: "#706993", color: "white" }}
                   form="report-form"
                   type="submit"
+                  isLoading={leaveLoading}
                   onClick={onOpen}
                 >
                   Leave Group
@@ -229,11 +234,12 @@ export default function UpdatePassword() {
                         <Button
                           colorScheme="red"
                           onClick={() => {
+                            onClose();
                             handleLeave();
                           }}
                           ml={3}
                         >
-                          Delete
+                          Leave
                         </Button>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -244,6 +250,7 @@ export default function UpdatePassword() {
           </Card>
         </>
       )}
+      {GroupDialog(status)}
     </>
   );
 }
