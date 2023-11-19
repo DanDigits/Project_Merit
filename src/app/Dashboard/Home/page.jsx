@@ -99,13 +99,22 @@ export default function Page() {
       } else {
         setReportDate(arr.mostRecentReportDate);
       }
-    }
 
-    setProgress(
-      (totals.totalReports /
-        (mission.needed + leadership.needed + resources.needed + unit.needed)) *
-        100
-    );
+      function calculate(completed, needed) {
+        var percentage = completed / needed;
+        if (percentage > 1) percentage = 1;
+        return percentage;
+      }
+      setProgress(
+        calculate(
+          calculate(mission.total, mission.needed) +
+            calculate(resources.total, resources.needed) +
+            calculate(leadership.total, leadership.needed) +
+            calculate(unit.total, unit.needed),
+          4
+        ) * 100
+      );
+    }
   }, [
     leadership,
     mission,
@@ -157,7 +166,7 @@ export default function Page() {
       }
     }
 
-    if (hasEmail && hasProfile) {
+    if (hasEmail && hasProfile && reportDate == "") {
       setDashboard();
     }
   }, [session, hasEmail, isLoading, hasProfile, email, hasError, setDashboard]);
