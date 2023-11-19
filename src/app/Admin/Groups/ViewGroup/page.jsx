@@ -1,6 +1,6 @@
 "use client";
 /* eslint-disable no-unused-vars */
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -35,7 +35,9 @@ export default function Page() {
     deleteGroup({ groupArray }).then((response) => {
       if (response.ok) {
         {
-          window.location.replace("/Admin/Groups");
+          if (typeof window !== "undefined") {
+            window.location.replace("/Admin/Groups");
+          }
         }
       } else {
         alert("Delete failed");
@@ -43,9 +45,17 @@ export default function Page() {
     });
   };
 
+  useEffect(() => {
+    if (session) {
+      if (session?.user.role !== "Admin" && typeof window !== "undefined") {
+        window.location.replace("/Dashboard/Home");
+      }
+    }
+  }, [session]);
+
   return (
     <>
-      {session?.user.role == "Admin" ? (
+      {session?.user.role == "Admin" && (
         <Card
           p={{ base: 0, md: 2 }}
           mx={{ base: -4, md: 0 }}
@@ -128,8 +138,6 @@ export default function Page() {
             )}
           </VStack>
         </Card>
-      ) : (
-        window.location.replace("/Dashboard/Home")
       )}
     </>
   );

@@ -16,7 +16,7 @@ export default function Page() {
   };
 
   useEffect(() => {
-    if (session?.user.role !== "Admin") {
+    if (session?.user.role !== "Admin" && typeof window !== "undefined") {
       window.location.replace("/Dashboard/Home");
     }
   }, [session]);

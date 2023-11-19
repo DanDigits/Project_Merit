@@ -1,6 +1,6 @@
 "use client";
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Button,
   ButtonGroup,
@@ -12,26 +12,21 @@ import {
 import { useSession } from "next-auth/react";
 import User from "../ViewUser/user";
 
-/* 
-  report.jsx has been updated. The email variable needs to be sent to the
-  createReport function as well so if the submit function moves to the report page 
-  you may want to move the useEffect call to report.jsx as well so you don't have 
-  to pass it another way.
-
-  I went ahead and moved the dialog box to its own componenet as well.
-  It is called by setting createStatus to true. Do you think that can be passed
-  as a prop as well.
-
-  Let me know if you have any questions or need help. 
-  Thank you!
-*/
-
 export default function Page() {
   const { data: session } = useSession();
   const mode = "New";
+
+  useEffect(() => {
+    if (session) {
+      if (session?.user.role !== "Admin" && typeof window !== "undefined") {
+        window.location.replace("/Dashboard/Home");
+      }
+    }
+  }, [session]);
+
   return (
     <>
-      {session?.user.role == "Admin" ? (
+      {session?.user.role == "Admin" && (
         <Card
           p={2}
           alignSelf={"center"}
@@ -66,8 +61,6 @@ export default function Page() {
             </ButtonGroup>
           </VStack>
         </Card>
-      ) : (
-        window.location.replace("/Dashboard/Home")
       )}
     </>
   );

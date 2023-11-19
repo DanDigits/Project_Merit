@@ -37,7 +37,9 @@ export default function Page() {
     deleteUser({ userArray }).then((response) => {
       if (response.ok) {
         {
-          window.location.replace("/Admin/Users");
+          if (typeof window !== "undefined") {
+            window.location.replace("/Admin/Users");
+          }
         }
       } else {
         alert("Delete failed");
