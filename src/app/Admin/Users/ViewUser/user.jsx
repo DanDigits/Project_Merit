@@ -73,7 +73,7 @@ export default function User(user_mode) {
 
   const [msg, setMsg] = useState("");
 
-  var state;
+  var state, i;
 
   if (user_mode === "View") {
     state = true;
@@ -90,7 +90,7 @@ export default function User(user_mode) {
         console.log(
           "Comparing " + supervisedGroup + " against existing groups.."
         );
-        for (var i = 0; i < existingGroups.length; i++) {
+        for (i = 0; i < existingGroups.length; i++) {
           if (supervisedGroup === existingGroups[i]) {
             tempStatus = "invalid";
           }
@@ -145,7 +145,7 @@ export default function User(user_mode) {
         console.log(
           "Comparing " + supervisedGroup + " against existing groups.."
         );
-        for (var i = 0; i < existingGroups.length; i++) {
+        for (i = 0; i < existingGroups.length; i++) {
           if (supervisedGroup === existingGroups[i]) {
             tempStatus = "invalid";
           }
@@ -209,7 +209,7 @@ export default function User(user_mode) {
       var temp = [];
       var groupArr = JSON.parse(JSON.stringify(allGroups));
       if (groupArr) {
-        for (var i = 0; i < groupArr.length; i++) {
+        for (i = 0; i < groupArr.length; i++) {
           temp.push(groupArr[i][0]);
         }
         setExistingGroups(temp);

@@ -83,7 +83,7 @@ export default function Page() {
       setData(arr);
       setIsLoading(false);
     }
-  }, [hasGroups, groups]);
+  }, [hasGroups, groups, isLoading]);
 
   const columns = React.useMemo(
     () => [

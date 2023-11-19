@@ -107,7 +107,7 @@ export default function Group(group_mode) {
   );
 
   var tempStatus = "success";
-  var state;
+  var state, i;
 
   if (group_mode === "View") {
     state = true;
@@ -177,7 +177,7 @@ export default function Group(group_mode) {
     if (supEmail != "") {
       if (existingSupervisors != []) {
         console.log("Comparing " + supEmail + " against existing sups..");
-        for (var i = 0; i < existingSupervisors.length; i++) {
+        for (i = 0; i < existingSupervisors.length; i++) {
           if (supEmail === existingSupervisors[i]) {
             setEmailStatus("exist");
             tempStatus = "exist";
@@ -201,6 +201,9 @@ export default function Group(group_mode) {
                         supervisedGroup: oldGroupName,
                       }).then((response) => {
                         if (response.ok) {
+                          if (oldSupEmail == null) {
+                            router.push("/Admin/Groups");
+                          }
                           updateUser({
                             email: oldSupEmail,
                             supervisedGroup: "",
@@ -234,7 +237,7 @@ export default function Group(group_mode) {
     if (groupName != "") {
       if (existingGroups != []) {
         console.log("Comparing " + groupName + " against existing groups..");
-        for (var i = 0; i < existingGroups.length; i++) {
+        for (i = 0; i < existingGroups.length; i++) {
           if (groupName === existingGroups[i]) {
             setNameStatus("exist");
             tempStatus = "exist";
@@ -271,7 +274,7 @@ export default function Group(group_mode) {
       console.log(existingGroups, existingSupervisors);
       if (groupName != "" && existingGroups != []) {
         console.log("Comparing " + groupName + " against existing groups..");
-        for (var i = 0; i < existingGroups.length; i++) {
+        for (i = 0; i < existingGroups.length; i++) {
           if (groupName === existingGroups[i]) {
             tempStatus = "exist";
             setNameStatus("exist");
@@ -280,7 +283,7 @@ export default function Group(group_mode) {
       }
       if (supEmail != "" && existingSupervisors != []) {
         console.log("Comparing " + supEmail + " against existing sups..");
-        for (var i = 0; i < existingSupervisors.length; i++) {
+        for (i = 0; i < existingSupervisors.length; i++) {
           if (supEmail === existingSupervisors[i]) {
             tempStatus = "exist";
             setEmailStatus("exist");
@@ -325,24 +328,6 @@ export default function Group(group_mode) {
       }
     }
 
-    console.log("refresh", refresh);
-    if (hasGroupName && hasEntry) {
-      console.log("hasReportId && hasEntry", groupName, hasEntry);
-      var arr = JSON.parse(JSON.stringify(entry));
-      if (arr) {
-        console.log("arr", arr);
-        setSupEmail(arr[0][0].email);
-        setOldSupEmail(arr[0][0].email);
-        setSupervisor(
-          [arr[0][0].firstName, arr[0][0].lastName, arr[0][0].suffix]
-            .filter(Boolean)
-            .join(" ")
-        );
-        setTotal(arr[1].length);
-        setData(arr[1]);
-        setIsLoading(false);
-      }
-    }
     if (!hasAllGroups) {
       getAllGroups().then((response) => {
         response.ok
@@ -358,9 +343,10 @@ export default function Group(group_mode) {
       var tempSupervisors = [];
       var groupArr = JSON.parse(JSON.stringify(allGroups));
       if (groupArr) {
-        for (var i = 0; i < groupArr.length; i++) {
+        for (i = 0; i < groupArr.length; i++) {
           tempGroupNames.push(groupArr[i][0]);
-          tempSupervisors.push(groupArr[i][1]["email"]);
+          if (groupArr[i][1] != null)
+            tempSupervisors.push(groupArr[i][1]["email"]);
         }
         setExistingGroups(tempGroupNames);
         setExistingSupervisors(tempSupervisors);
@@ -400,12 +386,14 @@ export default function Group(group_mode) {
         var arr = JSON.parse(JSON.stringify(entry));
         if (arr) {
           console.log("arr", arr);
-          setSupEmail(arr[0][0].email);
-          setSupervisor(
-            [arr[0][0].firstName, arr[0][0].lastName, arr[0][0].suffix]
-              .filter(Boolean)
-              .join(" ")
-          );
+          if (arr[0][0] != null) {
+            setSupEmail(arr[0][0].email);
+            setSupervisor(
+              [arr[0][0].firstName, arr[0][0].lastName, arr[0][0].suffix]
+                .filter(Boolean)
+                .join(" ")
+            );
+          }
           setTotal(arr[1].length);
           setData(arr[1]);
           setIsLoading(false);

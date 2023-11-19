@@ -257,10 +257,10 @@ export default function Page() {
     if (hasGroupName && groupName === "" && hasAllGroups) {
       console.log("no group; arr");
       var temp = [];
-      var arr = JSON.parse(JSON.stringify(allGroups));
-      if (arr) {
-        for (var i = 0; i < arr.length; i++) {
-          temp.push(arr[i][0]);
+      var arr3 = JSON.parse(JSON.stringify(allGroups));
+      if (arr3) {
+        for (var i = 0; i < arr3.length; i++) {
+          temp.push(arr3[i][0]);
         }
         setExistingGroups(temp);
       }

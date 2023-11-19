@@ -39,7 +39,6 @@ export default function UpdatePassword() {
   const [profile, setProfile] = useState(null);
   const [hasProfile, setHasProfile] = useState(false);
   const [leaderInfo, setLeaderInfo] = useState("");
-  const [hasLeaderInfo, setHasLeaderInfo] = useState(false);
   const [leaveLoading, setLeaveLoading] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
