@@ -190,7 +190,7 @@ export default function User(user_mode) {
 
   useEffect(() => {
     if (session) {
-      if (session?.user.role !== "Admin") {
+      if (session?.user.role !== "Admin" && typeof window !== "undefined") {
         window.location.replace("/Dashboard/Home");
       }
     }

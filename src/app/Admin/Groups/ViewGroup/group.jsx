@@ -323,7 +323,7 @@ export default function Group(group_mode) {
 
   useEffect(() => {
     if (session) {
-      if (session?.user.role !== "Admin") {
+      if (session?.user.role !== "Admin" && typeof window !== "undefined") {
         window.location.replace("/Dashboard/Home");
       }
     }

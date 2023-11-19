@@ -16,52 +16,42 @@ export default function Page() {
   const { data: session } = useSession();
   const mode = "New";
 
-  useEffect(() => {
-    if (session) {
-      if (session?.user.role !== "Admin" && typeof window !== "undefined") {
-        window.location.replace("/Dashboard/Home");
-      }
-    }
-  }, [session]);
-
   return (
     <>
-      {session?.user.role == "Admin" && (
-        <Card
-          p={2}
-          alignSelf={"center"}
-          size={{ base: "sm", md: "lg" }}
-          w={'{ md: "lg" }'}
-          bgColor={"white"}
-        >
-          <VStack m="5vh">
-            <Heading color="#331E38">Create User</Heading>
-            <br />
+      <Card
+        p={2}
+        alignSelf={"center"}
+        size={{ base: "sm", md: "lg" }}
+        w={'{ md: "lg" }'}
+        bgColor={"white"}
+      >
+        <VStack m="5vh">
+          <Heading color="#331E38">Create User</Heading>
+          <br />
 
-            {User(mode)}
-            <ButtonGroup>
-              <Link href="/Admin/Users">
-                <Button
-                  bgColor={"#A0C1B9"}
-                  color={"#331E38"}
-                  _hover={{ bgColor: "#706993", color: "white" }}
-                >
-                  Cancel
-                </Button>
-              </Link>
+          {User(mode)}
+          <ButtonGroup>
+            <Link href="/Admin/Users">
               <Button
-                bgColor={"#70A0AF"}
-                color={"white"}
+                bgColor={"#A0C1B9"}
+                color={"#331E38"}
                 _hover={{ bgColor: "#706993", color: "white" }}
-                form="user-form"
-                type="submit"
               >
-                Submit
+                Cancel
               </Button>
-            </ButtonGroup>
-          </VStack>
-        </Card>
-      )}
+            </Link>
+            <Button
+              bgColor={"#70A0AF"}
+              color={"white"}
+              _hover={{ bgColor: "#706993", color: "white" }}
+              form="user-form"
+              type="submit"
+            >
+              Submit
+            </Button>
+          </ButtonGroup>
+        </VStack>
+      </Card>
     </>
   );
 }

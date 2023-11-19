@@ -47,7 +47,7 @@ export default function Page() {
 
   useEffect(() => {
     if (session) {
-      if (session?.user.role !== "Admin") {
+      if (session?.user.role !== "Admin" && typeof window !== "undefined") {
         router.push("/Dashboard/Home");
       }
     }
