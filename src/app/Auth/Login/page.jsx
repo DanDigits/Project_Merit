@@ -150,7 +150,7 @@ export default function Page() {
     console.log("mode: " + mode);
 
     setStatus("");
-  }, [mode, role, session]);
+  }, [mode, role, session, updated, urlExpired, urlNum, urlVerified, verified]);
 
   /**
    * This section handles all form submissions sorted by mode.

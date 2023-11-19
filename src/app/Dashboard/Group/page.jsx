@@ -198,7 +198,6 @@ export default function Page() {
       setHasError(false);
 
       var arr = JSON.parse(JSON.stringify(profile));
-      //console.log("Arr = ", arr);
       if (arr) {
         setGroupName(arr.supervisedGroup);
         setHasGroupName(true);
@@ -277,96 +276,101 @@ export default function Page() {
     group,
     hasAllGroups,
     allGroups,
+    hasError,
+    session,
   ]);
 
-  const columns = React.useMemo(() => [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <IndeterminateCheckbox
-          {...{
-            checked: table.getIsAllRowsSelected(),
-            indeterminate: table.getIsSomeRowsSelected(),
-            onChange: table.getToggleAllRowsSelectedHandler(),
-          }}
-        />
-      ),
-      cell: ({ row }) => (
-        <div className="px-1">
+  const columns = React.useMemo(
+    () => [
+      {
+        id: "select",
+        header: ({ table }) => (
           <IndeterminateCheckbox
             {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler(),
+              checked: table.getIsAllRowsSelected(),
+              indeterminate: table.getIsSomeRowsSelected(),
+              onChange: table.getToggleAllRowsSelectedHandler(),
             }}
           />
-        </div>
-      ),
-    },
-    {
-      accessorFn: (row) =>
-        `${row.lastName}` +
-        (row.suffix ? ` ${row.suffix}` : ``) +
-        `, ${row.firstName}`,
-      id: "name",
-      header: "Name",
-      cell: (info) => info.getValue(),
-    },
-    {
-      accessorKey: "email",
-      header: "Email",
-    },
-    {
-      header: "Progress",
-      cell: (cell) => {
-        var progress = Math.floor(
-          (cell.row.original.totalReports /
-            (mission + resources + leadership + unit)) *
-            100
-        );
-        return (
-          <Badge
-            px={5}
-            alignItems={"center"}
-            bg={
-              progress == 100
-                ? "green.500"
-                : progress > 50
-                ? "yellow"
-                : progress > 0
-                ? "orange"
-                : "red"
-            }
-          >
-            {progress} %
-          </Badge>
-        );
+        ),
+        cell: ({ row }) => (
+          <div className="px-1">
+            <IndeterminateCheckbox
+              {...{
+                checked: row.getIsSelected(),
+                disabled: !row.getCanSelect(),
+                indeterminate: row.getIsSomeSelected(),
+                onChange: row.getToggleSelectedHandler(),
+              }}
+            />
+          </div>
+        ),
       },
-    },
-    {
-      header: "Category Fiscal Totals",
-      columns: [
-        {
-          accessorKey: "Mission",
-          header: "Mission",
+      {
+        accessorFn: (row) =>
+          `${row.lastName}` +
+          (row.suffix ? ` ${row.suffix}` : ``) +
+          `, ${row.firstName}`,
+        id: "name",
+        header: "Name",
+        cell: (info) => info.getValue(),
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
+      },
+      {
+        header: "Progress",
+        cell: (cell) => {
+          var progress = Math.floor(
+            (cell.row.original.totalReports /
+              (mission + resources + leadership + unit)) *
+              100
+          );
+          return (
+            <Badge
+              px={5}
+              alignItems={"center"}
+              bg={
+                progress == 100
+                  ? "green.500"
+                  : progress > 50
+                  ? "yellow"
+                  : progress > 0
+                  ? "orange"
+                  : "red"
+              }
+            >
+              {progress} %
+            </Badge>
+          );
         },
-        {
-          accessorKey: "Leadership",
-          header: "Leadership",
-        },
+      },
+      {
+        header: "Category Fiscal Totals",
+        columns: [
+          {
+            accessorKey: "Mission",
+            header: "Mission",
+          },
+          {
+            accessorKey: "Leadership",
+            header: "Leadership",
+          },
 
-        {
-          accessorKey: "Resources",
-          header: "Resources",
-        },
-        {
-          accessorKey: "Unit",
-          header: "Unit",
-        },
-      ],
-    },
-  ]);
+          {
+            accessorKey: "Resources",
+            header: "Resources",
+          },
+          {
+            accessorKey: "Unit",
+            header: "Unit",
+          },
+        ],
+      },
+    ],
+    []
+  );
 
   return (
     <>

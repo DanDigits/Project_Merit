@@ -343,7 +343,7 @@ export default function Group(group_mode) {
       var tempSupervisors = [];
       var groupArr = JSON.parse(JSON.stringify(allGroups));
       if (groupArr) {
-        for (i = 0; i < groupArr.length; i++) {
+        for (var i = 0; i < groupArr.length; i++) {
           tempGroupNames.push(groupArr[i][0]);
           if (groupArr[i][1] != null)
             tempSupervisors.push(groupArr[i][1]["email"]);
@@ -410,6 +410,7 @@ export default function Group(group_mode) {
     refresh,
     hasAllGroups,
     allGroups,
+    session,
   ]);
 
   const columns = useMemo(
@@ -479,7 +480,7 @@ export default function Group(group_mode) {
         header: () => "Email",
       },
     ],
-    []
+    [handleView]
   );
   const table = useReactTable({
     data,

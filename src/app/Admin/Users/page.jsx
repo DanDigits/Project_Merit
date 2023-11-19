@@ -69,7 +69,7 @@ export default function Page() {
       console.log("hasusers", hasUsers);
       setIsLoading(false);
     }
-  }, [hasUsers, session, role]);
+  }, [hasUsers, session, role, router]);
 
   const columns = React.useMemo(
     () => [

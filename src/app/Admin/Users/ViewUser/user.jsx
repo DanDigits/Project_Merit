@@ -209,7 +209,7 @@ export default function User(user_mode) {
       var temp = [];
       var groupArr = JSON.parse(JSON.stringify(allGroups));
       if (groupArr) {
-        for (i = 0; i < groupArr.length; i++) {
+        for (var i = 0; i < groupArr.length; i++) {
           temp.push(groupArr[i][0]);
         }
         setExistingGroups(temp);
@@ -281,6 +281,7 @@ export default function User(user_mode) {
     allGroups,
     user_mode,
     router,
+    session,
   ]);
 
   return (

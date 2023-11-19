@@ -121,6 +121,7 @@ export default function UpdatePassword() {
     isLoading,
     email,
     hasEmail,
+    hasError,
     profile,
     hasProfile,
     group,
