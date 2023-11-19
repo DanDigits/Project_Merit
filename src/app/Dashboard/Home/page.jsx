@@ -63,6 +63,12 @@ export default function Page() {
     needed: 3,
   });
 
+  function calculate(completed, needed) {
+    var percentage = completed / needed;
+    if (percentage > 1) percentage = 1;
+    return percentage;
+  }
+
   const setDashboard = useCallback(() => {
     console.log("Setting Dashboard");
     console.log("Profile: ", profile);
@@ -100,11 +106,6 @@ export default function Page() {
         setReportDate(arr.mostRecentReportDate);
       }
 
-      function calculate(completed, needed) {
-        var percentage = completed / needed;
-        if (percentage > 1) percentage = 1;
-        return percentage;
-      }
       setProgress(
         calculate(
           calculate(mission.total, mission.needed) +
@@ -124,7 +125,6 @@ export default function Page() {
     totals.Mission,
     totals.Resources,
     totals.Unit,
-    totals.totalReports,
     unit,
   ]);
 
@@ -169,7 +169,16 @@ export default function Page() {
     if (hasEmail && hasProfile && reportDate == "") {
       setDashboard();
     }
-  }, [session, hasEmail, isLoading, hasProfile, email, hasError, setDashboard]);
+  }, [
+    session,
+    hasEmail,
+    isLoading,
+    hasProfile,
+    email,
+    hasError,
+    reportDate,
+    setDashboard,
+  ]);
 
   return (
     <>
