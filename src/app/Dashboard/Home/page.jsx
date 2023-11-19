@@ -104,7 +104,7 @@ export default function Page() {
     if (hasEmail && hasProfile) {
       setDashboard();
     }
-  }, [hasEmail, hasProfile, profile, session]);
+  }, [hasEmail, hasProfile, profile, session, email, hasError, isLoading]);
 
   function setDashboard() {
     console.log("Setting Dashboard");
