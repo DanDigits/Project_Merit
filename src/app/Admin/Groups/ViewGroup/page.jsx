@@ -131,7 +131,7 @@ export default function Page() {
                     _hover={{ bgColor: "#031926", color: "white" }}
                     onClick={() => setMode("View")}
                   >
-                    Cancel
+                    Done
                   </Button>
                 </ButtonGroup>
               </>
