@@ -86,16 +86,18 @@ export default function UpdateProfile() {
     if (rank === "" || firstName === "" || lastName === "") {
       setMsg("missing");
     } else {
-      updateUser({ email, rank, firstName, lastName }).then((response) => {
-        if (response.ok) {
-          {
-            setMode("View");
-            setMsg("");
+      updateUser({ email, rank, firstName, lastName, suffix }).then(
+        (response) => {
+          if (response.ok) {
+            {
+              setMode("View");
+              setMsg("");
+            }
+          } else {
+            alert("User could not be updated. Please try again.");
           }
-        } else {
-          alert("User could not be updated. Please try again.");
         }
-      });
+      );
     }
   };
 
