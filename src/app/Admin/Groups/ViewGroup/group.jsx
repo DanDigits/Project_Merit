@@ -174,7 +174,7 @@ export default function Group(group_mode) {
   };
 
   const handleSupChange = () => {
-    if (supEmail != "") {
+    if (supEmail != "" && supEmail != oldSupEmail) {
       if (existingSupervisors != []) {
         console.log("Comparing " + supEmail + " against existing sups..");
         for (i = 0; i < existingSupervisors.length; i++) {
@@ -234,7 +234,7 @@ export default function Group(group_mode) {
   };
 
   const handleRename = () => {
-    if (groupName != "") {
+    if (groupName != "" && groupName != oldGroupName) {
       if (existingGroups != []) {
         console.log("Comparing " + groupName + " against existing groups..");
         for (i = 0; i < existingGroups.length; i++) {
@@ -388,6 +388,7 @@ export default function Group(group_mode) {
           console.log("arr", arr);
           if (arr[0][0] != null) {
             setSupEmail(arr[0][0].email);
+            setOldSupEmail(arr[0][0].email);
             setSupervisor(
               [arr[0][0].firstName, arr[0][0].lastName, arr[0][0].suffix]
                 .filter(Boolean)
@@ -748,7 +749,7 @@ export default function Group(group_mode) {
                           isLoading={searchLoading}
                           onClick={() => handleSearch(searchEmail)}
                         >
-                          Search
+                          Add
                         </Button>
                       </HStack>
                       {status === "error" && (
