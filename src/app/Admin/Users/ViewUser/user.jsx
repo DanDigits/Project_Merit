@@ -574,11 +574,11 @@ export default function User(user_mode) {
               {user_mode === "Edit" && (
                 <FormControl id="status" isRequired>
                   <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-                    Status
+                    Account Status
                   </FormLabel>
                   <Select
                     isReadOnly={state}
-                    placeholder="Select Status"
+                    placeholder="Select Account Status"
                     variant="trim"
                     borderWidth={"2px"}
                     borderColor={"#70A0AF"}
@@ -596,11 +596,11 @@ export default function User(user_mode) {
               {user_mode === "Edit" && (
                 <FormControl id="verified" isRequired>
                   <FormLabel mb={1} fontSize={15} color={"#331E38"}>
-                    Verification
+                    Email Verification
                   </FormLabel>
                   <Select
                     isReadOnly={state}
-                    placeholder="Select Verified Status"
+                    placeholder="Select Email Verification Status"
                     variant="trim"
                     borderWidth={"2px"}
                     borderColor={"#70A0AF"}
@@ -752,7 +752,7 @@ export default function User(user_mode) {
                   </FormControl>
                   <FormControl id="status">
                     <FormLabel mb={1} fontSize={15} color={"black"}>
-                      Status
+                      Account Status
                     </FormLabel>
                     <Input
                       isReadOnly={state}
@@ -770,7 +770,7 @@ export default function User(user_mode) {
                 </HStack>
                 <FormControl id="verified">
                   <FormLabel mb={1} fontSize={15} color={"black"}>
-                    Verification
+                    Email Verification
                   </FormLabel>
                   <Input
                     isReadOnly={state}
