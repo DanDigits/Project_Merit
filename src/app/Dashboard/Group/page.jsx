@@ -237,7 +237,6 @@ export default function Page() {
           //console.log("Arr2 = ", arr2);
           setGroupLength(arr2["1"].length);
           setGroupUsers(arr2["1"]);
-          console.log(groupUsers);
         }
       }
       setIsLoading(false);

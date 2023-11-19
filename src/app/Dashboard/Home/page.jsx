@@ -13,7 +13,7 @@ import {
   StatHelpText,
 } from "@chakra-ui/react";
 import { Stack, Heading } from "@chakra-ui/layout";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { getUser } from "./../../actions/User.js";
 import StatusBox from "./statusBox";
@@ -63,6 +63,62 @@ export default function Page() {
     needed: 3,
   });
 
+  const setDashboard = useCallback(() => {
+    console.log("Setting Dashboard");
+    console.log("Profile: ", profile);
+    var arr = JSON.parse(JSON.stringify(profile));
+
+    if (arr) {
+      setRank(arr.rank);
+      setLastName(arr.lastName);
+      setSuffix(arr.suffix);
+      setTotals({
+        totalReports: arr.totalReports,
+        currentQuarter: arr.currentQuarter,
+        quarterReports: arr.quarterReports,
+      });
+
+      if (totals.Mission !== "") {
+        mission.total = arr.Mission;
+      }
+
+      if (totals.Leadership !== "") {
+        leadership.total = arr.Leadership;
+      }
+
+      if (totals.Resources !== "") {
+        resources.total = arr.Resources;
+      }
+
+      if (totals.Unit !== "") {
+        unit.total = arr.Unit;
+      }
+
+      if (arr.mostRecentReportDate == 0) {
+        setReportDate("N/A");
+      } else {
+        setReportDate(arr.mostRecentReportDate);
+      }
+    }
+
+    setProgress(
+      (totals.totalReports /
+        (mission.needed + leadership.needed + resources.needed + unit.needed)) *
+        100
+    );
+  }, [
+    leadership,
+    mission,
+    profile,
+    resources,
+    totals.Leadership,
+    totals.Mission,
+    totals.Resources,
+    totals.Unit,
+    totals.totalReports,
+    unit,
+  ]);
+
   useEffect(() => {
     if (session) {
       if (session?.user.role === "Admin") {
@@ -104,54 +160,7 @@ export default function Page() {
     if (hasEmail && hasProfile) {
       setDashboard();
     }
-  }, [hasEmail, hasProfile, profile, session]);
-
-  function setDashboard() {
-    console.log("Setting Dashboard");
-    console.log("Profile: ", profile);
-    var arr = JSON.parse(JSON.stringify(profile));
-
-    if (arr) {
-      setRank(arr.rank);
-      setLastName(arr.lastName);
-      setSuffix(arr.suffix);
-      setTotals({
-        totalReports: arr.totalReports,
-        currentQuarter: arr.currentQuarter,
-        quarterReports: arr.quarterReports,
-      });
-
-      if (totals.Mission !== "") {
-        mission.total = arr.Mission;
-      }
-
-      if (totals.Leadership !== "") {
-        leadership.total = arr.Leadership;
-      }
-
-      if (totals.Resources !== "") {
-        resources.total = arr.Resources;
-      }
-
-      if (totals.Unit !== "") {
-        unit.total = arr.Unit;
-      }
-
-      if (!profile.mostRecentReportDate) {
-        setReportDate("N/A");
-      } else {
-        setReportDate(arr.mostRecentReportDate);
-      }
-    }
-
-    setProgress(
-      (totals.totalReports /
-        (mission.needed + leadership.needed + resources.needed + unit.needed)) *
-        100
-    );
-
-    console.log("Dashboard set");
-  }
+  }, [session, hasEmail, isLoading, hasProfile, email, hasError, setDashboard]);
 
   return (
     <>
