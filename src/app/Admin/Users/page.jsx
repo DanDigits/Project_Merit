@@ -1,13 +1,13 @@
 "use client";
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Center, Spinner, Text, Button, Icon } from "@chakra-ui/react";
-import ReportTable from "./ReportTable";
-import { getSession, useSession } from "next-auth/react";
-import { getUserReports } from "./../../actions/Report.js";
+import { Center, Spinner, Text, Button, Icon, Heading } from "@chakra-ui/react";
+import UserTable from "./UserTable.jsx";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
 import { PiEyeBold } from "react-icons/pi";
+import { getAllUsers } from "./../../actions/User.js";
 
 function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
   const ref = useRef(null);
@@ -30,56 +30,46 @@ function IndeterminateCheckbox({ indeterminate, className = "", ...rest }) {
 
 export default function Page() {
   const router = useRouter();
-  const { data: session } = useSession();
-  const [email, setEmail] = useState("");
-  const [reports, setReports] = useState("");
+  const [role, setRole] = useState("");
+  const [users, setUsers] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const [hasEmail, setHasEmail] = useState(false);
-  const [hasReport, setHasReport] = useState(false);
-  const [index, setIndex] = useState("0");
+  const [hasUsers, setHasUsers] = useState(false);
+  const { data: session } = useSession();
 
   const handleSubmitInfo = useCallback(
-    (reportId) => {
-      secureLocalStorage.setItem("reportID", reportId);
-      router.push("/Dashboard/ViewReport");
+    (email) => {
+      secureLocalStorage.setItem("email", email);
+      router.push("/Admin/Users/ViewUser");
     },
     [router]
   );
 
   useEffect(() => {
     if (session) {
-      if (session?.user.role === "Admin") {
-        window.location.replace("/Admin/Users");
+      if (session?.user.role !== "Admin") {
+        window.location.replace("/Dashboard/Home");
       }
     }
 
-    if (!hasEmail) {
-      //console.log("!hasemail");
+    if (!hasUsers) {
+      console.log("!hasusers", hasUsers);
       setIsLoading(true);
       setHasError(false);
-      getSession()
-        .then((session) => setEmail(session.user.email))
-        .then(() => setHasEmail(true));
-    }
-    if (hasEmail && !hasReport) {
-      console.log("hasEmail && !hasreport", email, hasReport);
-      setIsLoading(true);
-      setHasError(false);
-      getUserReports({ email, index }).then((response) => {
+      getAllUsers().then((response) => {
         response.ok
           ? response
               .json()
-              .then((response) => setReports(response))
-              .then(setHasReport(true))
+              .then((response) => setUsers(response))
+              .then(setHasUsers(true))
           : setHasError(true);
       });
     }
-    if (hasEmail && hasReport) {
-      console.log("hasEmail && hasreport", email, hasReport);
+    if (hasUsers) {
+      console.log("hasusers", hasUsers);
       setIsLoading(false);
     }
-  }, [hasEmail, hasReport, email, index, session]);
+  }, [hasUsers, session, role]);
 
   const columns = React.useMemo(
     () => [
@@ -108,19 +98,19 @@ export default function Page() {
         ),
       },
       {
-        id: "view",
-        header: "View",
+        id: "update",
+        header: "Update",
         cell: ({ cell }) => (
           <>
             <Button
-              size={{ base: "sm", lg: "md" }}
+              size="sm"
               textColor={"white"}
               bg={"#1c303c"}
               opacity={0.85}
               borderColor={"#354751"}
               borderWidth={"thin"}
               _hover={{ color: "black", bg: "white", opacity: 1 }}
-              onClick={() => handleSubmitInfo(cell.row.original._id)}
+              onClick={() => handleSubmitInfo(cell.row.original.email)}
             >
               <Icon as={PiEyeBold} />
             </Button>
@@ -128,48 +118,64 @@ export default function Page() {
         ),
       },
       {
-        accessorKey: "date",
-        header: "Date",
-        enableColumnFilter: true,
-        filterFn: (row, columnId, value) => {
-          const date = row.getValue(columnId);
-          const [start, end] = value; // value => two date input values
-          //If one filter defined and date is null filter it
-          if ((start || end) && !date) return false;
-          if (start && !end) {
-            return date >= start;
-          } else if (!start && end) {
-            return date <= end;
-          } else if (start && end) {
-            return date >= start && date <= end;
-          } else return true;
-        },
+        accessorFn: (row) =>
+          `${row.lastName}` +
+          (row.suffix ? ` ${row.suffix}` : ``) +
+          `, ${row.firstName}`,
+        id: "name",
+        header: "Name",
+        cell: (info) => info.getValue(),
+      },
+
+      {
+        accessorKey: "email",
+        header: "Email",
       },
       {
-        accessorKey: "category",
-        header: () => "Performance Area",
-        cell: ({ cell }) =>
-          cell.row.original.category === "Mission"
-            ? "Executing the Mission"
-            : cell.row.original.category === "Leadership"
-            ? "Leading People"
-            : cell.row.original.category === "Resources"
-            ? "Managing Resources"
-            : cell.row.original.category === "Unit"
-            ? "Improving the Unit"
-            : cell.row.original.category,
-
+        accessorKey: "role",
+        header: "Role",
         enableColumnFilter: true,
         filterFn: (row, columnId, filterCategories) => {
           if (filterCategories.length === 0) return true;
-          const category = row.getValue(columnId);
-          return filterCategories.includes(category);
+          const role = row.getValue(columnId);
+          return filterCategories.includes(role);
         },
       },
-
       {
-        accessorKey: "title",
-        header: "Title",
+        accessorKey: "group",
+        header: "Group Membership",
+        cell: ({ cell }) =>
+          !cell.row.original.group || cell.row.original.group === "unassigned"
+            ? ""
+            : cell.row.original.group,
+      },
+      {
+        accessorKey: "supervisedGroup",
+        header: "Group Managed",
+        cell: ({ cell }) =>
+          (!cell.row.original.supervisedGroup ||
+            cell.row.original.supervisedGroup === "unassigned") &&
+          cell.row.original.role === "Supervisor"
+            ? ""
+            : cell.row.original.supervisedGroup,
+      },
+      {
+        accessorKey: "totalReports",
+        header: "Fiscal Total Reports",
+      },
+      {
+        accessorKey: "mostRecentReportDate",
+        header: "Last Report",
+      },
+      {
+        accessorKey: "lastLogin",
+        header: "Last Sign-In",
+      },
+      {
+        accessorKey: "suspended",
+        header: "Status",
+        cell: ({ cell }) =>
+          cell.row.original.suspended == true ? "Suspended" : "Active",
       },
     ],
 
@@ -192,10 +198,10 @@ export default function Page() {
           </Center>
         </>
       )}
-      {session?.user.role !== "Admin" && (
+      {session?.user.role == "Admin" && (
         <>
-          {console.log(reports)}
-          <ReportTable columns={columns} data={reports} />
+          <Heading mb={10}>Manage Users</Heading>
+          <UserTable columns={columns} data={users} />
         </>
       )}
     </>

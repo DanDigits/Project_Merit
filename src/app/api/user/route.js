@@ -173,7 +173,7 @@ export async function GET(Request) {
         if (res == "ERROR") {
           return new Response(JSON.stringify(res), { status: 400 });
         } else {
-          return new Response(res, { status: 200 });
+          return new Response(JSON.stringify(res), { status: 200 });
         }
       }
       case "9": {
@@ -222,7 +222,8 @@ export async function GET(Request) {
 
 // Register new user with signup data
 export async function POST(Request) {
-  let req = await Request.json();
+  let res,
+    req = await Request.json();
   const requestHeaders = headers();
   let admin = requestHeaders?.get("admin");
   let registrar = await getUser(admin);
@@ -231,14 +232,26 @@ export async function POST(Request) {
   if (registrar?.role == "Admin") {
     req.verified = true;
     admin = true;
+    // Check to see if group already exists for supervisor creation
+    if (req.role == "Supervisor") {
+      let exists = await getGroup(req.supervisedGroup);
+      if (exists[0][0] != undefined) {
+        // Setting HTTP responses, never create user due to error
+        exists[0][0].name = "ERROR";
+        exists[0][0].message = "GROUP EXISTS";
+        res = exists[0][0];
+      } else {
+        res = await signUp(req);
+      }
+    } else {
+      res = await signUp(req);
+    }
   } else {
     req.verified = false;
     req.role = "User";
     admin = false;
+    res = await signUp(req);
   }
-
-  // Create user
-  let res = await signUp(req);
 
   // HTTP Responses
   if (res.name) {
@@ -288,15 +301,15 @@ export async function PATCH(Request) {
   }
 
   // HTTP Response
-  if (res.name == "ValidationError" /*|| res.message == "INCORRECT"*/) {
+  if (res?.name == "ValidationError" /*|| res.message == "INCORRECT"*/) {
     // if (res.name) {
     //   res.message = res;
     // }
-    return new Response(res.message, { status: 422 }); // res.message may not be proper response object
-  } else if (res.message) {
-    return new Response(res.message, { status: 400 });
-  } else if (res.id) {
-    return new Response(res.id, { status: 200 });
+    return new Response(res?.message, { status: 422 }); // res.message may not be proper response object
+  } else if (res?.message) {
+    return new Response(res?.message, { status: 400 });
+  } else if (res?.id) {
+    return new Response(res?.id, { status: 200 });
   } else {
     return new Response("ERROR", { status: 400 });
   }
@@ -310,7 +323,7 @@ export async function DELETE(Request) {
   const group = requestHeaders?.get("group");
 
   if (group != undefined) {
-    res = await deleteGroup(group);
+    res = await deleteGroup(req);
   } else {
     res = await deleteUser(req);
   }

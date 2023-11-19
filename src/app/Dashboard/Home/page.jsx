@@ -14,12 +14,12 @@ import {
 } from "@chakra-ui/react";
 import { Stack, Heading } from "@chakra-ui/layout";
 import { useEffect, useState } from "react";
-import { getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { getUser } from "./../../actions/User.js";
-import { getLastReport, getTotals } from "./../../actions/Report.js";
 import StatusBox from "./statusBox";
 
 export default function Page() {
+  const { data: session } = useSession();
   const [hasEmail, setHasEmail] = useState(false);
   const [hasProfile, setHasProfile] = useState(false);
   const [profile, setProfile] = useState("");
@@ -30,25 +30,12 @@ export default function Page() {
 
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const [hasReport, setHasReport] = useState(false);
-  const [report, setReport] = useState({
-    title: "",
-    category: "",
-    date: "",
-    report: "",
-  });
-
-  const [hasTotals, setHasTotals] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [reportDate, setReportDate] = useState("");
   const [totals, setTotals] = useState({
     totalReports: "",
     currentQuarter: "",
     quarterReports: "",
-    Mission: "",
-    Leadership: "",
-    Resources: "",
-    Unit: "",
   });
 
   const [mission] = useState({
@@ -77,13 +64,20 @@ export default function Page() {
   });
 
   useEffect(() => {
+    if (session) {
+      if (session?.user.role === "Admin") {
+        window.location.replace("/Admin/Users");
+      }
+    }
+
     if (!hasEmail && !isLoading) {
       setIsLoading(true);
       setHasError(false);
       console.log("Fetching email...");
-      getSession()
-        .then((session) => setEmail(session.user.email))
-        .then(() => setHasEmail(true));
+      setEmail(session?.user.email);
+      if (email && email != "") {
+        setHasEmail(true);
+      }
       console.log("Got email");
       setIsLoading(false);
     }
@@ -107,67 +101,47 @@ export default function Page() {
       }
     }
 
-    if (hasEmail && !hasTotals && !isLoading) {
-      console.log("Fetching totals");
-      setIsLoading(true);
-      setHasError(false);
-
-      getTotals({ email }).then((response) => {
-        response.ok
-          ? response
-              .json()
-              .then((response) => setTotals(response))
-              .then(setHasTotals(true))
-              .then(console.log("Got totals"))
-          : setTotals({ date: "N/A" });
-      });
-      setIsLoading(false);
-      if (hasError) {
-        console.log("Error fetching totals");
-      }
-    }
-
-    if (hasEmail && !hasReport && !isLoading) {
-      console.log("Fetching report");
-      setIsLoading(true);
-      setHasError(false);
-
-      getLastReport({ email }).then((response) => {
-        response.ok
-          ? response
-              .json()
-              .then((response) => setReport(response))
-              .then(setHasReport(true))
-              .then(console.log("Got report"))
-          : setHasError(true);
-      });
-      setIsLoading(false);
-      if (hasError) {
-        console.log("Error fetching report");
-      }
-    }
-
-    if (hasProfile && hasTotals && hasReport) {
+    if (hasEmail && hasProfile) {
       setDashboard();
     }
-  }, [hasEmail, hasProfile, hasReport, hasTotals, totals]);
+  }, [hasEmail, hasProfile, profile, session]);
 
   function setDashboard() {
     console.log("Setting Dashboard");
-    if (totals.Mission !== "") {
-      mission.total = totals.Mission;
-    }
+    console.log("Profile: ", profile);
+    var arr = JSON.parse(JSON.stringify(profile));
 
-    if (totals.Leadership !== "") {
-      leadership.total = totals.Leadership;
-    }
+    if (arr) {
+      setRank(arr.rank);
+      setLastName(arr.lastName);
+      setSuffix(arr.suffix);
+      setTotals({
+        totalReports: arr.totalReports,
+        currentQuarter: arr.currentQuarter,
+        quarterReports: arr.quarterReports,
+      });
 
-    if (totals.Resources !== "") {
-      resources.total = totals.Resources;
-    }
+      if (totals.Mission !== "") {
+        mission.total = arr.Mission;
+      }
 
-    if (totals.Unit !== "") {
-      unit.total = totals.Unit;
+      if (totals.Leadership !== "") {
+        leadership.total = arr.Leadership;
+      }
+
+      if (totals.Resources !== "") {
+        resources.total = arr.Resources;
+      }
+
+      if (totals.Unit !== "") {
+        unit.total = arr.Unit;
+      }
+
+      if (!profile.mostRecentReportDate) {
+        setReportDate("N/A");
+      } else {
+        setReportDate(arr.mostRecentReportDate);
+      }
     }
 
     setProgress(
@@ -176,23 +150,12 @@ export default function Page() {
         100
     );
 
-    if (!report.date) {
-      setReport({ date: "N/A" });
-    }
-
-    var arr = JSON.parse(JSON.stringify(profile));
-    if (arr) {
-      setRank(arr.rank);
-      setLastName(arr.lastName);
-      setSuffix(arr.suffix);
-    }
-
     console.log("Dashboard set");
   }
 
   return (
     <>
-      {isLoading ? (
+      {isLoading && (
         <>
           <AbsoluteCenter>
             <Spinner
@@ -204,7 +167,8 @@ export default function Page() {
             />
           </AbsoluteCenter>
         </>
-      ) : (
+      )}
+      {session?.user.role !== "Admin" && (
         <Card
           p={{ base: 0, md: 2 }}
           mx={{ base: -4, md: 0 }}
@@ -283,7 +247,7 @@ export default function Page() {
                         justifySelf={{ base: "flex-end", md: "auto" }}
                         fontSize={{ base: "lg", lg: "2xl" }}
                       >
-                        {report.date}
+                        {reportDate}
                       </StatNumber>
                       <StatHelpText fontSize={{ base: "xs", md: "sm" }}>
                         Report Date

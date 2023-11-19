@@ -43,11 +43,11 @@ const UserSchema = new Schema({
     default: "Never logged in",
   },
   group: {
-    type: [String],
+    type: String,
     required: false,
   },
   supervisedGroup: {
-    type: [String],
+    type: String,
     required: false,
   },
   passwordLocked: {

@@ -20,7 +20,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import {
   signUp,
   requestReset,
@@ -41,6 +41,8 @@ const statusMessages = {
   missingReg: "All fields except suffix are required.",
   missingUpd: "Both New Password and New Password Confirmation are required.",
   sent: "Request sent, please check your email. This link is only valid for 15 minutes. ",
+  suspended:
+    "This account has been locked. Please contact the system administrator.",
   verified: "Account successfully verified.",
 };
 
@@ -56,6 +58,7 @@ export default function Page() {
    * num is part of the verification link use for password reset (passed by url param)
    * params is the paramaters pulled from the url in the case of verification links and password reset links
    */
+  const { data: session } = useSession();
   const [mode, setMode] = useState("Login");
   const [status, setStatus] = useState("");
   const [expired, setExpired] = useState("");
@@ -77,6 +80,7 @@ export default function Page() {
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [role, setRole] = useState("");
 
   /**
    * Parameters pulled from the url
@@ -112,6 +116,15 @@ export default function Page() {
    * Status is cleared every time a mode changes.
    */
   useEffect(() => {
+    if (session) {
+      setRole(session?.user.role);
+      if (role != "" && role === "Admin") {
+        window.location.replace("/Admin/Users");
+      } else {
+        window.location.replace("/Dashboard/Home");
+      }
+    }
+
     console.log("urlVerified: " + urlVerified);
     if (urlNum && mode !== "Verification Needed" && !updated) {
       setNum(urlNum);
@@ -137,7 +150,7 @@ export default function Page() {
     console.log("mode: " + mode);
 
     setStatus("");
-  }, [mode]);
+  }, [mode, role, session]);
 
   /**
    * This section handles all form submissions sorted by mode.
@@ -240,10 +253,9 @@ export default function Page() {
               setStatus(statusMessages.credentials);
             } else if (response.error === "Unverified account") {
               setMode("Verification Needed");
+            } else if (response.error === "Suspended account") {
+              setStatus(statusMessages.suspended);
             }
-          } else {
-            window.location.replace("/Dashboard/Home");
-            console.log(response);
           }
         });
       }

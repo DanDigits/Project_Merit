@@ -25,6 +25,9 @@ export async function login({ email, password }) {
   if (user.verified == false) {
     throw new Error("Unverified account");
   }
+  if (user.suspended == true) {
+    throw new Error("Suspended account");
+  }
 
   //Update last signed in date
   modifyUser(email, { lastLogin: date.toISOString().substring(0, 10) });
@@ -196,22 +199,36 @@ export async function modifyUser(userId, userData) {
 // Rename a group by looping through the members, and updating
 export async function renameGroup(group, groupData) {
   await mongoDB();
-  let index,
-    i = 0;
+  let i = 0;
   const user = await UserSchema?.find({ group }).catch(function (err) {
     return err;
   });
-  console.log(group);
   while (user?.[i] != undefined) {
-    index = user[i].group?.indexOf(`${group}`);
-    user[i].group[index] = groupData.newGroup;
-    console.log(user[i].group[index]);
+    user[i].group = groupData.newGroup;
     await UserSchema?.findOneAndUpdate(
       { email: user[i].email },
       { group: user[i].group }
     );
     i++;
   }
+
+  i = 0;
+  const supervisor = await UserSchema?.find({ supervisedGroup: group }).catch(
+    function (err) {
+      return err;
+    }
+  );
+  while (supervisor?.[i] != undefined) {
+    //console.log(supervisor[i].supervisedGroup);
+    //console.log(group);
+    supervisor[i].supervisedGroup = groupData.newGroup;
+    await UserSchema?.findOneAndUpdate(
+      { email: supervisor[i].email },
+      { supervisedGroup: supervisor[i].supervisedGroup }
+    );
+    i++;
+  }
+
   user.id = "OK";
   return user;
 }
@@ -260,24 +277,47 @@ export async function deleteUser(userId) {
 }
 
 // Delete a group by looping through the members, and removing
-export async function deleteGroup(group) {
+export async function deleteGroup(groups) {
   await mongoDB();
-  let index,
-    i = 0;
-  const user = await UserSchema?.find({ group }).catch(function (err) {
-    return err;
-  });
-  while (user?.[i] != undefined) {
-    index = user[i].group?.indexOf(`${group}`);
-    user[i].group.splice(index, 1);
-    await UserSchema?.findOneAndUpdate(
-      { email: user[i].email },
-      { group: user[i].group }
+  let i = 0,
+    j = 0;
+  let length = groups?.group?.length;
+
+  // Depending on the number of groups provided, while loop through members and supervisor
+  while (i < length) {
+    const user = await UserSchema?.find({ group: groups?.group[i] }).catch(
+      function (err) {
+        return err;
+      }
     );
+    while (user?.[j] != undefined) {
+      console.log(user[j].email);
+      await UserSchema?.findOneAndUpdate(
+        { email: user[j].email },
+        { group: "" }
+      );
+      j++;
+    }
+    j = 0;
+
+    const supervisor = await UserSchema?.find({
+      supervisedGroup: groups?.group[i],
+    }).catch(function (err) {
+      return err;
+    });
+    while (supervisor?.[j] != undefined) {
+      console.log(supervisor[j].email);
+      await UserSchema?.findOneAndUpdate(
+        { email: supervisor[j].email },
+        { supervisedGroup: "" }
+      );
+      j++;
+    }
+    j = 0;
+
     i++;
   }
-  user.id = "OK";
-  return user;
+  return length;
 }
 
 // Verify a user from a 2FA email code
@@ -382,7 +422,7 @@ export async function getGroup(group) {
   await mongoDB();
   let members = [];
   let categories = "Mission Leadership Resources Unit";
-  let supervisorFilter = "firstName lastName rank suffix";
+  let supervisorFilter = "firstName lastName rank suffix email";
   let filter =
     "email firstName lastName rank suffix mostRecentReportDate totalReports currentQuarter quarterReports" +
     " " +
@@ -432,7 +472,7 @@ export async function getGroupOrphans() {
 export async function getAllUsers() {
   await mongoDB();
   let filter =
-    "email firstName lastName suffix id role group supervisedGroup totalReports mostRecentReportDate lastLogin suspended";
+    "email rank firstName lastName suffix id role group supervisedGroup totalReports mostRecentReportDate lastLogin suspended";
   const users = await UserSchema?.find({ email: { $exists: true } }, filter)
     .sort({ lastName: 1, firstName: 1 })
     .catch(function (err) {
@@ -443,13 +483,14 @@ export async function getAllUsers() {
 }
 
 export async function getSupervisor(group) {
-  let supervisors,
-    i,
+  let supervisors = [],
+    i = 0,
     currentGroup = await getGroup(group);
 
   // If current group isnt empty, push supervisor profile to supervisors array
   while (currentGroup?.[0]?.[i] != undefined) {
-    supervisors.push(group[0][i]);
+    supervisors.push(currentGroup[0][i]);
+    i++;
   }
 
   return supervisors;
@@ -457,8 +498,34 @@ export async function getSupervisor(group) {
 
 export async function getGroups() {
   await mongoDB();
+  let i = 0;
+  let array = [];
+  let uniques;
   let groups = await UserSchema?.find().distinct("group");
-  return groups;
+  let supervisedGroups = await UserSchema?.find().distinct("supervisedGroup");
+
+  // Filter out empty strings
+  groups = groups.filter((group) => group !== "" && group != null);
+  supervisedGroups = supervisedGroups.filter(
+    (supervisedGroup) => supervisedGroup !== "" && supervisedGroup != null
+  );
+
+  // Create array with unique values from both results
+  function uniqueFilter(value, index, self) {
+    return self.indexOf(value) === index;
+  }
+  groups = groups.concat(supervisedGroups);
+  uniques = groups.filter(uniqueFilter);
+
+  while (i < uniques?.length) {
+    let supervisor = await UserSchema?.find(
+      { supervisedGroup: uniques[i] },
+      "firstName lastName rank suffix email"
+    );
+    array.push([uniques[i], supervisor[0]]);
+    i++;
+  }
+  return array;
 }
 
 export async function removeMultipleUsers(users) {
@@ -474,7 +541,7 @@ export async function removeMultipleUsers(users) {
     while (i < length) {
       user = await UserSchema?.findOneAndUpdate(
         { email: users?.email[i] },
-        { group: [] }
+        { group: "" }
       ).catch(function (err) {
         return err;
       });
