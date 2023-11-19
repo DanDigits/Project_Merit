@@ -167,7 +167,7 @@ export default function GroupTable({ group, columns, data }) {
             isLoading={searchLoading}
             onClick={() => handleSearch(searchEmail)}
           >
-            Search
+            Add
           </Button>
         </HStack>
         {status === "error" && <p>There was an error while adding member.</p>}

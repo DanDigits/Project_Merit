@@ -236,7 +236,6 @@ export default function Page() {
           //console.log("Arr2 = ", arr2);
           setGroupLength(arr2["1"].length);
           setGroupUsers(arr2["1"]);
-          console.log(groupUsers);
         }
       }
       setIsLoading(false);
@@ -322,10 +321,19 @@ export default function Page() {
       {
         header: "Progress",
         cell: (cell) => {
+          function calculate(completed, needed) {
+            var percentage = completed / needed;
+            if (percentage > 1) percentage = 1;
+            return percentage;
+          }
           var progress = Math.floor(
-            (cell.row.original.totalReports /
-              (mission + resources + leadership + unit)) *
-              100
+            calculate(
+              calculate(cell.row.original.Mission, mission) +
+                calculate(cell.row.original.Resources, resources) +
+                calculate(cell.row.original.Leadership, leadership) +
+                calculate(cell.row.original.Unit, unit),
+              4
+            ) * 100
           );
           return (
             <Badge
