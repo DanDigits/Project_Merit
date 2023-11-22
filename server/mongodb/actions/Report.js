@@ -50,13 +50,17 @@ export async function updateUserReportStatistics(email) {
   const date = new Date();
 
   // Find most recent reported event date
-  reportDate = await ReportSchema.find({ email: email }, "date -_id")
+  reportDate = await ReportSchema?.find({ email: email }, "date -_id")
     .sort({ date: -1 })
     .limit(1)
     .catch(function (err) {
       return err;
     });
-  user.mostRecentReportDate = reportDate[0].date.slice(0, 10);
+  if (reportDate == undefined) {
+    user.mostRecentReportDate = "0";
+  } else {
+    user.mostRecentReportDate = reportDate[0]?.date.slice(0, 10);
+  }
 
   // Find total reports for the fiscal year Oct-Sept
   if (date.getMonth() >= 9) {
