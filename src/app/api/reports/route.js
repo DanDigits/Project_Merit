@@ -15,14 +15,19 @@ import {
 import { pdf } from "server/pdf/actions/generatePDF";
 
 export async function POST(Request) {
+  let req = await Request.json();
+  let res,
+    time,
+    date = new Date();
   const requestHeaders = headers();
   const request = requestHeaders.get("request");
-  let res;
 
   switch (request) {
     case "1": {
       // Create a report
-      res = await createReport(await Request.json());
+      time = date.toISOString().slice(10);
+      req.date = req.date + time;
+      res = await createReport(req);
 
       // HTTP Response
       if (res.name == "ValidationError") {
@@ -47,9 +52,7 @@ export async function POST(Request) {
       // }
 
       // Download a PDF of given report(s)
-      const req = await Request.json();
       const stream = new PassThrough();
-      const date = new Date();
       pdf(stream, req);
 
       // HTTP response, may be ineffective due to how stream operates
@@ -79,7 +82,7 @@ export async function GET() {
   // Switch case to differentiate GET requests
   switch (request) {
     case "1": {
-      // Get 20 of a Users reports, ordered by date most recent
+      // Get Users reports, ordered by date most recent
       const user = requestHeaders.get("user"); // or "email";
       const index = requestHeaders.get("index");
       res = await getUserReports(user, index);
