@@ -19,12 +19,12 @@ export default function Thesaurus() {
   const [text, setText] = useState("");
   const [results, setResults] = useState("");
   const [resultsSet, setResultsSet] = useState(false);
-  var temp = "";
+  const [temp, setTemp] = useState("");
 
   useEffect(() => {
     if (resultsSet) {
       if (results === "") {
-        temp = "No results. Please try another word.";
+        setTemp("No results. Please try another word.");
       } else {
         var arr = Object.values(results).slice(
           0,
@@ -33,13 +33,14 @@ export default function Thesaurus() {
             : 15
         );
 
-        for (var i = 0; i < arr.length; i++) temp += arr[i] + "  ";
+        var list = temp;
+        for (var i = 0; i < arr.length; i++) list += arr[i] + "  ";
       }
-      setText(temp);
+      setText(list);
       setResultsSet(false);
-      temp = "";
+      setTemp("");
     }
-  });
+  }, [resultsSet, results, temp]);
 
   const handleSearch = (e) => {
     if (word !== "") {

@@ -80,6 +80,11 @@ resource "aws_iam_role_policy_attachment" "task_execution_role_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+resource "aws_iam_role_policy_attachment" "task_cloudwatch_role_policy" {
+  role       = aws_iam_role.task_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+}
+
 # Security Group -------------------------------------------------
 # Load Balancer
 resource "aws_security_group" "load_balancer_security_group" {

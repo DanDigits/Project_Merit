@@ -1,8 +1,8 @@
 "use client";
 import { ChakraProvider } from "@chakra-ui/react";
 import { customTheme } from "../styles/customTheme";
-import { useEffect, useState } from "react";
-import { getSession, useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
+import { useSession, getSession } from "next-auth/react";
 import {
   IconButton,
   Box,
@@ -21,22 +21,11 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
-import { FaUser, FaUsers } from "react-icons/fa";
-import {
-  AiOutlineFileProtect,
-  AiFillHome,
-  AiFillFile,
-  AiFillFolder,
-  AiOutlineFileAdd,
-} from "react-icons/ai";
+import { FaUser } from "react-icons/fa";
+import { AiOutlineFileProtect } from "react-icons/ai";
 import { useRouter } from "next/navigation";
 import NextLink from "next/link";
 import { signOut } from "next-auth/react";
-/*const LinkItems = [
-  { name: "Home", icon: AiFillHome },
-  { name: "Reports", icon: AiOutlineFolder },
-  { name: "Guidelines", icon: AiOutlineFile }
-]*/
 
 export default function SidebarWithHeader({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -44,25 +33,27 @@ export default function SidebarWithHeader({ children }) {
   return (
     <ChakraProvider theme={customTheme}>
       <Box minH="100vh" bg={useColorModeValue("#F5F5F5", "#D4D4D4")}>
-        <SidebarContent
-          onClose={() => onClose}
-          display={{ base: "none", md: "block" }}
-        />
-        <Drawer
-          autoFocus={false}
-          isOpen={isOpen}
-          placement="left"
-          onClose={onClose}
-          returnFocusOnClose={false}
-          onOverlayClick={onClose}
-          size="full"
-        >
-          <DrawerContent>
-            <SidebarContent onClose={onClose} />
-          </DrawerContent>
-        </Drawer>
-        {/* mobilenav */}
-        <MobileNav onOpen={onOpen} />
+        <>
+          <SidebarContent
+            onClose={() => onClose}
+            display={{ base: "none", md: "block" }}
+          />
+          <Drawer
+            autoFocus={false}
+            isOpen={isOpen}
+            placement="left"
+            onClose={onClose}
+            returnFocusOnClose={false}
+            onOverlayClick={onClose}
+            size="full"
+          >
+            <DrawerContent>
+              <SidebarContent onClose={onClose} />
+            </DrawerContent>
+          </Drawer>
+          {/* mobilenav */}
+          <MobileNav onOpen={onOpen} />
+        </>
         <Box p="4" px="8" ml={{ base: "0", md: "60" }}>
           {children}
         </Box>
@@ -106,67 +97,37 @@ const SidebarContent = ({ onClose, ...rest }) => {
           onClick={onClose}
         />
       </Flex>
-      <VStack mt="50px" ml={10} spacing={14} alignItems="left" w="100%">
-        <NextLink href="/Dashboard/Home" passHref>
-          <Button
-            variant="ghost"
-            onClick={onClose}
-            fontSize={{ base: "2xl", md: "xl" }}
-            textColor={"#031926"}
-            _hover={{ bg: "#1c303c", color: "white" }}
-            leftIcon={<AiFillHome />}
-          >
-            Home
-          </Button>
-        </NextLink>
-
-        <NextLink href={"/Dashboard/Reports"} passHref>
-          <Button
-            variant="ghost"
-            onClick={onClose}
-            fontSize={{ base: "2xl", md: "xl" }}
-            textColor={"#031926"}
-            _hover={{ bg: "#1c303c", color: "white" }}
-            leftIcon={<AiFillFolder />}
-          >
-            Reports
-          </Button>
-        </NextLink>
-
-        <NextLink href={"/Dashboard/Guidelines"} passHref>
-          <Button
-            variant="ghost"
-            onClick={onClose}
-            fontSize={{ base: "2xl", md: "xl" }}
-            textColor={"#031926"}
-            _hover={{ bg: "#1c303c", color: "white" }}
-            leftIcon={<AiFillFile />}
-          >
-            Guidelines
-          </Button>
-        </NextLink>
-
-        {role === "Supervisor" && (
-          <NextLink href={"/Dashboard/Group"} passHref>
+      {role === "Admin" && (
+        <VStack mt="50px" ml={10} spacing={14} alignItems="left" w="100%">
+          <NextLink href="/Admin/Users">
             <Button
               variant="ghost"
               onClick={onClose}
               fontSize={{ base: "2xl", md: "xl" }}
               textColor={"#031926"}
               _hover={{ bg: "#1c303c", color: "white" }}
-              leftIcon={<FaUsers />}
             >
-              Group
+              Users
             </Button>
           </NextLink>
-        )}
-      </VStack>
+          <NextLink href={"/Admin/Groups"} passHref>
+            <Button
+              variant="ghost"
+              onClick={onClose}
+              fontSize={{ base: "2xl", md: "xl" }}
+              textColor={"#031926"}
+              _hover={{ bg: "#1c303c", color: "white" }}
+            >
+              Groups
+            </Button>
+          </NextLink>
+        </VStack>
+      )}
     </Box>
   );
 };
 
 const MobileNav = ({ onOpen, ...rest }) => {
-  //const { data: session, status, update } = useSession();
   const router = useRouter();
 
   const handleLogout = (e) => {
@@ -194,18 +155,6 @@ const MobileNav = ({ onOpen, ...rest }) => {
         icon={<FiMenu />}
       />
       <Box justifyContent={{ base: "space-between", md: "flex-end" }}>
-        <Button
-          variant="ghost"
-          onClick={() => router.push("/Dashboard/NewReport")}
-          fontSize={20}
-          textColor={"white"}
-          _hover={{ bg: "white", color: "#031926" }}
-          textOverflow={"inherit"}
-          leftIcon={<AiOutlineFileAdd />}
-        >
-          New Report
-        </Button>
-
         <Menu>
           <MenuButton
             as={Button}
@@ -218,7 +167,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
           <MenuList>
             <MenuItem
               textColor={"#331E38"}
-              onClick={() => router.push("/Dashboard/Profile")}
+              onClick={() => router.push("/Admin/Profile")}
             >
               Profile
             </MenuItem>

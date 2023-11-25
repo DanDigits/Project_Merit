@@ -1,6 +1,6 @@
 on:
   push:
-    branches: ["main", "test"]
+    branches: ["main", "test", "admin"]
 
 name: CI/CD
 jobs:

@@ -7,6 +7,7 @@ export const signUp = async ({
   lastName,
   suffix,
   password,
+  role = "user",
 }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.signUp, {
     method: "POST",
@@ -22,6 +23,7 @@ export const signUp = async ({
       lastName,
       suffix,
       password,
+      role,
     }),
   });
 
@@ -40,6 +42,19 @@ export const getUser = async ({ email }) => {
     },
   });
   console.log("getUser response: ", response.statusText);
+
+  return response;
+};
+
+export const getAllUsers = async () => {
+  const response = await fetch(getPath.baseUrl + getPath.api.user.get, {
+    method: "GET",
+    mode: "same-origin",
+    headers: {
+      request: "6",
+    },
+  });
+  console.log(response.statusText);
 
   return response;
 };
@@ -97,6 +112,11 @@ export const updateUser = async ({
   firstName,
   lastName,
   suffix,
+  role,
+  group,
+  supervisedGroup,
+  suspended,
+  verified,
 }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
     method: "PATCH",
@@ -110,6 +130,11 @@ export const updateUser = async ({
       firstName,
       lastName,
       suffix,
+      role,
+      group,
+      supervisedGroup,
+      suspended,
+      verified,
     }),
   });
   console.log("Update Response:", response.statusText);
@@ -135,13 +160,11 @@ export const updatePassword = async ({ email, password, newPassword }) => {
   return response;
 };
 
-export const deleteUser = async ({ email }) => {
+export const deleteUser = async ({ userArray }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.delete, {
     method: "DELETE",
     mode: "same-origin",
-    headers: {
-      user: email,
-    },
+    body: JSON.stringify({ email: userArray }),
   });
   console.log(response.statusText);
 
