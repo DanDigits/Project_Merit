@@ -1,13 +1,39 @@
-### Junior Design Project (Team 2122)
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p align="center">
+  <h1 align="center">
+    <a href="http://merit.testing.systems">Project Merit</a>
+  </h1>
+</p>
 
-Members:
+<p align="center">
+  <img src="https://github.com/nodeonline/nodejscart/actions/workflows/build.yml/badge.svg" alt="Github Action">
+  <a href="https://opensource.org/license/mit/">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="License">
+  </a>
+</p>
 
-- Charlie Luo (cvxluo@gatech.edu, 609-436-5970)
-- Jin Woo (jwoo44@gatech.edu, 470-331-7848)
-- Jill Patel (jpatel409@gatech.edu, 762-219-6305)
-- Alexa O'Reilly (aoreilly7@gatech.edu, 470-775-4289)
-- Ian Loo (yloo6@gatech.edu, 404-663-6205)
-- Manavi Rao (mrao44@gatech.edu, 404-983-3408)
+<p align="center">
+<img alt="EverShop" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/img.png"/>
+</p>
+
+## Introduction
+
+Project Merit is a quick and easy tool where Air Force personnel can write, edit, and save performance reports from any device.
+
+This tool will guide them to write evaluation reports according to the guidelines and standards set out by the Air Force.
+
+Personnel will be able to export and download the reports for submission through official Air Force channels.
+
+## Senior Design Project (Group 15)
+
+- Daniel Cruz-Castro (Da709128@ucf.edu)
+- Amber McCullah (am324232@ucf.edu)
+- Mari Peele (ma973527@ucf.edu)
+- Emily Tao (em265354@ucf.edu)
+
+## Documentation
+
+- [Video Introduction](https://youtu.be/GMgM7Sv90zI?si=KjG4qlxBToPAXIKL).
 
 ## Getting Started
 
@@ -21,11 +47,7 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed based on which endpoint you would like to change. The reports endpoint can be edited in `src/app/api/reports/route.js`. Likewise, the user endpoint can be edited in `src/app/api/user/route.js`.
 
 ## Learn More
 
@@ -36,8 +58,63 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## System Design
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Use Case Digrams
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+<p align="left">
+<img alt="Use Case Diagram - User" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/Use%20Case%20-%20User.png"/>
+</p>
+<p align="left">
+<img alt="Use Case Diagram - Supervisor" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/Use%20Case%20-%20Supervisor.png"/>
+</p>
+<p align="left">
+<img alt="Use Case Diagram - Admin" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/Use%20Case%20-%20Admin.png"/>
+</p>
+
+Class Diagram
+
+<p align="left">
+<img alt="Class Diagram" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/Class%20Diagram.jpg"/>
+</p>
+
+Activity Diagrams
+
+<p align="left">
+<img alt="Activity Diagram" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/Activity%20diagram.jpg"/>
+</p>
+
+## Demo
+
+Explore our app with this demo account.
+
+<p align="left">
+  <a href="merit.testing.systems" target="_blank">
+  </a>
+</p>
+<b>Demo user:</b>
+
+Email: jace@test.com<br/>
+Password: testingxyz
+
+## Support
+
+### Create a bug report
+
+If you see an error message or run into an issue, please [create bug report](https://github.com/DanDigits/Project_Merit/issues).
+
+### Submit a feature request
+
+If you have an idea, or you're missing a capability that would make development easier and more robust, please [Submit feature request](https://github.com/DanDigits/Project_Merit/issues).
+
+If a similar feature request already exists, don't forget to leave a "+1".
+
+## Contributing
+
+Project Merit is an open-source project. We are committed to making this application a success and appreciate any contributions. Whether you are recommending new features, alerting us to bugs, or just spreading the word - we are delighted to welcome you to the Project Merit community.
+
+Please refer to our [Contribution Guidelines](https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/CONTRIBUTING.md) and [Code of Conduct](https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/CodeOfConduct.md).
+
+## License
+
+[MIT License](https://github.com/DanDigits/Project_Merit/blob/f88421459e0c64bb7acfab2ec7cf9868f19280ee/READMEObjects/MIT-License.txt)
