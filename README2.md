@@ -66,13 +66,13 @@ Use Case Digrams
 Class Diagram
 
 <p align="left">
-<img alt="Class Diagram" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/Class%20Diagram.png"/>
+<img alt="Class Diagram" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/Class%20Diagram.jpg"/>
 </p>
 
 Activity Diagrams
 
 <p align="left">
-<img alt="Activity Diagram" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/System%20Design%20Diagram.png"/>
+<img alt="Activity Diagram" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/Activity%20diagram.jpg"/>
 </p>
 
 ## Demo
