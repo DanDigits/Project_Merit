@@ -291,7 +291,8 @@ export async function PATCH(Request) {
     if (user == undefined && group == undefined) {
       res = await makeAdmin(admin, req);
     } else if (user != undefined && group == undefined) {
-      res = await modifyUser(user, (req.adminCredentials = admin));
+      req.adminCredentials = admin;
+      res = await modifyUser(user, req);
     } else {
       res.message = "TOO MANY REQUESTS";
     }

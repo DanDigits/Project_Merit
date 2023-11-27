@@ -93,8 +93,7 @@ export async function getUser(userId) {
 // Update user information in database
 export async function modifyUser(userId, userData) {
   await mongoDB();
-  let admins,
-    user,
+  let user,
     password = userData?.password,
     newPassword = userData?.newPassword;
   //If statement to retrieve user from database, and set userId to the users email
@@ -103,20 +102,6 @@ export async function modifyUser(userId, userData) {
   } else {
     user = await UserSchema.findOne({ _id: userId });
     userId = user.email;
-  }
-
-  // Check if user is last Admin demoting themselves
-  admins = await UserSchema?.find(
-    {
-      role: "Admin",
-    },
-    "email"
-  ).catch(function (err) {
-    return err;
-  });
-
-  if (admins.length < 2 && user.role == "Admin" && userData.role != "Admin") {
-    return (user.message = "LAST ADMIN");
   }
 
   // Resetting password while being logged in (e.g. verify with current password)
@@ -194,6 +179,27 @@ export async function modifyUser(userId, userData) {
           return user;
         }
       }
+
+      // Check if user is last Admin demoting themselves
+      let admins = await UserSchema?.find(
+        {
+          role: "Admin",
+        },
+        "email"
+      ).catch(function (err) {
+        return err;
+      });
+
+      console.log(admins.length);
+      console.log(user.role);
+      console.log(userData.role);
+      if (
+        admins.length < 2 &&
+        user.role == "Admin" &&
+        userData.role != "Admin"
+      ) {
+        return (user.message = "LAST ADMIN");
+      }
     }
 
     // Update user
@@ -262,7 +268,7 @@ export async function deleteUser(userId) {
   let length = userId?.email?.length;
   let user, reports, report, admins;
 
-  // Retrieve admins in the system, so if request user to be deleted is the last admin, it is denied
+  // Retrieve admins in the system, to deny modification tot he last admin
   admins = await UserSchema?.find(
     {
       role: "Admin",
@@ -272,6 +278,7 @@ export async function deleteUser(userId) {
     return err;
   });
 
+  // If statements depending on situation, first else if is if plenty of admins are present
   if (length == undefined) {
     return "ERROR";
   } else if (admins?.length > 1) {
@@ -299,7 +306,7 @@ export async function deleteUser(userId) {
       i++;
     }
   } else {
-    console.log("LESS THAN 2 ADMIN");
+    // There is only one admin left, check if the given user is that admin
     let temp = JSON.stringify(userId);
     let lastAdmin = new RegExp(admins[0].email);
     if (temp?.match(lastAdmin) != undefined) {
