@@ -1,3 +1,7 @@
+## Do note that the NEXTAUTH_SECRET and DB_URI environment varialbes are required by
+## npm run build!(line 11). They should therefore be added to a .env file OR entered
+## manually into the Dockerfile by commandline args or etc.
+
 FROM node:20.5.1-alpine AS build
 # Below RUN line is included to avoid missing libc requirements which are not included in alpine linux
 RUN apk add --no-cache libc6-compat gcompat
@@ -22,10 +26,11 @@ USER user
 RUN sed -i 's|const errorUrl = new URL(`${basePath}${errorPage}`, origin);|const errorUrl = new URL(`${basePath}${errorPage}`, process.env.NEXTAUTH_URL + ":" + process.env.NEXTAUTH_PORT);|g' .next/server/src/middleware.js 
 RUN sed -i 's|const signInUrl = new URL(`${basePath}${signInPage}`, origin);|const signInUrl = new URL(`${basePath}${signInPage}`, process.env.NEXTAUTH_URL + ":" + process.env.NEXTAUTH_PORT);|g' .next/server/src/middleware.js 
 
+# Environment variables
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLED 1
-ENV NEXTAUTH_SECRET=SECRET
+#ENV NEXTAUTH_SECRET=SECRET
 ENV NEXTAUTH_URL=localhost
 ENV NEXTAUTH_PORT=443
 ENV NEXT_PUBLIC_NEXTAUTH_URL=merit.testing.systems
@@ -36,7 +41,7 @@ ENV EMAIL_SERVER_USER=
 ENV EMAIL_SERVER_PASSWORD=
 ENV EMAIL_FROM=noreply@service.com
 ENV EMAIL_SUBJECT=
-ENV DB_URI=
+#ENV DB_URI=
 #ENV DB_NAME=name
 
 EXPOSE $PORT
