@@ -19,6 +19,22 @@ on:
         required: true
       domain_cert:
         required: true
+      nextauth_secret:
+        required: true
+      email_from:
+        required: true
+      email_subject:
+        required: true
+      email_server_service:
+        required: true
+      email_server_user:
+        required: true
+      email_server_password:
+        required: true
+      email_server_host:
+        required: true
+      email_server_port:
+        required: true
 
 name: "Deploy Terraform"
 jobs:
@@ -33,6 +49,7 @@ jobs:
       ECS_CLUSTER: ${{ secrets.cluster_name }}
       ECS_SERVICE: ${{ secrets.service_name }}
       DB_URI: ${{ secrets.db_uri }}
+
     defaults:
       run:
         working-directory: terraform
@@ -52,6 +69,6 @@ jobs:
         run: terraform init -reconfigure -backend-config="env/${GITHUB_REF##*/}/state.tfvars"
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color -var-file="env/${GITHUB_REF##*/}/instance.tfvars" -var ecr_repo_name="${{ env.ECR_REPO }}${GITHUB_REF##*/}" -var cluster_name="${{ env.ECS_CLUSTER }}-${GITHUB_REF##*/}" -var db_uri="${{ env.DB_URI }}" -var service_name="${{ env.ECS_SERVICE }}-${GITHUB_REF##*/}" -var domain_certificate="${{ env.DOMAIN_CERT }}" -var nextauth_secret="${{ secrets.NEXTAUTH_SECRET }}" -var email_from="${{ secrets.EMAIL_FROM }}" -var email_server_host="${{ secrets.EMAIL_SERVER_HOST}}" -var email_server_password="${{ secrets.EMAIL_SERVER_PASSWORD }}" -var email_server_port="${{ secrets.EMAIL_SERVER_PORT }}" -var email_server_service="${{ secrets.EMAIL_SERVER_SERVICE }}" -var email_server_user="${{ secrets.EMAIL_SERVER_USER }}" -var email_subject="${{ secrets.EMAIL_SUBJECT }}" -var email_server_password="${{ secrets.EMAIL_SERVER_PASSWORD }}"
+        run: terraform plan -no-color -var-file="env/${GITHUB_REF##*/}/instance.tfvars" -var ecr_repo_name="${{ env.ECR_REPO }}${GITHUB_REF##*/}" -var cluster_name="${{ env.ECS_CLUSTER }}-${GITHUB_REF##*/}" -var db_uri="${{ env.DB_URI }}" -var service_name="${{ env.ECS_SERVICE }}-${GITHUB_REF##*/}" -var domain_certificate="${{ env.DOMAIN_CERT }}" -var nextauth_secret="${{ secrets.nextauth_secret }}" -var email_from="${{ secrets.email_from }}" -var email_server_host="${{ secrets.email_server_host}}" -var email_server_password="${{ secrets.email_server_password }}" -var email_server_port="${{ secrets.email_server_port }}" -var email_server_service="${{ secrets.email_server_service }}" -var email_server_user="${{ secrets.email_server_user }}" -var email_subject="${{ secrets.email_subject }}" -var email_server_password="${{ secrets.email_server_password }}"
       - name: Terraform Apply
-        run: terraform apply -var-file="env/${GITHUB_REF##*/}/instance.tfvars" -var ecr_repo_name="${{ env.ECR_REPO }}${GITHUB_REF##*/}" -var cluster_name="${{ env.ECS_CLUSTER }}-${GITHUB_REF##*/}" -var db_uri="${{ env.DB_URI }}" -var service_name="${{ env.ECS_SERVICE }}-${GITHUB_REF##*/}" -var domain_certificate="${{ env.DOMAIN_CERT }}" -var nextauth_secret="${{ secrets.NEXTAUTH_SECRET }}" -var email_from="${{ secrets.EMAIL_FROM }}" -var email_server_host="${{ secrets.EMAIL_SERVER_HOST}}" -var email_server_password="${{ secrets.EMAIL_SERVER_PASSWORD }}" -var email_server_port="${{ secrets.EMAIL_SERVER_PORT }}" -var email_server_service="${{ secrets.EMAIL_SERVER_SERVICE }}" -var email_server_user="${{ secrets.EMAIL_SERVER_USER }}" -var email_subject="${{ secrets.EMAIL_SUBJECT }}" -var email_server_password="${{ secrets.EMAIL_SERVER_PASSWORD }}" -auto-approve
+        run: terraform apply -var-file="env/${GITHUB_REF##*/}/instance.tfvars" -var ecr_repo_name="${{ env.ECR_REPO }}${GITHUB_REF##*/}" -var cluster_name="${{ env.ECS_CLUSTER }}-${GITHUB_REF##*/}" -var db_uri="${{ env.DB_URI }}" -var service_name="${{ env.ECS_SERVICE }}-${GITHUB_REF##*/}" -var domain_certificate="${{ env.DOMAIN_CERT }}" -var nextauth_secret="${{ secrets.nextauth_secret }}" -var email_from="${{ secrets.email_from }}" -var email_server_host="${{ secrets.email_server_host}}" -var email_server_password="${{ secrets.email_server_password }}" -var email_server_port="${{ secrets.email_server_port }}" -var email_server_service="${{ secrets.email_server_service }}" -var email_server_user="${{ secrets.email_server_user }}" -var email_subject="${{ secrets.email_subject }}" -var email_server_password="${{ secrets.email_server_password }}" -auto-approve
