@@ -93,7 +93,8 @@ export async function getUser(userId) {
 // Update user information in database
 export async function modifyUser(userId, userData) {
   await mongoDB();
-  let user,
+  let admins,
+    user,
     password = userData?.password,
     newPassword = userData?.newPassword;
   //If statement to retrieve user from database, and set userId to the users email
@@ -102,6 +103,20 @@ export async function modifyUser(userId, userData) {
   } else {
     user = await UserSchema.findOne({ _id: userId });
     userId = user.email;
+  }
+
+  // Check if user is last Admin demoting themselves
+  admins = await UserSchema?.find(
+    {
+      role: "Admin",
+    },
+    "email"
+  ).catch(function (err) {
+    return err;
+  });
+
+  if (admins.length < 2 && user.role == "Admin" && userData.role != "Admin") {
+    return (user.message = "LAST ADMIN");
   }
 
   // Resetting password while being logged in (e.g. verify with current password)
@@ -236,20 +251,31 @@ export async function renameGroup(group, groupData) {
 // Delete a user and their reports
 export async function deleteUser(userId) {
   await mongoDB();
-  // This code is for deleting a single user at a time
-  // user = await UserSchema.findOneAndDelete({ email: userId }).catch(
-  //   function (err) {
-  //     return err;
-  //   }
-  // );
+  /* This code is for deleting a single user at a time
+  user = await UserSchema.findOneAndDelete({ email: userId }).catch(
+    function (err) {
+      return err;
+    }
+  );*/
   let i = 0;
   let j = 0;
   let length = userId?.email?.length;
-  let user, reports, report;
+  let user, reports, report, admins;
+
+  // Retrieve admins in the system, so if request user to be deleted is the last admin, it is denied
+  admins = await UserSchema?.find(
+    {
+      role: "Admin",
+    },
+    "email"
+  ).catch(function (err) {
+    return err;
+  });
 
   if (length == undefined) {
     return "ERROR";
-  } else {
+  } else if (admins?.length > 1) {
+    console.log("\nMORE THAN ONE ADMIN\n");
     while (i < length) {
       user = await UserSchema?.findOneAndDelete({
         email: userId?.email[i],
@@ -271,6 +297,36 @@ export async function deleteUser(userId) {
         j++;
       }
       i++;
+    }
+  } else {
+    console.log("LESS THAN 2 ADMIN");
+    let temp = JSON.stringify(userId);
+    let lastAdmin = new RegExp(admins[0].email);
+    if (temp?.match(lastAdmin) != undefined) {
+      while (i < length) {
+        user = await UserSchema?.findOneAndDelete({
+          email: userId?.email[i],
+        }).catch(function (err) {
+          return err;
+        });
+        reports = await ReportSchema?.find(
+          { email: userId?.email[i] },
+          "_id"
+        ).catch(function (err) {
+          console.log("NO REPORTS FOR USER");
+        });
+        while (reports[j] != undefined) {
+          report = await ReportSchema?.findByIdAndDelete(reports[j].id).catch(
+            function (err) {
+              return err;
+            }
+          );
+          j++;
+        }
+        i++;
+      }
+    } else {
+      return "LAST";
     }
   }
   return i;

@@ -330,7 +330,9 @@ export async function DELETE(Request) {
   }
 
   // HTTP Response
-  if (res) {
+  if (res == "LAST") {
+    return new Response("ERROR", { status: 403 });
+  } else if (res) {
     return new Response("OK", { status: 200 });
   } else {
     return new Response(res, { status: 400 });
