@@ -142,6 +142,47 @@ export const updateUser = async ({
   return response;
 };
 
+// INCOMPLETE
+export const adminUpdateUser = async (
+  {
+    email,
+    rank,
+    firstName,
+    lastName,
+    suffix,
+    role,
+    group,
+    supervisedGroup,
+    suspended,
+    verified,
+  },
+  admin
+) => {
+  const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
+    method: "PATCH",
+    mode: "same-origin",
+    headers: {
+      admin: admin,
+      user: email,
+    },
+    body: JSON.stringify({
+      email,
+      rank,
+      firstName,
+      lastName,
+      suffix,
+      role,
+      group,
+      supervisedGroup,
+      suspended,
+      verified,
+    }),
+  });
+  console.log("Update Response:", response.statusText);
+
+  return response;
+};
+
 // Specifically used to change password when the user is already signed in
 export const updatePassword = async ({ email, password, newPassword }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
