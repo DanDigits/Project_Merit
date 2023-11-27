@@ -1,7 +1,8 @@
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
 <p align="center">
   <h1 align="center">
-  <a href="merit.testing.systems">Project Merit</h1>
+    <a href="http://merit.testing.systems">Project Merit</a>
+  </h1>
 </p>
 
 <p align="center">
