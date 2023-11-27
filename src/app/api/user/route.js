@@ -26,6 +26,7 @@ import { redirect } from "next/navigation";
 
 /* Mail related functions */
 const transporter = nodemailer.createTransport({
+  service: process.env.EMAIL_SERVER_SERVICE,
   port: process.env.EMAIL_SERVER_PORT,
   host: process.env.EMAIL_SERVER_HOST,
   auth: {
