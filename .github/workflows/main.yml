@@ -15,6 +15,14 @@ jobs:
       aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       domain_cert: ${{ secrets.DOMAIN_CERT }}
       db_uri: ${{ secrets.DB_URI }}
+      nextauth_secret: ${{ secrets.NEXTAUTH_SECRET }}
+      email_from: ${{ secrets.EMAIL_FROM}}
+      email_subject: ${{ secrets.EMAIL_SUBJECT }}
+      email_server_service: ${{ secrets.EMAIL_SERVER_SERVICE }}
+      email_server_user: ${{ secrets.EMAIL_SERVER_USER }}
+      email_server_password: ${{ secrets.EMAIL_SERVER_PASSWORD }}
+      email_server_host: ${{ secrets.EMAIL_SERVER_HOST }}
+      email_server_port: ${{ secrets.EMAIL_SERVER_PORT }}
       ecr_repo_name: meritrepo
       cluster_name: merit-cluster
       service_name: merit-service
@@ -39,6 +47,8 @@ jobs:
       - name: Login to ECR
         id: ecr
         uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: "true"
       - name: Export Branch & Modified Names
         shell: bash
         run: |

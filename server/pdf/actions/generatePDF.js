@@ -104,7 +104,10 @@ export async function pdf(stream, reportId) {
     doc
       .fontSize(14)
       .font("Times-Italic")
-      .text(`Date: ${report.date}`, { continued: "true", align: "left" })
+      .text(`Date: ${report.date.slice(0, 10)}`, {
+        continued: "true",
+        align: "left",
+      })
       .font("Times-Roman");
 
     doc

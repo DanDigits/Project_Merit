@@ -74,13 +74,13 @@ export const requestReset = async ({ email }) => {
   return response;
 };
 
-// resend password request email
+// resend verification email
 export const resendRequest = async ({ email }) => {
   const response = await fetch(getPath.baseUrl + getPath.api.user.get, {
     method: "GET",
     mode: "same-origin",
     headers: {
-      forgot: email,
+      user: email,
       request: "3",
     },
   });

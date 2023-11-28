@@ -73,6 +73,11 @@ variable "db_uri" {
   type        = string
 }
 
+variable "nextauth_secret" {
+  description = "Nextauth Secret"
+  type        = string
+}
+
 variable "nextauth_port" {
   description = "Nextauth Public Facing Port"
   type        = string
@@ -85,5 +90,40 @@ variable "nextauth_url" {
 
 variable "nextauth_public_url" {
   description = "Nextauth URL Address"
+  type        = string
+}
+
+variable "email_server_service" {
+  description = "Email Service Provider"
+  type        = string
+}
+
+variable "email_server_user" {
+  description = "Email Service User"
+  type        = string
+}
+
+variable "email_server_password" {
+  description = "Email Service Password"
+  type        = string
+}
+
+variable "email_server_host" {
+  description = "Email Service Provider Address"
+  type        = string
+}
+
+variable "email_server_port" {
+  description = "Email Service Provider Port"
+  type        = string
+}
+
+variable "email_from" {
+  description = "Email Sender"
+  type        = string
+}
+
+variable "email_subject" {
+  description = "Email Header"
   type        = string
 }

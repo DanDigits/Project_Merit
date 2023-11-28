@@ -3,7 +3,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 import { headers } from "next/headers";
-import fs from "fs";
 import { PassThrough, Stream } from "stream";
 import {
   createReport,

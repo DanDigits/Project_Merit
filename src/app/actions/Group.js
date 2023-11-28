@@ -76,7 +76,6 @@ export const leaveGroup = async ({ email }) => {
 };
 
 export const renameGroup = async ({ groupName, newName }) => {
-  console.log("82", groupName, newName);
   const response = await fetch(getPath.baseUrl + getPath.api.user.update, {
     method: "PATCH",
     mode: "same-origin",

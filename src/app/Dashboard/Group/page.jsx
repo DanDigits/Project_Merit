@@ -90,16 +90,18 @@ export default function Page() {
   const [newName, setNewName] = useState("");
   const [email, setEmail] = useState("");
   const [existingGroups, setExistingGroups] = useState("");
+  const [nameStatus, setNameStatus] = useState("");
 
   const [fetching, setFetching] = useState(true);
   const [rename, setRename] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  var tempStatus = "success";
+
   const handleCreate = () => {
     if (searchGroup != "" && existingGroups != "") {
       setSearchLoading(true);
-      var tempStatus = "success";
       console.log("Comparing " + searchGroup + " against existing groups..");
       for (var i = 0; i < existingGroups.length; i++) {
         if (searchGroup === existingGroups[i]) {
@@ -142,16 +144,37 @@ export default function Page() {
   };
 
   const handleRename = () => {
-    renameGroup({ groupName, newName }).then((response) => {
-      if (response.ok) {
-        {
-          window.location.reload();
+    if (newName != "" && newName != groupName) {
+      if (existingGroups != []) {
+        console.log("Comparing " + newName + " against existing groups..");
+        for (var i = 0; i < existingGroups.length; i++) {
+          if (newName === existingGroups[i]) {
+            setNameStatus("exist");
+            tempStatus = "exist";
+          }
         }
-      } else {
-        console.log("Error: " + response.error);
-        alert("Rename failed");
+        if (newName === groupName) {
+          setNameStatus("success");
+          tempStatus = "success";
+        }
       }
-    });
+      console.log(tempStatus);
+      if (tempStatus != "exist") {
+        renameGroup({ groupName: groupName, newName: newName }).then(
+          (response) => {
+            if (response.ok) {
+              {
+                window.location.reload();
+              }
+            } else {
+              setGroupName(groupName);
+              console.log("Error: " + response.error);
+              alert("Rename failed");
+            }
+          }
+        );
+      }
+    }
   };
 
   useEffect(() => {
@@ -241,7 +264,7 @@ export default function Page() {
       setIsLoading(false);
     }
 
-    if (hasGroupName && groupName === "" && !hasAllGroups) {
+    if (hasGroupName && existingGroups === "" && !hasAllGroups) {
       console.log("no group");
       getAllGroups().then((response) => {
         response.ok
@@ -252,7 +275,7 @@ export default function Page() {
           : setHasError(true);
       });
     }
-    if (hasGroupName && groupName === "" && hasAllGroups) {
+    if (hasGroupName && existingGroups === "" && hasAllGroups) {
       console.log("no group; arr");
       var temp = [];
       var arr3 = JSON.parse(JSON.stringify(allGroups));
@@ -276,6 +299,7 @@ export default function Page() {
     hasAllGroups,
     allGroups,
     hasError,
+    existingGroups,
     session,
   ]);
 
@@ -319,6 +343,7 @@ export default function Page() {
         header: "Email",
       },
       {
+        accessorKey: "progress",
         header: "Progress",
         cell: (cell) => {
           function calculate(completed, needed) {
@@ -480,6 +505,9 @@ export default function Page() {
                     </HStack>
                   ) : (
                     <Text>Group Name: {groupName}</Text>
+                  )}
+                  {rename && nameStatus === "exist" && (
+                    <p>The group name you entered already exist.</p>
                   )}
                   <Text>Total Members: {groupLength}</Text>
                 </VStack>

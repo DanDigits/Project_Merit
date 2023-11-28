@@ -113,14 +113,6 @@ export default function Group(group_mode) {
     state = true;
   } else state = false;
 
-  const handleView = useCallback(
-    (email) => {
-      secureLocalStorage.setItem("Email", email);
-      router.push("/Admin/Users/ViewUser");
-    },
-    [router]
-  );
-
   const handleChange = (e) => {
     setSearchEmail(e);
     setStatus("");
@@ -441,26 +433,6 @@ export default function Group(group_mode) {
         ),
       },
       {
-        id: "view",
-        header: "View",
-        cell: ({ cell }) => (
-          <>
-            <Button
-              size={{ base: "sm", lg: "md" }}
-              textColor={"white"}
-              bg={"#1c303c"}
-              opacity={0.85}
-              borderColor={"#354751"}
-              borderWidth={"thin"}
-              _hover={{ color: "black", bg: "white", opacity: 1 }}
-              onClick={() => handleView(cell.row.original.email)}
-            >
-              <Icon as={PiEyeDuotone} />
-            </Button>
-          </>
-        ),
-      },
-      {
         accessorKey: "lastName",
         header: () => "Last Name",
       },
@@ -481,7 +453,7 @@ export default function Group(group_mode) {
         header: () => "Email",
       },
     ],
-    [handleView]
+    []
   );
   const table = useReactTable({
     data,
