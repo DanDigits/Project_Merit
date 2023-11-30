@@ -1,6 +1,6 @@
 on:
   push:
-    branches: ["main", "test", "admin"]
+    branches: ["main", "test"]
 
 name: CI/CD
 jobs:
@@ -56,6 +56,14 @@ jobs:
           echo "cluster=${{ env.cluster_name }}-$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
           echo "service=${{ env.service_name }}-$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
         id: exports
+      - name: Create Build Arguments Through .env
+        shell: bash
+        run: |
+          echo "" >> .env
+          echo "DB_URI=${{ secrets.DB_URI }}" >> .env
+          echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
+          if [ $GITHUB_REF_NAME = "test" ]; then echo NEXT_PUBLIC_NEXTAUTH_URL=https://test.testing.systems >> .env; else echo NEXTAUTH_PUBLIC_URL=https://merit.testing.systems >> .env; fi
+          cat .env
       - name: Build Image to ECR and Force Deployment on ECS
         uses: jaroldwong/ecr-push-and-ecs-deploy@v1.1
         with:
