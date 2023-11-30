@@ -487,6 +487,8 @@ export async function getSupervisor(group) {
     i = 0,
     currentGroup = await getGroup(group);
 
+  if (group == "") return supervisors;
+
   // If current group isnt empty, push supervisor profile to supervisors array
   while (currentGroup?.[0]?.[i] != undefined) {
     supervisors.push(currentGroup[0][i]);

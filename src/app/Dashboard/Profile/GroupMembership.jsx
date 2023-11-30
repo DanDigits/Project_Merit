@@ -73,7 +73,7 @@ export default function UpdatePassword() {
       var arr = JSON.parse(JSON.stringify(profile));
       if (arr) {
         setGroup(arr.group);
-        console.log("arr", arr);
+        //console.log("arr", arr);
         setHasGroup(true);
       }
       setHasError(false);
@@ -92,13 +92,13 @@ export default function UpdatePassword() {
           : setHasError(true);
         console.log("hasError:", hasError);
       });
-      setIsLoading(true);
+      setIsLoading(false);
     }
 
     if (hasEmail && hasProfile && hasGroup && hasLeader) {
       setIsLoading(true);
       var arr2 = JSON.parse(JSON.stringify(leader));
-      if (arr2) {
+      if (arr2 && arr2.length != 0) {
         setLeaderInfo(
           [
             arr2[0].rank,
@@ -110,8 +110,6 @@ export default function UpdatePassword() {
             .filter(Boolean)
             .join(" ")
         );
-        console.log("arr2", arr2);
-        console.log("leaderInfo: " + leaderInfo);
       }
 
       setHasError(false);
