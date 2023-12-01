@@ -18,22 +18,30 @@
 <img alt="Dashboard" width="950" src="/docs/img.png"/>
 </p>
 
+Explore our app with this demo account!
+
+<p align="left">
+  <a href="https://merit.testing.systems" target="_blank">
+  </a>
+</p>
+<b>Demo user:</b>
+
+Email: jace@test.com<br/>
+Password: testingxyz
+
 ## Introduction
 
-Project Merit is a quick and easy tool where Air Force personnel can write, edit, and save performance reports from any device.
+- [Video Introduction](https://youtu.be/GMgM7Sv90zI?si=KjG4qlxBToPAXIKL)
 
-This tool will guide them to write evaluation reports according to the guidelines and standards set out by the Air Force.
-
-Personnel will be able to export and download the reports for submission through official Air Force channels.
+Project Merit is an easy tool where Air Force personnel can write, edit, and save performance reports from any device, and allows exporting narratives to download as a PDF for submission through official Air Force channels.
 
 ## Getting Started
 
-This web application assumes you're working under Linux, and are capable with commandline. For Windows devices, the easiest way to run the application would be through [Docker](https://www.docker.com/get-started/), using the GUI (visual program from desktop).
+This web application assumes you're working under Linux, and are capable with commandline. For Windows devices, the easiest way to run the application would be through [Docker](https://www.docker.com/get-started/), using the GUI (desktop program).
 
 That being said, there are three ways to run this application:
 
-1. Terraform
-   Fork/clone this repository and add these following variables to your Github Actions Secrets:
+1. [Github Actions](https://docs.github.com/en/actions/learn-github-actions): Fork/clone this repository and add these following variables to your repositories secrets:
    | ENV Variable | Value |
    | ------------ | ----- |
    | AWS_ACCESS_KEY_ID | AWS IAM User Access Key |
@@ -45,13 +53,11 @@ That being said, there are three ways to run this application:
 
    Likewise modify the .env file to add email functionality with your own email service provider and account, then make a push to your main!
 
-   If you're technically adept, you can run terraform commands explictly, though if you do, please note the backend is currently not instantiated with the code here, so make sure you create them and modify the files accordingly. These code files should be pushed in a future update, so keep checking back.
+   > **Note** You can run the terraform commands explictly, though please note the backend is currently not instantiated with the code here, so make sure you create it and modify the files accordingly. If you dont want a remote backend, just comment out lines 4-5 in main.tf, and the terraform.state file will be created locally in your directory; be sure to secure it as it can have credentials in plaintext.
 
-2. Docker
-   Please install [Docker](https://www.docker.com/get-started/). Start with running `docker build -t Merit:1.0 .` at this repositories root directory, which will create an 'image' in your docker installation; type `docker images` to see more information, the image should have the tag "Merit". Afterwards, you can start a container from the 'image' by running `docker run -d --rm -p 3000:3000 --restart=unless-stopped --name ProjectMerit <Image ID>` which will make it accessable on the same device at [http://localhost:3000](http://localhost:3000).
+2. [Docker](https://www.docker.com/get-started/): Start with running `docker build -t Merit:1.0 .` at this repositories root directory, which will create an 'image' in your docker installation; type `docker images` to see more information, the image should have the tag "Merit". Afterwards, you can start a container from the 'image' by running `docker run -d --rm -p 3000:3000 --restart=unless-stopped --name ProjectMerit <Image ID>` which will make it accessable on the same device at [http://localhost:3000](http://localhost:3000). You can get the Image ID through the docker images command.
 
-3. NPM
-   Run
+3. [NPM](https://www.npmjs.com): Run
 
 ```
 npm run dev
@@ -62,8 +68,6 @@ yarn dev
 Open [http://localhost:3000](http://localhost:3000) with your local browser to see the result.
 
 ## Documentation
-
-- [Video Introduction](https://youtu.be/GMgM7Sv90zI?si=KjG4qlxBToPAXIKL)
 
 [API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed based on which endpoint you would like to change. The reports endpoint can be edited in `src/app/api/reports/route.js`. Likewise, the user endpoint can be edited in `src/app/api/user/route.js`.
 
@@ -92,19 +96,6 @@ Activity Diagrams
 <p align="left">
 <img alt="Activity Diagram" width="950" src="/docs/Activity%20diagram.jpg"/>
 </p>
-
-## Demo
-
-Explore our app with this demo account.
-
-<p align="left">
-  <a href="https://merit.testing.systems" target="_blank">
-  </a>
-</p>
-<b>Demo user:</b>
-
-Email: jace@test.com<br/>
-Password: testingxyz
 
 ## Support
 
