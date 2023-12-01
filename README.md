@@ -26,39 +26,46 @@ This tool will guide them to write evaluation reports according to the guideline
 
 Personnel will be able to export and download the reports for submission through official Air Force channels.
 
-## Senior Design Project (Group 15)
-
-- Daniel Cruz-Castro (Da709128@ucf.edu)
-- Amber McCullah (am324232@ucf.edu)
-- Mari Peele (ma973527@ucf.edu)
-- Emily Tao (em265354@ucf.edu)
-
-## Documentation
-
-- [Video Introduction](https://youtu.be/GMgM7Sv90zI?si=KjG4qlxBToPAXIKL).
-
 ## Getting Started
 
-First, run the development server:
+This web application assumes you're working under Linux, and are capable with commandline. For Windows devices, the easiest way to run the application would be through [Docker](https://www.docker.com/get-started/), using the GUI (visual program from desktop).
 
-```bash
+That being said, there are three ways to run this application:
+
+1. Terraform
+   Fork/clone this repository and add these following variables to your Github Actions Secrets:
+   | ENV Variable | Value |
+   | ------------ | ----- |
+   | AWS_ACCESS_KEY_ID | AWS IAM User Access Key |
+   | AWS_SECRET_ACCESS_KEY | AWS IAM User Secret Key |
+   | DB_URI | MongoDB URI link |
+   | NEXTAUTH_SECRET | A random secret cipher for NextJS |
+   | NEXT_PUBLIC_NEXTAUTH_URL | Your sites domain address |
+   | DOMAIN_CERT | Your Amazon CM certificate |
+
+   Likewise modify the .env file to add email functionality with your own email service provider and account, then make a push to your main!
+
+   If you're technically adept, you can run terraform commands explictly, though if you do, please note the backend is currently not instantiated with the code here, so make sure you create them and modify the files accordingly. These code files should be pushed in a future update, so keep checking back.
+
+2. Docker
+   Please install [Docker](https://www.docker.com/get-started/). Start with running `docker build -t Merit:1.0 .` at this repositories root directory, which will create an 'image' in your docker installation; type `docker images` to see more information, the image should have the tag "Merit". Afterwards, you can start a container from the 'image' by running `docker run -d --rm -p 3000:3000 --restart=unless-stopped --name ProjectMerit <Image ID>` which will make it accessable on the same device at [http://localhost:3000](http://localhost:3000).
+
+3. NPM
+   Run
+
+```
 npm run dev
 # or
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your local browser to see the result.
+
+## Documentation
+
+- [Video Introduction](https://youtu.be/GMgM7Sv90zI?si=KjG4qlxBToPAXIKL)
 
 [API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed based on which endpoint you would like to change. The reports endpoint can be edited in `src/app/api/reports/route.js`. Likewise, the user endpoint can be edited in `src/app/api/user/route.js`.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
 ## System Design
 
@@ -116,6 +123,22 @@ If a similar feature request already exists, don't forget to leave a "+1".
 Project Merit is an open-source project. We are committed to making this application a success and appreciate any contributions. Whether you are recommending new features, alerting us to bugs, or just spreading the word - we are delighted to welcome you to the Project Merit community.
 
 Please refer to our [Contribution Guidelines](/docs/CONTRIBUTING.md) and [Code of Conduct](/docs/CodeOfConduct.md).
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+
+## Senior Design Project (Group 15)
+
+- Daniel Cruz-Castro (Da709128@ucf.edu)
+- Amber McCullah (am324232@ucf.edu)
+- Mari Peele (ma973527@ucf.edu)
+- Emily Tao (em265354@ucf.edu)
 
 ## License
 
