@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-<img alt="EverShop" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/img.png"/>
+<img alt="EverShop" width="950" src="/READMEObjects/img.png"/>
 </p>
 
 ## Introduction
@@ -63,25 +63,25 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 Use Case Digrams
 
 <p align="left">
-<img alt="Use Case Diagram - User" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/Use%20Case%20-%20User.png"/>
+<img alt="Use Case Diagram - User" width="950" src="https://github.com/DanDigits/Project_Merit/blob/test/READMEObjects/Use%20Case%20-%20User.png"/>
 </p>
 <p align="left">
-<img alt="Use Case Diagram - Supervisor" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/Use%20Case%20-%20Supervisor.png"/>
+<img alt="Use Case Diagram - Supervisor" width="950" src="https://github.com/DanDigits/Project_Merit/blob/test/READMEObjects/Use%20Case%20-%20Supervisor.png"/>
 </p>
 <p align="left">
-<img alt="Use Case Diagram - Admin" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/Use%20Case%20-%20Admin.png"/>
+<img alt="Use Case Diagram - Admin" width="950" src="https://github.com/DanDigits/Project_Merit/blob/test/READMEObjects/Use%20Case%20-%20Admin.png"/>
 </p>
 
 Class Diagram
 
 <p align="left">
-<img alt="Class Diagram" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/Class%20Diagram.jpg"/>
+<img alt="Class Diagram" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/test/Class%20Diagram.jpg"/>
 </p>
 
 Activity Diagrams
 
 <p align="left">
-<img alt="Activity Diagram" width="950" src="https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/Activity%20diagram.jpg"/>
+<img alt="Activity Diagram" width="950" src="https://github.com/DanDigits/Project_Merit/blob/test/READMEObjects/Activity%20diagram.jpg"/>
 </p>
 
 ## Demo
@@ -113,7 +113,7 @@ If a similar feature request already exists, don't forget to leave a "+1".
 
 Project Merit is an open-source project. We are committed to making this application a success and appreciate any contributions. Whether you are recommending new features, alerting us to bugs, or just spreading the word - we are delighted to welcome you to the Project Merit community.
 
-Please refer to our [Contribution Guidelines](https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/CONTRIBUTING.md) and [Code of Conduct](https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/CodeOfConduct.md).
+Please refer to our [Contribution Guidelines](https://github.com/DanDigits/Project_Merit/blob/Editing-README/READMEObjects/CONTRIBUTING.md) and [Code of Conduct](https://github.com/DanDigits/Project_Merit/blob/test/READMEObjects/CodeOfConduct.md).
 
 ## License
 
