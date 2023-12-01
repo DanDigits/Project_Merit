@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-<img alt="EverShop" width="950" src="/docs/img.png"/>
+<img alt="Dashboard" width="950" src="/docs/img.png"/>
 </p>
 
 ## Introduction

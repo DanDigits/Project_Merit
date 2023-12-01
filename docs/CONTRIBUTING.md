@@ -52,6 +52,7 @@ npm run build
 ```
 
 8. Testing the production build
+
 ```bash
 npm run start
 ```
@@ -59,18 +60,23 @@ npm run start
 9. Running tests
 
 Run the [Jest](https://jestjs.io/) unit testing
+
 ```sh
 npm run test
 ```
+
 10. Issue that [pull request!](https://github.com/github/docs/blob/main/CONTRIBUTING.md)
 
 ## Any contributions you make will be under the MIT License
-In short, when you submit code changes, your submissions are understood to be under the same [MIT License](https://github.com/DanDigits/Project_Merit/blob/f88421459e0c64bb7acfab2ec7cf9868f19280ee/READMEObjects/MIT-License.txt) that covers the project. 
+
+In short, when you submit code changes, your submissions are understood to be under the same [MIT License](https://github.com/DanDigits/Project_Merit/blob/f88421459e0c64bb7acfab2ec7cf9868f19280ee/READMEObjects/MIT-License.txt) that covers the project.
 
 ## Report bugs using Github's issues
+
 We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/DanDigits/Project_Merit/issues); it's that easy!
 
 ## Write bug reports with detail, background, and sample code
+
 **Great Bug Reports** tend to have:
 
 - A quick summary and/or background
@@ -86,4 +92,5 @@ We use GitHub issues to track public bugs. Report a bug by [opening a new issue]
 - Notes (possibly including why you think this might be happening, or stuff you tried that didn't work)
 
 ## License
+
 By contributing, you agree that your contributions will be licensed under its MIT License.
