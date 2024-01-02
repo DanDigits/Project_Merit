@@ -55,14 +55,14 @@ resource "aws_route_table_association" "public_route_table_assoc" {
 }
 
 # Security Group -----------------------------
-resource "aws_security_group" "ecs_ecr_sg" {
+resource "aws_security_group" "ecs_ec2_sg" {
   name_prefix = "merit-${var.branch_prefix}-ecr"
   vpc_id      = aws_vpc.vpc.id
 
   egress {
     from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -95,10 +95,11 @@ resource "aws_security_group" "http" {
   dynamic "ingress" {
     for_each = [80, 443, 3000]
     content {
-      protocol    = "tcp"
       from_port   = ingress.value
       to_port     = ingress.value
+      protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
     }
   }
 
@@ -107,6 +108,7 @@ resource "aws_security_group" "http" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 }
 
@@ -159,7 +161,7 @@ resource "aws_launch_template" "ecs_ec2" {
   name_prefix            = "merit-${var.branch_prefix}-launch-template"
   image_id               = data.aws_ssm_parameter.ecs_ec2_ami.value
   instance_type          = "t2.micro"
-  vpc_security_group_ids = [aws_security_group.ecs_ecr_sg.id]
+  vpc_security_group_ids = [aws_security_group.ecs_ec2_sg.id]
 
   iam_instance_profile {
     arn = aws_iam_instance_profile.ec2_instance_profile.arn
