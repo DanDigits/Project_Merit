@@ -284,7 +284,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
       {
         name  = "NEXT_PUBLIC_NEXTAUTH_URL",
         value = "${var.nextauth_public_url}"
-      }
+      },
       {
         name  = "EMAIL_SERVER_USER",
         value = "${var.email_server_user}"
