@@ -264,14 +264,14 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
     ],
 
     environment = [
-      {
-        name  = "DB_URI",
-        value = "${var.db_uri}"
-      },
-      {
-        name  = "NEXTAUTH_SECRET",
-        value = "${var.nextauth_secret}"
-      },
+      # {
+      #   name  = "DB_URI",
+      #   value = "${var.db_uri}"
+      # },
+      # {
+      #   name  = "NEXTAUTH_SECRET",
+      #   value = "${var.nextauth_secret}"
+      # },
       # {
       #   name  = "NEXTAUTH_URL",
       #   value = "${var.nextauth_url}"
@@ -280,10 +280,10 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
       #   name  = "NEXTAUTH_PORT",
       #   value = "${var.nextauth_port}"
       # },
-      {
-        name  = "NEXT_PUBLIC_NEXTAUTH_URL",
-        value = "${var.nextauth_public_url}"
-      },
+      # {
+      #   name  = "NEXT_PUBLIC_NEXTAUTH_URL",
+      #   value = "${var.nextauth_public_url}"
+      # },
       {
         name  = "EMAIL_SERVER_USER",
         value = "${var.email_server_user}"

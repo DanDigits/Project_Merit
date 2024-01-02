@@ -104,13 +104,13 @@ variable "nextauth_public_url" {
   type        = string
 }
 
-variable "email_server_service" {
-  description = "Email Service Provider"
+variable "email_server_user" {
+  description = "Email Service User"
   type        = string
 }
 
-variable "email_server_user" {
-  description = "Email Service User"
+variable "email_server_service" {
+  description = "Email Service Provider"
   type        = string
 }
 
