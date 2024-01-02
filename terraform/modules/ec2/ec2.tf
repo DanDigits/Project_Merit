@@ -251,8 +251,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
 
   container_definitions = jsonencode([{
     name  = "merit-${var.branch_prefix}",
-    image = "250593967027.dkr.ecr.us-east-1.amazonaws.com/meritrepomain:latest",
-    # image     = "${var.repo_url}",
+    image     = "${var.repo_url}",
     essential = true,
     portMappings = [
       {
