@@ -93,7 +93,7 @@ resource "aws_security_group" "http" {
   vpc_id      = aws_vpc.vpc.id
 
   dynamic "ingress" {
-    for_each = [80, 443]
+    for_each = [80, 443, 3000]
     content {
       protocol    = "tcp"
       from_port   = ingress.value
@@ -264,10 +264,10 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
     ],
 
     environment = [
-      {
-        name  = "DB_URI",
-        value = "${var.db_uri}"
-      },
+      # {
+      #   name  = "DB_URI",
+      #   value = "${var.db_uri}"
+      # },
       # {
       #   name  = "NEXTAUTH_SECRET",
       #   value = "${var.nextauth_secret}"
