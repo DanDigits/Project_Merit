@@ -1,5 +1,6 @@
-bucket_name = "terraformstate-bucket089217340198"
-table_name  = "state_locks"
+bucket_name  = "terraformstate-bucket089217340198"
+table_name   = "state_locks"
+subnet_count = 3
 # ecr_repo_name = "meritProd"
 availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d", "us-east-1e", "us-east-1f"]
 # cluster_name             = "meritProdCluster"

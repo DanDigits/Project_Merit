@@ -16,16 +16,13 @@ jobs:
       domain_cert: ${{ secrets.DOMAIN_CERT }}
       db_uri: ${{ secrets.DB_URI }}
       nextauth_secret: ${{ secrets.NEXTAUTH_SECRET }}
-      email_from: ${{ secrets.EMAIL_FROM}}
-      email_subject: ${{ secrets.EMAIL_SUBJECT }}
-      email_server_service: ${{ secrets.EMAIL_SERVER_SERVICE }}
       email_server_user: ${{ secrets.EMAIL_SERVER_USER }}
       email_server_password: ${{ secrets.EMAIL_SERVER_PASSWORD }}
-      email_server_host: ${{ secrets.EMAIL_SERVER_HOST }}
-      email_server_port: ${{ secrets.EMAIL_SERVER_PORT }}
-      ecr_repo_name: meritrepo
-      cluster_name: merit-cluster
-      service_name: merit-service
+      # email_from: ${{ secrets.EMAIL_FROM}}
+      # email_subject: ${{ secrets.EMAIL_SUBJECT }}
+      # email_server_service: ${{ secrets.EMAIL_SERVER_SERVICE }}
+      # email_server_host: ${{ secrets.EMAIL_SERVER_HOST }}
+      # email_server_port: ${{ secrets.EMAIL_SERVER_PORT }}
   aws:
     needs:
       - terraform
@@ -49,12 +46,10 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
         with:
           mask-password: "true"
-      - name: Export Branch & Modified Names
+      - name: Export Infrastructure Title Prefix
         shell: bash
         run: |
-          echo "branch=${{ env.ecr_repo_name }}$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
-          echo "cluster=${{ env.cluster_name }}-$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
-          echo "service=${{ env.service_name }}-$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
+          echo "prefix=merit-$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
         id: exports
       - name: Create Build Arguments Through .env
         shell: bash
@@ -63,11 +58,10 @@ jobs:
           echo "DB_URI=${{ secrets.DB_URI }}" >> .env
           echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
           if [ $GITHUB_REF_NAME = "test" ]; then echo NEXT_PUBLIC_NEXTAUTH_URL=https://test.testing.systems >> .env; else echo NEXT_PUBLIC_NEXTAUTH_URL=https://merit.testing.systems >> .env; fi
-          cat .env
       - name: Build Image to ECR and Force Deployment on ECS
         uses: jaroldwong/ecr-push-and-ecs-deploy@v1.1
         with:
           ecr-registry: ${{ steps.ecr.outputs.registry }}
-          ecr-repository: ${{ steps.exports.outputs.branch }}
-          ecs-cluster: ${{ steps.exports.outputs.cluster }}
-          ecs-service: ${{ steps.exports.outputs.service }}
+          ecr-repository: ${{ steps.exports.outputs.prefix }}
+          ecs-cluster: ${{ steps.exports.outputs.prefix }}
+          ecs-service: ${{ steps.exports.outputs.prefix }}
