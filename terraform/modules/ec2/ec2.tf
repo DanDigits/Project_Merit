@@ -264,10 +264,10 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
     ],
 
     environment = [
-      # {
-      #   name  = "DB_URI",
-      #   value = "${var.db_uri}"
-      # },
+      {
+        name  = "DB_URI",
+        value = "${var.db_uri}"
+      },
       # {
       #   name  = "NEXTAUTH_SECRET",
       #   value = "${var.nextauth_secret}"
