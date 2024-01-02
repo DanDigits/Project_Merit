@@ -28,23 +28,23 @@ variable "container_port" {
 #   type        = string
 # }
 
-# variable "availability_zones" {
-#   description = "us-east-1 AZs"
-#   type        = list(string)
-# }
-
 # variable "cluster_name" {
 #   description = "ECS Cluster Name"
 #   type        = string
 # }
 
-# variable "task_family" {
-#   description = "ECS Task Family"
+# variable "container_name" {
+#   description = "ECS Container Name"
 #   type        = string
 # }
 
-# variable "container_name" {
-#   description = "ECS Container Name"
+# variable "availability_zones" {
+#   description = "us-east-1 AZs"
+#   type        = list(string)
+# }
+
+# variable "task_family" {
+#   description = "ECS Task Family"
 #   type        = string
 # }
 

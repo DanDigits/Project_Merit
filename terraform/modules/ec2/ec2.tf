@@ -273,22 +273,18 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
         name  = "NEXTAUTH_SECRET",
         value = "${var.nextauth_secret}"
       },
-      {
-        name  = "NEXTAUTH_URL",
-        value = "${var.nextauth_url}"
-      },
-      {
-        name  = "NEXTAUTH_PORT",
-        value = "${var.nextauth_port}"
-      },
+      # {
+      #   name  = "NEXTAUTH_URL",
+      #   value = "${var.nextauth_url}"
+      # },
+      # {
+      #   name  = "NEXTAUTH_PORT",
+      #   value = "${var.nextauth_port}"
+      # },
       {
         name  = "NEXT_PUBLIC_NEXTAUTH_URL",
         value = "${var.nextauth_public_url}"
-      },
-      {
-        name  = "EMAIL_SERVER_SERVICE",
-        value = "${var.email_server_service}"
-      },
+      }
       {
         name  = "EMAIL_SERVER_USER",
         value = "${var.email_server_user}"
@@ -296,23 +292,27 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
       {
         name  = "EMAIL_SERVER_PASSWORD",
         value = "${var.email_server_password}"
-      },
-      {
-        name  = "EMAIL_SERVER_HOST",
-        value = "${var.email_server_host}"
-      },
-      {
-        name  = "EMAIL_SERVER_PORT",
-        value = "${var.email_server_port}"
-      },
-      {
-        name  = "EMAIL_FROM",
-        value = "${var.email_from}"
-      },
-      {
-        name  = "EMAIL_SUBJECT",
-        value = "${var.email_subject}"
       }
+      # {
+      #   name  = "EMAIL_SERVER_SERVICE",
+      #   value = "${var.email_server_service}"
+      # },
+      # {
+      #   name  = "EMAIL_SERVER_HOST",
+      #   value = "${var.email_server_host}"
+      # },
+      # {
+      #   name  = "EMAIL_SERVER_PORT",
+      #   value = "${var.email_server_port}"
+      # },
+      # {
+      #   name  = "EMAIL_FROM",
+      #   value = "${var.email_from}"
+      # },
+      # {
+      #   name  = "EMAIL_SUBJECT",
+      #   value = "${var.email_subject}"
+      # }
     ],
 
     logConfiguration = {

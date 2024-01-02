@@ -1,6 +1,6 @@
 bucket_name = "terraformstate-bucket089217340198"
 # table_name   = "state_locks"
-branch_prefix  = "test"
+# branch_prefix  = "test"
 subnet_count   = 3
 container_port = 3000
 
