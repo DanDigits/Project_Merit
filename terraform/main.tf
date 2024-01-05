@@ -44,7 +44,7 @@ module "ecr" {
 #   email_subject         = var.email_subject
 # }
 
-// Fargate ECS Deployment, do note is out of date
+// Fargate ECS Deployment
 module "ecs" {
   source         = "./modules/ecs"
   repo_url       = module.ecr.repository_url

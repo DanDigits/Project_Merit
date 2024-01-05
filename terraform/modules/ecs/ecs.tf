@@ -1,5 +1,5 @@
 # VPC -------------------------------------------------------------
-resource "aws_vpc" "vpc" {
+resource "aws_default_vpc" "vpc" {
   #cidr_block           = "10.11.0.0/16"
   # enable_dns_hostnames = true
   # enable_dns_support   = true
@@ -9,7 +9,7 @@ resource "aws_vpc" "vpc" {
 }
 
 resource "aws_subnet" "public_subnet" {
-  vpc_id            = aws_vpc.vpc.id
+  vpc_id            = aws_default_vpc.vpc.id
   count             = var.subnet_count
   availability_zone = data.aws_availability_zones.available.names[count.index]
   # cidr_block              = cidrsubnet(aws_vpc.vpc.cidr_block, 8, 12 + count.index)
@@ -219,7 +219,7 @@ resource "aws_lb_target_group" "target_group" {
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
-  vpc_id      = aws_vpc.vpc.id
+  vpc_id      = aws_default_vpc.vpc.id
 
   health_check {
     enabled             = true
