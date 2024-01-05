@@ -1,9 +1,8 @@
-/* eslint-disable no-undef */
 import {
   createReport,
   getReport,
   getUserReports,
-} from "../server/mongodb/actions/Report";
+} from "/server/mongodb/actions/Report";
 import mongoDB from "../dbConnection";
 import ReportSchema from "/server/mogodb/actions/models/Report";
 

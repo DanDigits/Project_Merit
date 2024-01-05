@@ -1,147 +1,38 @@
-resource "aws_ecs_cluster" "cluster" {
-  name = var.cluster_name
-
-  setting {
-    name  = "containerInsights"
-    value = "enabled"
+# VPC ------------------------------------------------------------------
+resource "aws_default_vpc" "vpc" {
+  #cidr_block           = "10.11.0.0/16"
+  # enable_dns_hostnames = true
+  # enable_dns_support   = true
+  tags = {
+    Name = "merit-vpc"
   }
 }
 
-# Task Definition ----------------------------------------
-resource "aws_ecs_task_definition" "task_definition" {
-  family                   = var.task_family
-  container_definitions    = <<DEFINITION
-  [
-    {
-      "name": "${var.container_name}",
-      "image": "${var.repo_url}",
-      "cpu": 0,
-      "essential": true,
-      "portMappings": [
-        {
-          "name": "3000-tcp",
-          "containerPort": ${var.container_port},
-          "hostPort": ${var.container_port},
-          "protocol": "tcp",
-          "appProtocol": "http"
-        }
-      ],
-      "environment": [
-        {
-          "name": "DB_URI",
-          "value": "${var.db_uri}"
-        },
-        {
-          "name": "NEXTAUTH_SECRET",
-          "value": "${var.nextauth_secret}"
-        },
-        {
-          "name": "NEXTAUTH_URL",
-          "value": "${var.nextauth_url}"
-        },
-        {
-          "name": "NEXTAUTH_PORT",
-          "value": "${var.nextauth_port}"
-        },
-        {
-          "name": "NEXT_PUBLIC_NEXTAUTH_URL",
-          "value": "${var.nextauth_public_url}"
-        },
-        {
-          "name": "EMAIL_SERVER_SERVICE",
-          "value": "${var.email_server_service}"
-        },
-        {
-          "name": "EMAIL_SERVER_USER",
-          "value": "${var.email_server_user}"
-        },
-        {
-          "name": "EMAIL_SERVER_PASSWORD",
-          "value": "${var.email_server_password}"
-        },
-        {
-          "name": "EMAIL_SERVER_HOST",
-          "value": "${var.email_server_host}"
-        },
-        {
-          "name": "EMAIL_SERVER_PORT",
-          "value": "${var.email_server_port}"
-        },
-        {
-          "name": "EMAIL_FROM",
-          "value": "${var.email_from}"
-        },
-        {
-          "name": "EMAIL_SUBJECT",
-          "value": "${var.email_subject}"
-        }
-      ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-            "awslogs-create-group": "true",
-            "awslogs-group": "/ecs/${var.container_name}",
-            "awslogs-region": "us-east-1",
-            "awslogs-stream-prefix": "ecs"
-        },
-        "secretOptions": []
-      }
+resource "aws_default_subnet" "subnet" {
+  #vpc_id            = aws_default_vpc.vpc.id
+  count             = var.subnet_count
+  availability_zone = data.aws_availability_zones.available.names[count.index]
+  # cidr_block              = cidrsubnet(aws_default_vpc.vpc.cidr_block, 8, 12 + count.index)
+  # map_public_ip_on_launch = true
+  tags = {
+    Name = "merit-${var.branch_prefix}-${data.aws_availability_zones.available.names[count.index]}"
+  }
+}
+
+# Security Groups -------------------------------------------------------
+resource "aws_security_group" "load_balancer" {
+  name_prefix = "merit-${var.branch_prefix}-alb"
+  # vpc_id      = aws_default_vpc.vpc.id
+
+  dynamic "ingress" {
+    for_each = [80, 443, 3000]
+    content {
+      from_port        = ingress.value
+      to_port          = ingress.value
+      protocol         = "tcp"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
     }
-  ]
-  DEFINITION
-  requires_compatibilities = ["FARGATE"]
-  network_mode             = "awsvpc"
-  memory                   = 2048
-  cpu                      = 1024
-  execution_role_arn       = aws_iam_role.task_execution_role.arn
-
-  runtime_platform {
-    cpu_architecture        = "X86_64"
-    operating_system_family = "LINUX"
-  }
-}
-
-# IAM Role -------------------------------------------------------
-resource "aws_iam_role" "task_execution_role" {
-  name               = var.task_execution_role_name
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
-}
-
-resource "aws_iam_role_policy_attachment" "task_execution_role_policy" {
-  role       = aws_iam_role.task_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
-
-resource "aws_iam_role_policy_attachment" "task_cloudwatch_role_policy" {
-  role       = aws_iam_role.task_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
-}
-
-# Security Group -------------------------------------------------
-# Load Balancer
-resource "aws_security_group" "load_balancer_security_group" {
-  ingress {
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  ingress {
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  ingress {
-    from_port        = 3000
-    to_port          = 3000
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
   }
 
   egress {
@@ -153,13 +44,15 @@ resource "aws_security_group" "load_balancer_security_group" {
   }
 }
 
-# Service
-resource "aws_security_group" "service_security_group" {
+resource "aws_security_group" "ecs_service" {
+  name_prefix = "merit-${var.branch_prefix}-service"
+  #vpc_id      = aws_default_vpc.vpc.id
+
   ingress {
     from_port       = 0
     to_port         = 0
     protocol        = "-1"
-    security_groups = ["${aws_security_group.load_balancer_security_group.id}"]
+    security_groups = [aws_security_group.load_balancer.id]
   }
 
   egress {
@@ -170,48 +63,20 @@ resource "aws_security_group" "service_security_group" {
   }
 }
 
-# Application Load Balancer --------------------------------------
-resource "aws_default_vpc" "default_vpc" {}
-
-resource "aws_default_subnet" "default_subnet_a" {
-  availability_zone = var.availability_zones[0]
-}
-resource "aws_default_subnet" "default_subnet_b" {
-  availability_zone = var.availability_zones[1]
-}
-resource "aws_default_subnet" "default_subnet_c" {
-  availability_zone = var.availability_zones[2]
-}
-resource "aws_default_subnet" "default_subnet_d" {
-  availability_zone = var.availability_zones[3]
-}
-resource "aws_default_subnet" "default_subnet_e" {
-  availability_zone = var.availability_zones[4]
-}
-resource "aws_default_subnet" "default_subnet_f" {
-  availability_zone = var.availability_zones[5]
-}
-
+# Load Balancer -------------------------------------------------------
 resource "aws_alb" "application_load_balancer" {
-  name               = var.application_load_balancer_name
+  name               = "merit-${var.branch_prefix}"
   load_balancer_type = "application"
-  subnets = [
-    "${aws_default_subnet.default_subnet_a.id}",
-    "${aws_default_subnet.default_subnet_b.id}",
-    "${aws_default_subnet.default_subnet_c.id}",
-    "${aws_default_subnet.default_subnet_d.id}",
-    "${aws_default_subnet.default_subnet_e.id}",
-    "${aws_default_subnet.default_subnet_f.id}"
-  ]
-  security_groups = ["${aws_security_group.load_balancer_security_group.id}"]
+  subnets            = aws_default_subnet.subnet[*].id
+  security_groups    = [aws_security_group.load_balancer.id]
 }
 
 resource "aws_lb_target_group" "target_group" {
-  name        = var.target_group
+  name_prefix = "merit-"
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
-  vpc_id      = aws_default_vpc.default_vpc.id
+  vpc_id      = aws_default_vpc.vpc.id
 
   health_check {
     enabled             = true
@@ -227,7 +92,7 @@ resource "aws_lb_target_group" "target_group" {
 
 resource "aws_lb_listener" "load_balancer_listener_HTTP" {
   load_balancer_arn = aws_alb.application_load_balancer.arn
-  port              = "80"
+  port              = 80
   protocol          = "HTTP"
 
   default_action {
@@ -253,10 +118,130 @@ resource "aws_lb_listener" "load_balancer_listener_HTTPS" {
   }
 }
 
-# Service -----------------------------------------------------------
+# IAM Roles -------------------------------------------------------
+resource "aws_iam_role" "task_execution_role" {
+  name_prefix        = "merit-${var.branch_prefix}-ecs-task-role"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+}
 
+resource "aws_iam_role_policy_attachment" "task_execution_role_policy" {
+  role       = aws_iam_role.task_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "task_cloudwatch_role_policy" {
+  role       = aws_iam_role.task_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+}
+
+# Cluster -------------------------------------------------------------
+resource "aws_ecs_cluster" "cluster" {
+  name = "merit-${var.branch_prefix}"
+
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
+}
+
+# Cloudwatch ----------------------------------------------------------
+resource "aws_cloudwatch_log_group" "ecs_cloudwatch" {
+  name              = "/ecs/merit-${var.branch_prefix}"
+  retention_in_days = 14
+}
+
+# Task Definition ------------------------------------------------------
+resource "aws_ecs_task_definition" "task_definition" {
+  family                   = "merit-${var.branch_prefix}-task"
+  execution_role_arn       = aws_iam_role.task_execution_role.arn
+  network_mode             = "awsvpc"
+  cpu                      = 256
+  memory                   = 512
+  requires_compatibilities = ["FARGATE"]
+  runtime_platform {
+    cpu_architecture        = "X86_64"
+    operating_system_family = "LINUX"
+  }
+
+  container_definitions = jsonencode([{
+    name      = "merit-${var.branch_prefix}",
+    image     = "${var.repo_url}",
+    essential = true,
+    portMappings = [
+      {
+        name          = "3000-tcp",
+        containerPort = var.container_port,
+        hostPort      = var.container_port,
+        protocol      = "tcp",
+        appProtocol   = "http"
+      }
+    ],
+
+    environment = [
+      {
+        name  = "DB_URI",
+        value = "${var.db_uri}"
+      },
+      {
+        name  = "NEXTAUTH_SECRET",
+        value = "${var.nextauth_secret}"
+      },
+      {
+        name  = "NEXTAUTH_URL",
+        value = "${var.nextauth_url}"
+      },
+      {
+        name  = "NEXTAUTH_PORT",
+        value = "${var.nextauth_port}"
+      },
+      {
+        name  = "NEXT_PUBLIC_NEXTAUTH_URL",
+        value = "${var.nextauth_public_url}"
+      },
+      {
+        name  = "EMAIL_SERVER_USER",
+        value = "${var.email_server_user}"
+      },
+      {
+        name  = "EMAIL_SERVER_PASSWORD",
+        value = "${var.email_server_password}"
+      }
+      # {
+      #   name  = "EMAIL_SERVER_SERVICE",
+      #   value = "${var.email_server_service}"
+      # },
+      # {
+      #   name  = "EMAIL_SERVER_HOST",
+      #   value = "${var.email_server_host}"
+      # },
+      # {
+      #   name  = "EMAIL_SERVER_PORT",
+      #   value = "${var.email_server_port}"
+      # },
+      # {
+      #   name  = "EMAIL_FROM",
+      #   value = "${var.email_from}"
+      # },
+      # {
+      #   name  = "EMAIL_SUBJECT",
+      #   value = "${var.email_subject}"
+      # }
+    ],
+
+    logConfiguration = {
+      logDriver = "awslogs",
+      options = {
+        "awslogs-region"        = "us-east-1",
+        "awslogs-group"         = aws_cloudwatch_log_group.ecs_cloudwatch.name,
+        "awslogs-stream-prefix" = "merit-${var.branch_prefix}"
+      }
+    },
+  }])
+}
+
+# Service -----------------------------------------------------------
 resource "aws_ecs_service" "service" {
-  name                              = var.service_name
+  name                              = "merit-${var.branch_prefix}"
   cluster                           = aws_ecs_cluster.cluster.id
   task_definition                   = aws_ecs_task_definition.task_definition.arn
   launch_type                       = "FARGATE"
@@ -265,20 +250,13 @@ resource "aws_ecs_service" "service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.target_group.arn
-    container_name   = var.container_name
+    container_name   = "merit-${var.branch_prefix}"
     container_port   = var.container_port
   }
 
   network_configuration {
-    subnets = [
-      "${aws_default_subnet.default_subnet_a.id}",
-      "${aws_default_subnet.default_subnet_b.id}",
-      "${aws_default_subnet.default_subnet_c.id}",
-      "${aws_default_subnet.default_subnet_d.id}",
-      "${aws_default_subnet.default_subnet_e.id}",
-      "${aws_default_subnet.default_subnet_f.id}"
-    ]
+    subnets          = aws_default_subnet.subnet[*].id
     assign_public_ip = true
-    security_groups  = ["${aws_security_group.service_security_group.id}"]
+    security_groups  = [aws_security_group.ecs_service.id]
   }
 }

@@ -1,13 +1,13 @@
-# Docker-compose created exclusively to load MongoDB URI from an .env file,
-# but can be amended to include a MongoDB installation as well
-# local MongoDB URL is as follows: mongodb://admin:password@$url:27017/databaseName?authSource=admin`
+# Uses .env file to load environment variables for dockerfile
+# Local MongoDB URL is as follows: mongodb://admin:password@$url:27017/databaseName?authSource=admin`
 version: "3.8"
 services:
   server:
-    #container_name: Merit
+    container_name: Merit
     build: .
-    #network_mode: 'host'
+    network_mode: "host"
     ports:
+      # container:host
       - "3000:3000"
     env_file:
       - .env
