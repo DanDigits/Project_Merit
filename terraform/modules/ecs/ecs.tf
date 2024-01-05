@@ -8,8 +8,8 @@ resource "aws_default_vpc" "vpc" {
   }
 }
 
-resource "aws_subnet" "public_subnet" {
-  vpc_id            = aws_default_vpc.vpc.id
+resource "aws_default_subnet" "public_subnet" {
+  #vpc_id            = aws_vpc.vpc.id
   count             = var.subnet_count
   availability_zone = data.aws_availability_zones.available.names[count.index]
   # cidr_block              = cidrsubnet(aws_vpc.vpc.cidr_block, 8, 12 + count.index)
@@ -200,7 +200,7 @@ resource "aws_ecs_service" "service" {
   }
 
   network_configuration {
-    subnets          = aws_subnet.public_subnet[*].id
+    subnets          = aws_default_subnet.public_subnet[*].id
     assign_public_ip = true
     security_groups  = [aws_security_group.service_security_group.id]
   }
@@ -210,7 +210,7 @@ resource "aws_ecs_service" "service" {
 resource "aws_alb" "application_load_balancer" {
   name               = "merit-${var.branch_prefix}"
   load_balancer_type = "application"
-  subnets            = aws_subnet.public_subnet[*].id
+  subnets            = aws_default_subnet.public_subnet[*].id
   security_groups    = [aws_security_group.load_balancer_security_group.id]
 }
 
