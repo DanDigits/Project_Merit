@@ -9,7 +9,7 @@ variable "bucket_name" {
 
 variable "subnet_count" {
   description = "EC2 Subnet Count"
-  default     = 2
+  default     = 3
   type        = number
 }
 

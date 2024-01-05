@@ -1,5 +1,4 @@
 # Uses .env file to load environment variables for dockerfile
-#
 # Local MongoDB URL is as follows: mongodb://admin:password@$url:27017/databaseName?authSource=admin`
 version: "3.8"
 services:

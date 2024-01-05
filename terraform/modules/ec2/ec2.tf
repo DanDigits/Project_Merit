@@ -55,42 +55,36 @@ resource "aws_route_table_association" "public_route_table_assoc" {
 }
 
 # Security Group -----------------------------
-resource "aws_security_group" "ecs_ec2_sg" {
-  name_prefix = "merit-${var.branch_prefix}-ecr"
+resource "aws_security_group" "ec2" {
+  name_prefix = "merit-${var.branch_prefix}-ec2"
   vpc_id      = aws_vpc.vpc.id
 
-  # ingress {
-  #   from_port       = 1024
-  #   to_port         = 65535
-  #   protocol        = "tcp"
-  #   security_groups = [aws_security_group.http.id]
-  # }
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port       = 1024
+    to_port         = 65535
+    protocol        = "tcp"
+    security_groups = [aws_security_group.load_balancer_security_group.id]
   }
 
   egress {
     from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    to_port     = 65535
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
-resource "aws_security_group" "ecs_task" {
-  name_prefix = "merit-${var.branch_prefix}-ecs-task"
+resource "aws_security_group" "service" {
+  name_prefix = "merit-${var.branch_prefix}-ecs-service"
   vpc_id      = aws_vpc.vpc.id
-  description = "Allow all traffic within the VPC"
+  #depends_on = [ aws_security_group.load_balancer_security_group ]
 
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    security_groups = [aws_security_group.load_balancer_security_group.id]
     #cidr_blocks = [aws_vpc.vpc.cidr_block]
-    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -101,26 +95,19 @@ resource "aws_security_group" "ecs_task" {
   }
 }
 
-resource "aws_security_group" "http" {
-  name_prefix = "merit-${var.branch_prefix}-http"
-  description = "Allow all HTTP/HTTPS traffic from public"
+resource "aws_security_group" "load_balancer_security_group" {
+  name_prefix = "merit-${var.branch_prefix}-alb"
   vpc_id      = aws_vpc.vpc.id
 
-  # dynamic "ingress" {
-  #   for_each = [80, 443, 3000]
-  #   content {
-  #     from_port        = ingress.value
-  #     to_port          = ingress.value
-  #     protocol         = "tcp"
-  #     cidr_blocks      = ["0.0.0.0/0"]
-  #     ipv6_cidr_blocks = ["::/0"]
-  #   }
-  # }
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+  dynamic "ingress" {
+    for_each = [80, 443, 3000]
+    content {
+      from_port        = ingress.value
+      to_port          = ingress.value
+      protocol         = "tcp"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
+    }
   }
 
   egress {
@@ -180,8 +167,8 @@ resource "aws_iam_role_policy_attachment" "ecs_exec_role_policy" {
 resource "aws_launch_template" "ecs_ec2" {
   name_prefix            = "merit-${var.branch_prefix}-launch-template"
   image_id               = data.aws_ssm_parameter.ecs_ec2_ami.value
-  instance_type          = "t2.micro"
-  vpc_security_group_ids = [aws_security_group.ecs_ec2_sg.id]
+  instance_type          = "t3.micro"
+  vpc_security_group_ids = [aws_security_group.ec2.id]
 
   iam_instance_profile {
     arn = aws_iam_instance_profile.ec2_instance_profile.arn
@@ -286,26 +273,26 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
     ],
 
     environment = [
-      # {
-      #   name  = "DB_URI",
-      #   value = "${var.db_uri}"
-      # },
-      # {
-      #   name  = "NEXTAUTH_SECRET",
-      #   value = "${var.nextauth_secret}"
-      # },
-      # {
-      #   name  = "NEXTAUTH_URL",
-      #   value = "${var.nextauth_url}"
-      # },
-      # {
-      #   name  = "NEXTAUTH_PORT",
-      #   value = "${var.nextauth_port}"
-      # },
-      # {
-      #   name  = "NEXT_PUBLIC_NEXTAUTH_URL",
-      #   value = "${var.nextauth_public_url}"
-      # },
+      {
+        name  = "DB_URI",
+        value = "${var.db_uri}"
+      },
+      {
+        name  = "NEXTAUTH_SECRET",
+        value = "${var.nextauth_secret}"
+      },
+      {
+        name  = "NEXTAUTH_URL",
+        value = "${var.nextauth_url}"
+      },
+      {
+        name  = "NEXTAUTH_PORT",
+        value = "${var.nextauth_port}"
+      },
+      {
+        name  = "NEXT_PUBLIC_NEXTAUTH_URL",
+        value = "${var.nextauth_public_url}"
+      },
       {
         name  = "EMAIL_SERVER_USER",
         value = "${var.email_server_user}"
@@ -349,15 +336,22 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
 
 # ECS Service Definition ----------------------------------------------------------------------------------------
 resource "aws_ecs_service" "ecs_service" {
-  name            = "merit-${var.branch_prefix}"
-  cluster         = aws_ecs_cluster.cluster.id
-  task_definition = aws_ecs_task_definition.ecs_task_definition.arn
-  desired_count   = 1
-  depends_on      = [aws_lb_target_group.target_group]
+  name                              = "merit-${var.branch_prefix}"
+  cluster                           = aws_ecs_cluster.cluster.id
+  task_definition                   = aws_ecs_task_definition.ecs_task_definition.arn
+  desired_count                     = 1
+  health_check_grace_period_seconds = 10
+  depends_on                        = [aws_lb_target_group.target_group]
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.target_group.arn
+    container_name   = "merit-${var.branch_prefix}"
+    container_port   = var.container_port
+  }
 
   network_configuration {
-    security_groups = [aws_security_group.ecs_task.id]
     subnets         = aws_subnet.public_subnet[*].id
+    security_groups = [aws_security_group.service.id]
   }
 
   capacity_provider_strategy {
@@ -374,12 +368,6 @@ resource "aws_ecs_service" "ecs_service" {
   lifecycle {
     ignore_changes = [desired_count]
   }
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.target_group.arn
-    container_name   = "merit-${var.branch_prefix}"
-    container_port   = var.container_port
-  }
 }
 
 # Application Load Balancer ---------------------------------
@@ -387,7 +375,7 @@ resource "aws_lb" "load_balancer" {
   name               = "merit-${var.branch_prefix}"
   load_balancer_type = "application"
   subnets            = aws_subnet.public_subnet[*].id
-  security_groups    = [aws_security_group.http.id]
+  security_groups    = ["${aws_security_group.load_balancer_security_group.id}"]
 }
 
 resource "aws_lb_target_group" "target_group" {

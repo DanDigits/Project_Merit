@@ -14,7 +14,7 @@ variable "container_port" {
   type        = number
 }
 
-# # Environment variables ---------------------------------------------
+# Environment variables ---------------------------------------------
 variable "branch_prefix" {
   description = "The git branch prefix to append to respective names"
   type        = string
