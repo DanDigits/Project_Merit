@@ -1,4 +1,4 @@
-# VPC -------------------------------------------------------------
+# VPC ------------------------------------------------------------------
 resource "aws_default_vpc" "vpc" {
   #cidr_block           = "10.11.0.0/16"
   # enable_dns_hostnames = true
@@ -8,21 +8,21 @@ resource "aws_default_vpc" "vpc" {
   }
 }
 
-resource "aws_default_subnet" "public_subnet" {
-  #vpc_id            = aws_vpc.vpc.id
+resource "aws_default_subnet" "subnet" {
+  #vpc_id            = aws_default_vpc.vpc.id
   count             = var.subnet_count
   availability_zone = data.aws_availability_zones.available.names[count.index]
-  # cidr_block              = cidrsubnet(aws_vpc.vpc.cidr_block, 8, 12 + count.index)
+  # cidr_block              = cidrsubnet(aws_default_vpc.vpc.cidr_block, 8, 12 + count.index)
   # map_public_ip_on_launch = true
   tags = {
-    Name = "merit-public-${data.aws_availability_zones.available.names[count.index]}"
+    Name = "merit-${var.branch_prefix}-${data.aws_availability_zones.available.names[count.index]}"
   }
 }
 
-# Security Groups -------------------------------------------------
-resource "aws_security_group" "load_balancer_security_group" {
+# Security Groups -------------------------------------------------------
+resource "aws_security_group" "load_balancer" {
   name_prefix = "merit-${var.branch_prefix}-alb"
-  # vpc_id      = aws_vpc.vpc.id
+  # vpc_id      = aws_default_vpc.vpc.id
 
   dynamic "ingress" {
     for_each = [80, 443, 3000]
@@ -44,15 +44,15 @@ resource "aws_security_group" "load_balancer_security_group" {
   }
 }
 
-resource "aws_security_group" "service_security_group" {
+resource "aws_security_group" "ecs_service" {
   name_prefix = "merit-${var.branch_prefix}-service"
-  #vpc_id      = aws_vpc.vpc.id
+  #vpc_id      = aws_default_vpc.vpc.id
 
   ingress {
     from_port       = 0
     to_port         = 0
     protocol        = "-1"
-    security_groups = ["${aws_security_group.load_balancer_security_group.id}"]
+    security_groups = [aws_security_group.load_balancer.id]
   }
 
   egress {
@@ -63,13 +63,58 @@ resource "aws_security_group" "service_security_group" {
   }
 }
 
-# Cluster -------------------------------------------------------------
-resource "aws_ecs_cluster" "cluster" {
-  name = "merit-${var.branch_prefix}"
+# Load Balancer -------------------------------------------------------
+resource "aws_alb" "application_load_balancer" {
+  name               = "merit-${var.branch_prefix}"
+  load_balancer_type = "application"
+  subnets            = aws_default_subnet.subnet[*].id
+  security_groups    = [aws_security_group.load_balancer.id]
+}
 
-  setting {
-    name  = "containerInsights"
-    value = "enabled"
+resource "aws_lb_target_group" "target_group" {
+  name_prefix = "merit-"
+  port        = 80
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = aws_default_vpc.vpc.id
+
+  health_check {
+    enabled             = true
+    protocol            = "HTTP"
+    path                = "/Auth/Login"
+    timeout             = 15
+    unhealthy_threshold = 2
+    healthy_threshold   = 5
+    interval            = 30
+    matcher             = "200"
+  }
+}
+
+resource "aws_lb_listener" "load_balancer_listener_HTTP" {
+  load_balancer_arn = aws_alb.application_load_balancer.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+      #path = "/#{host}:443/#{path}?#{query}", https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener
+    }
+  }
+}
+
+resource "aws_lb_listener" "load_balancer_listener_HTTPS" {
+  load_balancer_arn = aws_alb.application_load_balancer.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  certificate_arn   = data.aws_acm_certificate.certificate.arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.target_group.arn
   }
 }
 
@@ -89,19 +134,29 @@ resource "aws_iam_role_policy_attachment" "task_cloudwatch_role_policy" {
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
 
-# Cloudwatch ---------------------------------------
+# Cluster -------------------------------------------------------------
+resource "aws_ecs_cluster" "cluster" {
+  name = "merit-${var.branch_prefix}"
+
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
+}
+
+# Cloudwatch ----------------------------------------------------------
 resource "aws_cloudwatch_log_group" "ecs_cloudwatch" {
   name              = "/ecs/merit-${var.branch_prefix}"
   retention_in_days = 14
 }
 
-# Task Definition ----------------------------------------
+# Task Definition ------------------------------------------------------
 resource "aws_ecs_task_definition" "task_definition" {
   family                   = "merit-${var.branch_prefix}-task"
   execution_role_arn       = aws_iam_role.task_execution_role.arn
   network_mode             = "awsvpc"
-  cpu                      = 1024
-  memory                   = 2048
+  cpu                      = 256
+  memory                   = 512
   requires_compatibilities = ["FARGATE"]
   runtime_platform {
     cpu_architecture        = "X86_64"
@@ -200,63 +255,8 @@ resource "aws_ecs_service" "service" {
   }
 
   network_configuration {
-    subnets          = aws_default_subnet.public_subnet[*].id
+    subnets          = aws_default_subnet.subnet[*].id
     assign_public_ip = true
-    security_groups  = [aws_security_group.service_security_group.id]
-  }
-}
-
-# Load Balancer -------------------------------------------------------
-resource "aws_alb" "application_load_balancer" {
-  name               = "merit-${var.branch_prefix}"
-  load_balancer_type = "application"
-  subnets            = aws_default_subnet.public_subnet[*].id
-  security_groups    = [aws_security_group.load_balancer_security_group.id]
-}
-
-resource "aws_lb_target_group" "target_group" {
-  name_prefix = "merit-"
-  port        = 80
-  protocol    = "HTTP"
-  target_type = "ip"
-  vpc_id      = aws_default_vpc.vpc.id
-
-  health_check {
-    enabled             = true
-    protocol            = "HTTP"
-    path                = "/Auth/Login"
-    timeout             = 15
-    unhealthy_threshold = 2
-    healthy_threshold   = 5
-    interval            = 30
-    matcher             = "200"
-  }
-}
-
-resource "aws_lb_listener" "load_balancer_listener_HTTP" {
-  load_balancer_arn = aws_alb.application_load_balancer.arn
-  port              = 80
-  protocol          = "HTTP"
-
-  default_action {
-    type = "redirect"
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-      #path = "/#{host}:443/#{path}?#{query}", https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener
-    }
-  }
-}
-
-resource "aws_lb_listener" "load_balancer_listener_HTTPS" {
-  load_balancer_arn = aws_alb.application_load_balancer.arn
-  port              = "443"
-  protocol          = "HTTPS"
-  certificate_arn   = data.aws_acm_certificate.certificate.arn
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.target_group.arn
+    security_groups  = [aws_security_group.ecs_service.id]
   }
 }
