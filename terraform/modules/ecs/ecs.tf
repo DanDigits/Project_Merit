@@ -215,7 +215,7 @@ resource "aws_alb" "application_load_balancer" {
 }
 
 resource "aws_lb_target_group" "target_group" {
-  name_prefix = "merit-${var.branch_prefix}-"
+  name_prefix = "merit-"
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
