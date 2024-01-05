@@ -5,7 +5,7 @@ subnet_count   = 3
 container_port = 3000
 
 # Environment Variables -------------------------------------------------------------------------
-db_uri                = "mongodb+srv://admin:7BJ6vvekZP3XkXcQ@development.mh52mvl.mongodb.net/?retryWrites=true&w=majority"
+db_uri                = "ECS"
 nextauth_port         = 443
 nextauth_url          = "https://test.testing.systems"
 nextauth_public_url   = "https://test.testing.systems"
