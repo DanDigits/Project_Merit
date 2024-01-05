@@ -28,7 +28,7 @@ module "ecs" {
   branch_prefix  = var.branch_prefix
   subnet_count   = var.subnet_count
   container_port = var.container_port
-  
+
   db_uri                = var.db_uri
   nextauth_secret       = var.nextauth_secret
   nextauth_port         = var.nextauth_port
