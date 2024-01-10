@@ -37,23 +37,23 @@ Project Merit is an easy tool where Air Force personnel can write, edit, and sav
 
 ## Getting Started
 
-This web application is requires Linux, and likewise being familiar with commandline. For Windows devices, the easiest way to run the application would be through [Docker](https://www.docker.com/get-started/), using the GUI (desktop program).
+This web application requires Linux, and likewise being familiar with commandline. For Windows devices, the easiest way to run the application would be through [Docker](https://www.docker.com/get-started/), using the GUI (desktop program).
 
 That being said, there are a couple ways to run this application:
 
-1. [Docker Compose](https://docs.docker.com/compose/): The easiest way; ensure you change environment variables accordingly for the following variables, at minimum. Changing these can be found in `Dockerfile` and the `.env` file:
+1. [Docker Compose](https://docs.docker.com/compose/): The easiest way; make sure you change environment variables accordingly for the following variables. Modifying these can be found in the `Dockerfile` and `.env` file:
    | ENV Variable | Value |
    | ------------ | ----- |
    | DB_URI | MongoDB URI link |
-   | NEXTAUTH_SECRET | A cipher for encrypting NextJS sessions validators |
+   | NEXTAUTH_SECRET | A cipher for encrypting sessions |
    | NEXT_PUBLIC_NEXTAUTH_URL | Your sites address |
    | NEXTAUTH_URL | Your sites address |
 
-   Do note if you are running the application on the local device, all that needs adding is DB_URI and NEXTAUTH_SECRET, and uncommenting the URL environment variables.
+   Do note if you are running the application locally, all that needs adding is DB_URI and NEXTAUTH_SECRET, and uncommenting the URL environment variables in `.env`.
 
    Once done, begin the application by running in terminal `docker-compose up` at the root directory, and visit your browser at [http://localhost:3000](http://localhost:3000). See [NextJS](https://nextjs.org/docs) and [NextAuth](https://next-auth.js.org/getting-started/introduction) documentation for more information on the environment variables provided.
 
-2. [Docker](https://www.docker.com/get-started/): Remember to change the requisite environnment variables as is shown in option 1, as this is a similar but different process. Start with running `docker build -t Merit .` at this repositories root directory, which will create an 'image' in your docker installation; type `docker images` to see more information, the image should have the tag "Merit". Afterwards, you can start a container from the 'image' by running `docker run -d --rm -p 3000:3000 --restart=unless-stopped --name Merit Merit` which will make it accessable on the same device at [http://localhost:3000](http://localhost:3000).
+2. [Docker](https://www.docker.com/get-started/): Remember to change the requisite environnment variables as is shown in option 1, as this is a similar but different process. Start with running `docker build -t Merit .` at this repositories root directory, which will create an 'image' in your docker installation; type `docker images` to see more information, the image should have the tag "Merit". Afterwards, you can start a container from the 'image' by running `docker run -d --rm -p 3000:3000 --restart=unless-stopped --name Merit Merit` which will make it accessable on the same device at [http://localhost:3000](http://localhost:3000)
 
 3. [Github Actions](https://docs.github.com/en/actions/learn-github-actions): This process is a little more difficult and is for cloud hosting the application, namely with Amazon which is how this application was done so during development. Fork/clone this repository and add the following variables to your repositories secrets:
    | ENV Variable | Value |
