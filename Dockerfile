@@ -1,8 +1,5 @@
-# The following environment variables should be in the .env or environment BEFORE running the Dockerfile,
-# as theyre used in the build process (line 14):
-# NEXTAUTH_SECRET
-# DB_URI
-# NEXT_PUBLIC_NEXTAUTH_URL
+# NEXTAUTH_URL and NEXT_PUBLIC_NEXTAUTH_URL *MUST* be present at runtime/as environment variables, even if using localhost, otherwise you will have noticable issues
+# Dont forget to add DB_URI and NEXTAUTH_SECRET!
 
 FROM node:20.5.1-alpine AS build
 # Below RUN line is included to avoid missing libc requirements which are not included in alpine linux
@@ -35,10 +32,14 @@ ENV PORT=3000
 
 # NextJS/NextAuth
 ENV NEXT_TELEMETRY_DISABLED 1
-ENV NEXT_PUBLIC_NEXTAUTH_URL=
+ENV NEXT_PUBLIC_NEXTAUTH_URL=http://localhost
+ENV NEXTAUTH_URL=http://localhost
 ENV NEXTAUTH_SECRET=
-ENV NEXTAUTH_URL=
-ENV NEXTAUTH_PORT=443
+ENV NEXTAUTH_URL_INTERNAL=
+ENV NEXTAUTH_PORT=3000
+
+# MongoDB Database
+ENV DB_URI=
 
 # Email
 ENV EMAIL_SERVER_USER=

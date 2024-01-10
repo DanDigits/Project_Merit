@@ -8,7 +8,7 @@ services:
     network_mode: "host"
     ports:
       # container:host
-      - "3000:3000"
+      - 3000:3000
     env_file:
       - .env
     #stdin_open: true
