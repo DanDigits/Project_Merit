@@ -49,11 +49,11 @@ That being said, there are a couple ways to run this application:
    | NEXT_PUBLIC_NEXTAUTH_URL | Your sites address |
    | NEXTAUTH_URL | Your sites address |
 
-   Do note if you are running the application on the local device, all that needs adding is DB_URI and NEXTAUTH_SECRET.
+   Do note if you are running the application on the local device, all that needs adding is DB_URI and NEXTAUTH_SECRET, and uncommenting the URL environment variables.
 
-   Once done, beging the application by running in terminal `docker-compose up`, and visit your browser at [http://localhost:3000](http://localhost:3000). As you can see from the Dockerfile these can likewise be changed accordingly, in case you would like a different port or have different conditions. See [NextJS](https://nextjs.org/docs) and [NextAuth](https://next-auth.js.org/getting-started/introduction) documentation for more.
+   Once done, begin the application by running in terminal `docker-compose up` at the root directory, and visit your browser at [http://localhost:3000](http://localhost:3000). See [NextJS](https://nextjs.org/docs) and [NextAuth](https://next-auth.js.org/getting-started/introduction) documentation for more information on the environment variables provided.
 
-2. [Docker](https://www.docker.com/get-started/): Remember to change the requisite environnment variables as is shown in option 1, as this is a similar, but different, process. Start with running `docker build -t Merit .` at this repositories root directory, which will create an 'image' in your docker installation; type `docker images` to see more information, the image should have the tag "Merit". Afterwards, you can start a container from the 'image' by running `docker run -d --rm -p 3000:3000 --restart=unless-stopped --name Merit Merit` which will make it accessable on the same device at [http://localhost:3000](http://localhost:3000).
+2. [Docker](https://www.docker.com/get-started/): Remember to change the requisite environnment variables as is shown in option 1, as this is a similar but different process. Start with running `docker build -t Merit .` at this repositories root directory, which will create an 'image' in your docker installation; type `docker images` to see more information, the image should have the tag "Merit". Afterwards, you can start a container from the 'image' by running `docker run -d --rm -p 3000:3000 --restart=unless-stopped --name Merit Merit` which will make it accessable on the same device at [http://localhost:3000](http://localhost:3000).
 
 3. [Github Actions](https://docs.github.com/en/actions/learn-github-actions): This process is a little more difficult and is for cloud hosting the application, namely with Amazon which is how this application was done so during development. Fork/clone this repository and add the following variables to your repositories secrets:
    | ENV Variable | Value |
@@ -78,7 +78,7 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your local browser to see the result, this is done on the local device as well.
+Open [http://localhost:3000](http://localhost:3000) with your local browser to see the result.
 
 ## Documentation
 
