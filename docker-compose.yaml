@@ -1,14 +1,15 @@
 # Uses .env file to load environment variables for dockerfile
 # Local MongoDB URL is as follows: mongodb://admin:password@$url:27017/databaseName?authSource=admin`
+# Atlas MongoDB URL is as follows: mongodb+srv://admin:passwordQ@url/?retryWrites=true&w=majority
 version: "3.8"
 services:
   server:
     container_name: Merit
     build: .
-    network_mode: "host"
+    # network_mode: "host"
     ports:
       # container:host
-      - "3000:3000"
+      - 3000:3000
     env_file:
       - .env
     #stdin_open: true

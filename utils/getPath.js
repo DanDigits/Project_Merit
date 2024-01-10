@@ -3,7 +3,8 @@ function getBaseURL() {
   // Check if a domain name has been assigned, and correct application URLs accordingly
   if (
     !process.env.NEXT_PUBLIC_NEXTAUTH_URL ||
-    process.env.NEXT_PUBLIC_NEXTAUTH_URL == "localhost"
+    process.env.NEXT_PUBLIC_NEXTAUTH_URL == "localhost" ||
+    process.env.NEXT_PUBLIC_NEXTAUTH_URL == "http://localhost"
   ) {
     return `http://localhost:3000`;
   } else if (
