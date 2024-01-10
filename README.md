@@ -37,27 +37,40 @@ Project Merit is an easy tool where Air Force personnel can write, edit, and sav
 
 ## Getting Started
 
-This web application assumes you're working under Linux, and are capable with commandline. For Windows devices, the easiest way to run the application would be through [Docker](https://www.docker.com/get-started/), using the GUI (desktop program).
+This web application is requires Linux, and likewise being familiar with commandline. For Windows devices, the easiest way to run the application would be through [Docker](https://www.docker.com/get-started/), using the GUI (desktop program).
 
-That being said, there are three ways to run this application:
+That being said, there are a couple ways to run this application:
 
-1. [Github Actions](https://docs.github.com/en/actions/learn-github-actions): Fork/clone this repository and add these following variables to your repositories secrets:
+1. [Docker Compose](https://docs.docker.com/compose/): The easiest way; ensure you change environment variables accordingly for the following variables, at minimum. Changing these can be found in `Dockerfile` and the `.env` file:
+   | ENV Variable | Value |
+   | ------------ | ----- |
+   | DB_URI | MongoDB URI link |
+   | NEXTAUTH_SECRET | A cipher for encrypting NextJS sessions validators |
+   | NEXT_PUBLIC_NEXTAUTH_URL | Your sites address |
+   | NEXTAUTH_URL | Your sites address |
+
+   Do note if you are running the application on the local device, all that needs adding is DB_URI and NEXTAUTH_SECRET.
+
+   Once done, beging the application by running in terminal `docker-compose up`, and visit your browser at [http://localhost:3000](http://localhost:3000). As you can see from the Dockerfile these can likewise be changed accordingly, in case you would like a different port or have different conditions. See [NextJS](https://nextjs.org/docs) and [NextAuth](https://next-auth.js.org/getting-started/introduction) documentation for more.
+
+2. [Docker](https://www.docker.com/get-started/): Remember to change the requisite environnment variables as is shown in option 1, as this is a similar, but different, process. Start with running `docker build -t Merit .` at this repositories root directory, which will create an 'image' in your docker installation; type `docker images` to see more information, the image should have the tag "Merit". Afterwards, you can start a container from the 'image' by running `docker run -d --rm -p 3000:3000 --restart=unless-stopped --name Merit Merit` which will make it accessable on the same device at [http://localhost:3000](http://localhost:3000).
+
+3. [Github Actions](https://docs.github.com/en/actions/learn-github-actions): This process is a little more difficult and is for cloud hosting the application, namely with Amazon which is how this application was done so during development. Fork/clone this repository and add the following variables to your repositories secrets:
    | ENV Variable | Value |
    | ------------ | ----- |
    | AWS_ACCESS_KEY_ID | AWS IAM User Access Key |
    | AWS_SECRET_ACCESS_KEY | AWS IAM User Secret Key |
-   | DB_URI | MongoDB URI link |
-   | NEXTAUTH_SECRET | A random secret cipher for NextJS |
-   | NEXT_PUBLIC_NEXTAUTH_URL | Your sites domain address |
    | DOMAIN_CERT | Your Amazon CM certificate |
+   | DB_URI | MongoDB URI link |
+   | NEXTAUTH_SECRET | A cipher for encrypting NextJS sessions validators |
+   | NEXT_PUBLIC_NEXTAUTH_URL | Your sites address |
+   | NEXTAUTH_URL | Your sites address |
 
    Likewise modify the .env file to add email functionality with your own email service provider and account, then make a push to your main!
 
-   > **Note** You can run the terraform commands explictly, though please note the backend is currently not instantiated with the code here, so make sure you create it and modify the files accordingly. If you dont want a remote backend, just comment out lines 4-5 in main.tf, and the terraform.state file will be created locally in your directory; be sure to secure it as it can have credentials in plaintext.
+   > **Note** You can run the terraform commands explictly, though please note the terraform state backend is currently not instantiated with the code here, so make sure you create it and modify the files accordingly. If you dont want a remote backend, just comment out lines 4-5 in main.tf, and the terraform.state file will be created locally in your directory; be sure to secure it as it can have credentials in plaintext.
 
-2. [Docker](https://www.docker.com/get-started/): Start with running `docker build -t Merit:1.0 .` at this repositories root directory, which will create an 'image' in your docker installation; type `docker images` to see more information, the image should have the tag "Merit". Afterwards, you can start a container from the 'image' by running `docker run -d --rm -p 3000:3000 --restart=unless-stopped --name ProjectMerit <Image ID>` which will make it accessable on the same device at [http://localhost:3000](http://localhost:3000). You can get the Image ID through the docker images command.
-
-3. [NPM](https://www.npmjs.com): Run
+4. [NPM](https://www.npmjs.com): Download the application and run
 
 ```
 npm run dev
@@ -65,7 +78,7 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your local browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your local browser to see the result, this is done on the local device as well.
 
 ## Documentation
 
