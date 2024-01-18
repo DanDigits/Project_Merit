@@ -129,10 +129,10 @@ resource "aws_iam_role_policy_attachment" "task_execution_role_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-resource "aws_iam_role_policy_attachment" "task_cloudwatch_role_policy" {
-  role       = aws_iam_role.task_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
-}
+# resource "aws_iam_role_policy_attachment" "task_cloudwatch_role_policy" {
+#   role       = aws_iam_role.task_execution_role.name
+#   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+# }
 
 # Cluster -------------------------------------------------------------
 resource "aws_ecs_cluster" "cluster" {
@@ -145,10 +145,10 @@ resource "aws_ecs_cluster" "cluster" {
 }
 
 # Cloudwatch ----------------------------------------------------------
-resource "aws_cloudwatch_log_group" "ecs_cloudwatch" {
-  name              = "/ecs/merit-${var.branch_prefix}"
-  retention_in_days = 14
-}
+# resource "aws_cloudwatch_log_group" "ecs_cloudwatch" {
+#   name              = "/ecs/merit-${var.branch_prefix}"
+#   retention_in_days = 14
+# }
 
 # Task Definition ------------------------------------------------------
 resource "aws_ecs_task_definition" "task_definition" {
@@ -228,14 +228,14 @@ resource "aws_ecs_task_definition" "task_definition" {
       # }
     ],
 
-    logConfiguration = {
-      logDriver = "awslogs",
-      options = {
-        "awslogs-region"        = "us-east-1",
-        "awslogs-group"         = aws_cloudwatch_log_group.ecs_cloudwatch.name,
-        "awslogs-stream-prefix" = "merit-${var.branch_prefix}"
-      }
-    },
+    # logConfiguration = {
+    #   logDriver = "awslogs",
+    #   options = {
+    #     "awslogs-region"        = "us-east-1",
+    #     "awslogs-group"         = aws_cloudwatch_log_group.ecs_cloudwatch.name,
+    #     "awslogs-stream-prefix" = "merit-${var.branch_prefix}"
+    #   }
+    # },
   }])
 }
 
