@@ -42,7 +42,6 @@ jobs:
       DOMAIN_CERT: ${{ secrets.domain_cert }}
       DB_URI: ${{ secrets.db_uri }}
       TERRAFORM_STATE: ${{ secrets.terraform_state }}
-      BRANCH: ${GITHUB_REF##*/}
 
     defaults:
       run:
@@ -60,7 +59,9 @@ jobs:
         run: echo "${{ env.TERRAFORM_STATE }}" >> env/${GITHUB_REF##*/}/state.tfvars
       - name: Correct Remote State File Template
         id: correct
-        run: sed -i 's|BRANCH_ID|${{ env.BRANCH }}|' env/${GITHUB_REF##*/}/state.tfvars
+        run: |
+          branch=$(echo "${GITHUB_REF##*/}")
+          sed -i 's|BRANCH_ID|$branch|' env/${GITHUB_REF##*/}/state.tfvars
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
