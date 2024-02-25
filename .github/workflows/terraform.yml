@@ -19,6 +19,8 @@ on:
         required: true
       email_server_password:
         required: true
+      terraform_state:
+        required: true
       # email_from:
       #   required: true
       # email_subject:
@@ -51,6 +53,12 @@ jobs:
         with:
           terraform_version: 1.5.0
           terraform_wrapper: false
+      - name: Insert Remote State File
+        id: insert
+        run: echo "${{ secrets.terraform_state }}" >> env/${GITHUB_REF##*/}/state.tfvars
+      - name: Correct Remote State File Template
+        id: correct
+        run: sed -i '' 's|BRANCH_ID|${GITHUB_REF##*/}|' env/${GITHUB_REF##*/}/state.tfvars
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
