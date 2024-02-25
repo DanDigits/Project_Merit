@@ -41,6 +41,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
       DOMAIN_CERT: ${{ secrets.domain_cert }}
       DB_URI: ${{ secrets.db_uri }}
+      TERRAFORM_STATE: ${{ secrets.terraform_state }}
 
     defaults:
       run:
@@ -55,7 +56,7 @@ jobs:
           terraform_wrapper: false
       - name: Insert Remote State File
         id: insert
-        run: echo "${{ secrets.terraform_state }}" >> env/${GITHUB_REF##*/}/state.tfvars
+        run: echo "${{ env.TERRAFORM_STATE }}" >> env/${GITHUB_REF##*/}/state.tfvars
       - name: Correct Remote State File Template
         id: correct
         run: sed -i '' 's|BRANCH_ID|${GITHUB_REF##*/}|' env/${GITHUB_REF##*/}/state.tfvars
