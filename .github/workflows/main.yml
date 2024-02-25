@@ -18,7 +18,8 @@ jobs:
       nextauth_secret: ${{ secrets.NEXTAUTH_SECRET }}
       email_server_user: ${{ secrets.EMAIL_SERVER_USER }}
       email_server_password: ${{ secrets.EMAIL_SERVER_PASSWORD }}
-      terraform_state: ${{ secrets.TERRAFORM_STATE }}
+      state_bucket: ${{ secrets.STATE_BUCKET }}
+      state_key: ${{ secrets.STATE_KEY }}
       # email_from: ${{ secrets.EMAIL_FROM}}
       # email_subject: ${{ secrets.EMAIL_SUBJECT }}
       # email_server_service: ${{ secrets.EMAIL_SERVER_SERVICE }}
