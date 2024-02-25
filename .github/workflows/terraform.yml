@@ -59,7 +59,7 @@ jobs:
         run: echo "${{ env.TERRAFORM_STATE }}" >> env/${GITHUB_REF##*/}/state.tfvars
       - name: Correct Remote State File Template
         id: correct
-        run: sed -i '' 's|BRANCH_ID|${GITHUB_REF##*/}|' env/${GITHUB_REF##*/}/state.tfvars
+        run: sed -i 's|BRANCH_ID|${GITHUB_REF##*/}|' env/${GITHUB_REF##*/}/state.tfvars
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
