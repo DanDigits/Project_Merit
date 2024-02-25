@@ -61,7 +61,7 @@ jobs:
         id: correct
         run: |
           branch=$(echo "${GITHUB_REF##*/}")
-          sed -i 's|BRANCH_ID|$branch|' env/${GITHUB_REF##*/}/state.tfvars
+          sed -i 's|BRANCH_ID|${branch}|' env/${GITHUB_REF##*/}/state.tfvars
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
